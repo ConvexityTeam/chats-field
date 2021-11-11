@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/cirle_bg_ripple.xml" value="0.2851851851851852" />
+        <entry key="app/src/main/res/drawable/dummy_image.xml" value="0.16875" />
+        <entry key="app/src/main/res/drawable/rectangle_text.xml" value="0.16302083333333334" />
+        <entry key="app/src/main/res/drawable/transparent_rectangle_blue.xml" value="0.16302083333333334" />
+        <entry key="app/src/main/res/drawable/transparent_rectangle_green.xml" value="0.16302083333333334" />
+        <entry key="app/src/main/res/drawable/transparent_rectangle_yellow.xml" value="0.16302083333333334" />
+        <entry key="app/src/main/res/layout/activity_auth.xml" value="0.125" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work.xml" value="0.20907420656412676" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work_image.xml" value="0.23530938300641668" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work_submit.xml" value="0.5554773083515638" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work_task.xml" value="1.7470604090270863" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work_task_details.xml" value="0.5997575997127674" />
+        <entry key="app/src/main/res/layout/fragment_image_capture.xml" value="0.125" />
+        <entry key="app/src/main/res/layout/fragment_onboarding.xml" value="0.2672631068739748" />
+        <entry key="app/src/main/res/layout/fragment_register.xml" value="0.28020833333333334" />
+        <entry key="app/src/main/res/layout/fragment_register_image.xml" value="0.25379033630037057" />
+        <entry key="app/src/main/res/layout/fragment_register_otp.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_register_print.xml" value="0.19737272826094426" />
+        <entry key="app/src/main/res/layout/fragment_register_verify.xml" value="0.3767441860465116" />
+        <entry key="app/src/main/res/layout/fragment_vendor.xml" value="0.4129547708972228" />
+        <entry key="app/src/main/res/layout/item_cash_for_work_item.xml" value="0.34913793103448276" />
+        <entry key="app/src/main/res/layout/layout_empty.xml" value="0.20128311156331694" />
+        <entry key="app/src/main/res/layout/onboarding_item_layout.xml" value="0.14336372847011145" />
+        <entry key="app/src/main/res/layout/print_pager_view.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/spinner_drop_down.xml" value="0.125" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1046875" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1046875" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

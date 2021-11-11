@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".views.auth.ui.RegisterImageFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="32dp"
+        tools:context=".views.auth.ui.RegisterImageFragment">
+
+        <ImageButton
+            android:id="@+id/cfw_image_back_btn"
+            style="@style/ImageButton.Default"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/task_details"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Capture Image"
+            android:textAppearance="@style/TextAppearance.TextMedium"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/cfw_image_back_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cfw_image_back_btn"
+            app:layout_constraintTop_toTopOf="@+id/cfw_image_back_btn" />
+
+        <TextView
+            android:id="@+id/cfw_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Photos (Click to upload)"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.TextMedium"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cfw_image_descLayout" />
+
+        <ImageView
+            android:id="@+id/cfw_image_one"
+            android:layout_width="156dp"
+            android:layout_height="93dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cfw_text"
+            app:srcCompat="@drawable/dummy_image" />
+
+        <ImageView
+            android:id="@+id/cfw_image_two"
+            android:layout_width="156dp"
+            android:layout_height="93dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cfw_text"
+            app:srcCompat="@drawable/dummy_image" />
+
+        <ImageView
+            android:id="@+id/cfw_image_three"
+            android:layout_width="156dp"
+            android:layout_height="93dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cfw_image_two"
+            app:srcCompat="@drawable/dummy_image" />
+
+        <ImageView
+            android:id="@+id/cfw_image_four"
+            android:layout_width="156dp"
+            android:layout_height="93dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cfw_image_two"
+            app:srcCompat="@drawable/dummy_image" />
+
+        <ImageView
+            android:id="@+id/cfw_image_five"
+            android:layout_width="156dp"
+            android:layout_height="93dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/cfw_image_four"
+            app:srcCompat="@drawable/dummy_image" />
+
+
+        <Button
+            android:id="@+id/cfw_image_submit"
+            style="@style/Widget.MaterialComponents.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/submit_task"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cfw_image_five" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cfw_image_descLayout"
+            style="@style/TextInputLayout.FormEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView26">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cfw_image_descEdit"
+                style="@style/TextInputEditText.Padding"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_gravity="top"
+                android:gravity="top"
+                android:hint="Enter description"
+                android:inputType="textMultiLine"
+                tools:text="@string/lorem" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <include
+            android:id="@+id/cfw_image_submit_progress"
+            layout="@layout/progress_layout"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView26"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Activity description"
+            android:textAppearance="@style/TextAppearance.TextMedium"
+            app:layout_constraintStart_toStartOf="@+id/cfw_image_back_btn"
+            app:layout_constraintTop_toBottomOf="@+id/task_details" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

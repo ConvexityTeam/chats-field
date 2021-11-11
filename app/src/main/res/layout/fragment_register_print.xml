@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".views.auth.ui.RegisterPrintFragment" >
+
+    <ImageButton
+        android:id="@+id/registerPrintBackButton"
+        style="@style/ImageButton.Default"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/task_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Verify Fingerprint"
+        android:textAppearance="@style/TextAppearance.TextMedium"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/registerPrintBackButton"
+        app:layout_constraintStart_toEndOf="@+id/registerPrintBackButton"
+        app:layout_constraintTop_toTopOf="@+id/registerPrintBackButton" />
+
+    <TextView
+        android:id="@+id/deviceConnectedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="Fingerprint Scanner not connected,\nPlease connect device"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.TextRegular"
+        android:textColor="@color/textColorSecondary"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/task_details" />
+
+    <Button
+        android:id="@+id/registerPrintNextBtn"
+        style="@style/Widget.MaterialComponents.Button.Primary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/connect_scanner"
+        app:layout_constraintBottom_toTopOf="@+id/scannerProgress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/printProgress"
+        layout="@layout/progress_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/scannerProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:max="6"
+        android:progress="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/print_view_pager"
+        android:layout_width="256dp"
+        android:layout_height="256dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="13dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deviceConnectedText" />
+
+    <Button
+        android:id="@+id/verifyPrintDoneBtn"
+        style="@style/Widget.MaterialComponents.Button.Outline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="Done"
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/task_details"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/task_details" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
