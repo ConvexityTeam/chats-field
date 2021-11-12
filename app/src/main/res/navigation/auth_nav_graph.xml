@@ -162,8 +162,8 @@
             android:id="@+id/action_registerImageFragment_to_imageCaptureFragment"
             app:destination="@id/imageCaptureFragment" />
         <action
-            android:id="@+id/action_registerImageFragment_to_registerPrintFragment"
-            app:destination="@id/registerPrintFragment" />
+            android:id="@+id/action_registerImageFragment_to_registerVerifyFragment"
+            app:destination="@id/registerVerifyFragment" />
     </fragment>
     <fragment
         android:id="@+id/vendorFragment"

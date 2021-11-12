@@ -55,7 +55,7 @@ class RegisterImageFragment : Fragment() {
         }
         //Declared Nav Btn from CaptureImage to ScanFingerPrintScan
         registerImageNextBtn.setOnClickListener {
-            findNavController().navigate(RegisterImageFragmentDirections.actionRegisterImageFragmentToRegisterPrintFragment())
+            findNavController().navigateUp()
         }
     }
 
