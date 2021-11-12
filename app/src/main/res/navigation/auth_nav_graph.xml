@@ -143,7 +143,11 @@
         android:id="@+id/registerPrintFragment"
         android:name="com.codose.chats.views.auth.ui.RegisterPrintFragment"
         android:label="fragment_register_print"
-        tools:layout="@layout/fragment_register_print" />
+        tools:layout="@layout/fragment_register_print" >
+        <action
+            android:id="@+id/action_registerPrintFragment_to_registerVerifyFragment"
+            app:destination="@id/registerVerifyFragment" />
+    </fragment>
     <fragment
         android:id="@+id/fingerPrintScannerFragment"
         android:name="com.codose.chats.views.auth.ui.FingerPrintScannerFragment"

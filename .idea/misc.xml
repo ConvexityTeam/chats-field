@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="..\:/Users/aminu/StudioProjects/frontend-fieldapp-develop/app/src/main/res/layout/fragment_finger_print_scanner.xml" value="0.2046875" />
+        <entry key="..\:/Users/aminu/StudioProjects/frontend-fieldapp-develop/app/src/main/res/layout/fragment_register_print.xml" value="0.2046875" />
         <entry key="app/src/main/res/drawable/cirle_bg_ripple.xml" value="0.2851851851851852" />
         <entry key="app/src/main/res/drawable/dummy_image.xml" value="0.16875" />
         <entry key="app/src/main/res/drawable/rectangle_text.xml" value="0.16302083333333334" />
@@ -34,7 +36,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
