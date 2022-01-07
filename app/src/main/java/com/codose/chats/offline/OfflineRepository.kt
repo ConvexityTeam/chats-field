@@ -7,7 +7,7 @@ import com.codose.chats.network.response.organization.campaign.Campaign
 import com.codose.chats.offline.Beneficiary
 import com.codose.chats.offline.BeneficiaryDao
 
-class OfflineRepository(val beneficiaryDao: BeneficiaryDao?) {
+class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
 
     @WorkerThread
     suspend fun insert(beneficiary : Beneficiary){

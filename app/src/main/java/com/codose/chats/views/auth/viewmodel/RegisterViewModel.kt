@@ -27,7 +27,7 @@ import java.io.File
 
 class RegisterViewModel(
     private val repository: NetworkRepository,
-    private val offlineRepository: OfflineRepository,
+    offlineRepository: OfflineRepository,
 ) : ViewModel() {
     val getCampaigns = offlineRepository.getAllCampaigns()
     var allFinger: ArrayList<Bitmap>? = null
@@ -41,6 +41,7 @@ class RegisterViewModel(
     val userDetails = MutableLiveData<ApiResponse<UserDetailsResponse>>()
     val nfcDetails = MutableLiveData<ApiResponse<NfcUpdateResponse>>()
     val forgot = MutableLiveData<ApiResponse<ForgotPasswordResponse>>()
+
 
     var specialCase = false
     var nin = "";
