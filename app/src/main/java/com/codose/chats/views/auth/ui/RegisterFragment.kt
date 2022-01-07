@@ -69,6 +69,8 @@ class RegisterFragment : BaseFragment() {
             val array: ArrayList<String> = ArrayList()
             for (campaign in it){
                 array.add(campaign.title!!)
+                Timber.d("Inside the loop: ${campaign.title}")
+
             }
             arrayAdapter = ArrayAdapter(requireContext(),R.layout.spinner_drop_down, array)
             registerCampaignEdit.setAdapter(arrayAdapter)
