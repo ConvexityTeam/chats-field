@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_register_verify.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -231,7 +232,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         val mGender =
             gender.toLowerCase(Locale.ROOT).toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mDate = date.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-//        val mOrganizationId = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),organizationId.toString())
+        val mOrganizationId = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),organizationId.toString())
         val mProfilePic = File(profileImage!!)
         val locationBody =
             LocationBody(coordinates = listOf(long.toDouble(), lat.toDouble()), country = "Nigeria")
@@ -284,6 +285,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         if(internetAvailabilityChecker.currentInternetAvailabilityStatus){
             if(mViewModel.specialCase){
                 registerViewModel.onboardSpecialUser(
+                    organizationId.toString(),
                     firstName = mFirstName,
                     lastName = mLastName,
                     email = mEmail,
@@ -301,7 +303,9 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     nin = mNin
                 )
             }else{
-                registerViewModel.onboardUser(firstName = mFirstName,
+                registerViewModel.onboardUser(
+                    organizationId.toString(),
+                    firstName = mFirstName,
                     lastName = mLastName,
                     email = mEmail,
                     phone = mPhone,

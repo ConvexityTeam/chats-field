@@ -58,8 +58,7 @@ class RegisterFragment : BaseFragment() {
         viewModel.nfc = null
         viewModel.allFinger = null
         viewModel.profileImage = null
-        viewModel.getCampaigns()
-        viewModel.getOrganizationCampaigns()
+        viewModel.getAllCampaigns()
         back_btn.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -67,7 +66,7 @@ class RegisterFragment : BaseFragment() {
         registerGenderEdit.setAdapter(adapter)
         viewModel.getCampaigns.observe(viewLifecycleOwner, {
             //for (campaign in viewModel.getCampaigns)
-            var array: ArrayList<String> = ArrayList()
+            val array: ArrayList<String> = ArrayList()
             for (campaign in it){
                 array.add(campaign.title!!)
             }

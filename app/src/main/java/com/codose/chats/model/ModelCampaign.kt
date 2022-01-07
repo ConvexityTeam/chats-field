@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
 data class ModelCampaign (
 
     @SerializedName("id")
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Int,
     @SerializedName("OrganisationId")
     val OrganisationId: Int,

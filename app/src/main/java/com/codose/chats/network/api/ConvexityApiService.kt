@@ -29,8 +29,9 @@ import kotlin.collections.ArrayList
 interface ConvexityApiService {
 
     @Multipart
-    @POST("auth/register")
+    @POST("ngos/{organisation_id}/beneficiaries")
     fun onboardUser(
+        @Path("organisation_id") id: String,
         @Part("first_name") firstName : RequestBody,
         @Part("last_name") lastName : RequestBody,
         @Part("email") email : RequestBody,
@@ -50,8 +51,9 @@ interface ConvexityApiService {
     ) : Deferred<RegisterResponse>
 
     @Multipart
-    @POST("auth/register/special-case")
+    @POST("ngos/{organisation_id}/beneficiaries/special-case")
     fun onboardSpecialUser(
+        @Path("organisation_id") id: String,
         @Part("first_name") firstName : RequestBody,
         @Part("last_name") lastName : RequestBody,
         @Part("email") email : RequestBody,
@@ -120,13 +122,8 @@ interface ConvexityApiService {
     @POST("cash-for-work/task/progress/confirm")
     fun postTaskCompleted(@Body postCompletionBody: PostCompletionBody) : Deferred<SubmitProgressModel>
 
-    @GET("organisations/{id}/campaigns")
-    suspend fun GetAllCampaigns(
-        @Path("id") id : Int, @Query("type") type : String
-    ): GetAllCampaignsResponse
-
-    @GET("organisations/{id}/campaigns/all")
-    suspend fun GetCampaigns(
+    @GET("organisations/{id}/campaigns/")
+    suspend fun getAllCampaigns(
         @Path("id") id : Int, @Query("type") type : String,
         @Header("Authorization") authorization : String = PrefUtils.getNGOToken()
     ): GetAllCampaignsResponse

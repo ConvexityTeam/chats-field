@@ -1,7 +1,6 @@
 package com.codose.chats.network
 
 import android.content.Context
-import android.util.Log
 import com.codose.chats.model.ModelCampaign
 import com.codose.chats.model.NFCModel
 import com.codose.chats.network.api.ConvexityApiService
@@ -12,7 +11,6 @@ import com.codose.chats.network.response.NfcUpdateResponse
 import com.codose.chats.network.response.RegisterResponse
 import com.codose.chats.network.response.UserDetailsResponse
 import com.codose.chats.network.response.campaign.CampaignByOrganizationModel
-import com.codose.chats.network.response.campaign.GetAllCampaignsResponse
 import com.codose.chats.network.response.forgot.ForgotBody
 import com.codose.chats.network.response.forgot.ForgotPasswordResponse
 import com.codose.chats.network.response.login.LoginResponse
@@ -25,14 +23,11 @@ import com.codose.chats.network.response.tasks.details.TaskDetailsModel
 import com.codose.chats.offline.OfflineRepository
 import com.codose.chats.utils.ApiResponse
 import com.codose.chats.utils.PrefUtils
-import com.codose.chats.utils.ProgressRequestBody
 import com.codose.chats.utils.Utils
 import id.zelory.compressor.Compressor
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.*
 import timber.log.Timber
 import java.io.File
@@ -45,6 +40,7 @@ class NetworkRepository(
 ) {
 
     suspend fun onboardUser(
+        organizationId: String,
         firstName: RequestBody,
         lastName: RequestBody,
         email: RequestBody,
@@ -72,6 +68,7 @@ class NetworkRepository(
                 mBody
             )
             val data = api.onboardUser(
+                organizationId,
                 firstName,
                 lastName,
                 email,
@@ -98,6 +95,7 @@ class NetworkRepository(
     }
 
     suspend fun onboardSpecialUser(
+        organizationId: String,
         firstName: RequestBody,
         lastName: RequestBody,
         email: RequestBody,
@@ -125,6 +123,7 @@ class NetworkRepository(
                 mBody
             )
             val data = api.onboardSpecialUser(
+                organizationId,
                 firstName,
                 lastName,
                 email,
@@ -232,6 +231,7 @@ class NetworkRepository(
     suspend fun getCampaigns(): ApiResponse<CampaignResponse> {
         return try {
             val data = api.getCampaigns().await()
+            Timber.v("Campaign: $data")
             offlineRepository.insertCampaign(data.data)
             ApiResponse.Success(data)
         } catch (e : HttpException) {
@@ -245,7 +245,7 @@ class NetworkRepository(
     suspend fun getAllCampaigns(): List<ModelCampaign>{
         return try{
             val apiService =  RetrofitClient.apiService().create(ConvexityApiService::class.java)
-            var data = apiService.GetAllCampaigns(PrefUtils.getNGOId(), "campaign").data
+            var data = apiService.getAllCampaigns(PrefUtils.getNGOId(), "campaign").data
             Timber.v("XXXgetAllCampaigns: called"+data.toString())
             offlineRepository.insertAllCampaign(data)
             data
@@ -260,9 +260,9 @@ class NetworkRepository(
     suspend fun getAllCashForWorkCampaigns(): List<ModelCampaign>{
         return try{
             val apiService =  RetrofitClient.apiService().create(ConvexityApiService::class.java)
-            var data = apiService.GetCampaigns(PrefUtils.getNGOId(), "cash-for-work").data
+            var data = apiService.getAllCampaigns(PrefUtils.getNGOId(), "cash-for-work").data
             Timber.v("XXXgetAllCampaigns: called"+data.toString())
-            //offlineRepository.insertAllCashForWork(data)
+            offlineRepository.insertAllCashForWork(data)
             data
         }
         catch (e: Exception){

@@ -1,23 +1,20 @@
 package com.codose.chats.offline
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.codose.chats.model.ModelCampaign
 import com.codose.chats.network.response.organization.campaign.Campaign
 
 @Dao
 interface BeneficiaryDao {
     @Insert
-    fun insertBeneficiary(beneficiary: Beneficiary)
+    suspend fun insertBeneficiary(beneficiary: Beneficiary)
 
     @Insert
     fun insertCampaigns(campaigns: List<Campaign>)
 
-    @Insert
-    fun insertAllCampaigns(allCampaigns: List<ModelCampaign>)
+    @Update
+    suspend fun insertAllCampaigns(allCampaigns: List<ModelCampaign>)
 
     @Insert
     fun insertAllCashForWork(allCampaigns: List<ModelCampaign>)
