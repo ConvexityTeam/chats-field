@@ -5,11 +5,12 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "modelCampaign")
+
 data class ModelCampaign (
 
     @SerializedName("id")
-    @PrimaryKey
-    val id: Int,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     @SerializedName("OrganisationId")
     val OrganisationId: Int,
     @SerializedName("title")

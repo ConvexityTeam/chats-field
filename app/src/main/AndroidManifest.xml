@@ -22,7 +22,8 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.BluetoothSensor">
-        <activity android:name="com.codose.chats.views.auth.AuthActivity">
+        <activity android:name="com.codose.chats.views.auth.AuthActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

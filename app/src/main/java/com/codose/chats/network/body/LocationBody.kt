@@ -1,7 +1,7 @@
 package com.codose.chats.network.body
 
-
 import com.google.gson.annotations.SerializedName
+
 
 data class LocationBody(
     @SerializedName("coordinates")

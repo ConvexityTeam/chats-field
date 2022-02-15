@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -154,7 +155,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         val mStatus = 0.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mGender = beneficiary.gender.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mDate = beneficiary.date.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-//        val mOrganizationId = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),beneficiary.organizationId.toString())
+//        val mOrganizationId = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),beneficiary.id.toString())
         val mProfilePic = beneficiary.profilePic.toFile()
         val profilePicBody = ProgressRequestBody(beneficiary.profilePic.toFile(), "image/jpg", this)
 
@@ -190,7 +191,9 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         }
 
         if(beneficiary.isSpecialCase){
-            mainViewModel.onboardSpecialUser(firstName = mFirstName,
+            mainViewModel.onboardSpecialUser(
+                beneficiary.id.toString(),
+                firstName = mFirstName,
                 lastName = mLastName,
                 email = mEmail,
                 phone = mPhone,
@@ -207,6 +210,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                 nin = mNin)
         }else{
             mainViewModel.onboardUser(
+                beneficiary.id.toString(),
                 firstName = mFirstName,
                 lastName = mLastName,
                 email = mEmail,

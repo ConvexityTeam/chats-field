@@ -18,12 +18,14 @@ import androidx.core.app.ActivityCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.codose.chats.R
+import com.codose.chats.model.ModelCampaign
 import com.codose.chats.network.response.organization.campaign.Campaign
 import com.codose.chats.offline.OfflineRepository
 import com.codose.chats.utils.*
 import com.codose.chats.views.auth.dialog.LoginDialog
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.codose.chats.views.base.BaseFragment
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.robin.locationgetter.EasyLocation
 import kotlinx.android.synthetic.main.dialog_login.*
 import kotlinx.android.synthetic.main.fragment_register.*
@@ -43,6 +45,7 @@ class RegisterFragment : BaseFragment() {
     private val myCalendar: Calendar = Calendar.getInstance()
     private var campaignId: String? = null
     private lateinit var arrayAdapter: ArrayAdapter<String>
+    private lateinit var campaignSpinner: MaterialAutoCompleteTextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,26 +61,24 @@ class RegisterFragment : BaseFragment() {
         viewModel.nfc = null
         viewModel.allFinger = null
         viewModel.profileImage = null
-        viewModel.getCampaigns()
-        viewModel.getOrganizationCampaigns()
+        viewModel.getAllCampaigns()
         back_btn.setOnClickListener {
             findNavController().navigateUp()
         }
         val adapter = ArrayAdapter(requireContext(),R.layout.spinner_drop_down, listOf("Male","Female"))
         registerGenderEdit.setAdapter(adapter)
-        viewModel.getCampaigns.observe(viewLifecycleOwner, {
-            //for (campaign in viewModel.getCampaigns)
-            var array: ArrayList<String> = ArrayList()
+        campaignSpinner = requireActivity().findViewById(R.id.registerCampaignEdit)
+        viewModel.getCampaigns.observe(viewLifecycleOwner) {
+            val array: ArrayList<String> = ArrayList()
             for (campaign in it){
                 array.add(campaign.title!!)
             }
             arrayAdapter = ArrayAdapter(requireContext(),R.layout.spinner_drop_down, array)
-            registerCampaignEdit.setAdapter(arrayAdapter)
-            registerCampaignEdit.setOnItemClickListener { _, _, position, _ ->
+            campaignSpinner.setAdapter(arrayAdapter)
+            campaignSpinner.setOnItemClickListener { _, _, position, _ ->
                 campaignId = it[position].id.toString()
             }
         }
-        )
 
         observeLoginDone()
 

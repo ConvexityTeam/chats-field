@@ -52,6 +52,6 @@ object RetrofitClient {
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
-        return  retrofit!!
+        return  retrofit
     }
 }

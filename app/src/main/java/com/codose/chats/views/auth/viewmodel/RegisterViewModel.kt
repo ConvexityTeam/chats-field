@@ -1,8 +1,6 @@
 package com.codose.chats.views.auth.viewmodel
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,14 +11,13 @@ import com.codose.chats.network.body.login.LoginBody
 import com.codose.chats.network.response.NfcUpdateResponse
 import com.codose.chats.network.response.RegisterResponse
 import com.codose.chats.network.response.UserDetailsResponse
-import com.codose.chats.network.response.campaign.GetAllCampaignsResponse
 import com.codose.chats.network.response.forgot.ForgotPasswordResponse
 import com.codose.chats.network.response.login.LoginResponse
 import com.codose.chats.network.response.organization.OrganizationResponse
+import com.codose.chats.offline.Beneficiary
 import com.codose.chats.offline.OfflineRepository
 import com.codose.chats.utils.ApiResponse
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
@@ -39,16 +36,18 @@ class RegisterViewModel(
     val onboardUser = MutableLiveData<ApiResponse<RegisterResponse>>()
     val vendorOnboarding = MutableLiveData<ApiResponse<RegisterResponse>>()
     val ngos = MutableLiveData<ApiResponse<OrganizationResponse>>()
-    val orgaizations = MutableLiveData<ApiResponse<List<ModelCampaign >>>()
+    val organizations = MutableLiveData<ApiResponse<List<ModelCampaign>>>()
     val login = MutableLiveData<ApiResponse<LoginResponse>>()
     val userDetails = MutableLiveData<ApiResponse<UserDetailsResponse>>()
     val nfcDetails = MutableLiveData<ApiResponse<NfcUpdateResponse>>()
     val forgot = MutableLiveData<ApiResponse<ForgotPasswordResponse>>()
 
+
     var specialCase = false
     var nin = "";
     var campaign: String = "1"
     fun onboardUser(
+        organisationId: String,
         firstName: RequestBody,
         lastName: RequestBody,
         email: RequestBody,
@@ -68,7 +67,9 @@ class RegisterViewModel(
         onboardUser.value = ApiResponse.Loading()
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val data = repository.onboardUser(firstName,
+                val data = repository.onboardUser(
+                    organisationId,
+                    firstName,
                     lastName,
                     email,
                     phone,
@@ -83,12 +84,17 @@ class RegisterViewModel(
                     mDate,
                     location,
                     campaign)
+                data.apply {
+                    profile_pic.delete()
+                }
+                Timber.d("data: $data")
                 onboardUser.postValue(data)
             }
         }
     }
 
     fun onboardSpecialUser(
+        organisationId: String,
         firstName: RequestBody,
         lastName: RequestBody,
         email: RequestBody,
@@ -109,6 +115,7 @@ class RegisterViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val data = repository.onboardSpecialUser(
+                    organisationId,
                     firstName,
                     lastName,
                     email,
@@ -125,6 +132,10 @@ class RegisterViewModel(
                     campaign,
                     nin,
                 )
+                data.apply {
+                    profile_pic.delete()
+                }
+                Timber.d("data: $data")
                 onboardUser.postValue(data)
             }
         }
@@ -160,28 +171,18 @@ class RegisterViewModel(
         }
     }
 
-    fun getCampaigns() {
 
+    /**
+     * Method for getting all campaigns
+     * */
+    fun getAllCampaigns() {
+        organizations.value = ApiResponse.Loading()
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val data = repository.getCampaigns()
-
+            val data = repository.getAllCampaigns()
+            organizations.postValue(organizations.value)
+            Timber.v("All data: $data")
             }
         }
-    }
-
-    fun getOrganizationCampaigns(){
-        Timber.v("getOrganizationsCalled")
-        orgaizations.value = ApiResponse.Loading()
-        viewModelScope.launch {
-            withContext(Dispatchers.IO){
-                val data = repository.getAllCampaigns()
-                Timber.v("All data"+data.toString())
-                //orgaizations.value = ApiResponse.Success(data)
-                //getCampaigns.postValue(data)
-            }
-        }
-    }
 
     fun getUserDetails(id: String) {
         userDetails.value = ApiResponse.Loading()
