@@ -158,9 +158,13 @@ class NetworkRepository(
         bvn: String,
         firstName: String,
         lastName: String,
+        address: String,
+        country: String,
+        state: String
     ) : ApiResponse<RegisterResponse>{
         return try {
-            val requestBody = VendorBody(bvn,email,businessName,password,phone,pin,businessName, firstName, lastName)
+            val requestBody = VendorBody(bvn,email,businessName,password,phone,pin,businessName, firstName, lastName,
+                address = address, country = country, state = state)
             val data = api.vendorOnboarding(requestBody).await()
             ApiResponse.Success(data)
         }catch (e : HttpException){
