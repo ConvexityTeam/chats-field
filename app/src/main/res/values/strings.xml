@@ -37,6 +37,6 @@
     <string name="submit_task">Submit Task</string>
     <string name="close_your_eyes_for_5_seconds">Close your eyes for 5 seconds</string>
     <string name="address">Address</string>
-    <string name="country">Country</string>
     <string name="state">State</string>
+    <string name="country">Country</string>
 </resources>
