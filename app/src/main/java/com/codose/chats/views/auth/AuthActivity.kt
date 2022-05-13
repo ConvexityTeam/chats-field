@@ -240,7 +240,10 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             currentBeneficiary.pin.toString(),
             currentBeneficiary.bvn,
             currentBeneficiary.firstName,
-            currentBeneficiary.lastName
+            currentBeneficiary.lastName,
+            currentBeneficiary.address,
+            currentBeneficiary.country,
+            currentBeneficiary.state
         )
     }
 

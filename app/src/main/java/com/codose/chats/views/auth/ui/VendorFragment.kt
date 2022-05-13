@@ -65,7 +65,7 @@ class VendorFragment : BaseFragment() {
     }
 
     private fun setObservers() {
-        registerViewModel.onboardUser.observe(viewLifecycleOwner, {
+        registerViewModel.onboardUser.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Loading -> {
                     vendorProgress.show()
@@ -84,7 +84,7 @@ class VendorFragment : BaseFragment() {
                     vendorNextButton.isEnabled = true
                 }
             }
-        })
+        }
     }
 
     private fun checkInputs() {
@@ -96,6 +96,9 @@ class VendorFragment : BaseFragment() {
         val password = Utils.generatePassword()
         val pin =  Utils.generatePIN()
         val bvn = vendorBvnEdit.text.toString()
+        val address = vendorAddressEdit.text.toString()
+        val country = vendorCountryEdit.text.toString()
+        val state = vendorStateEdit.text.toString()
 
         if(vendorFirstNameEdit.text.isNullOrBlank()){
             vendorFirstNameLayout.error = "First name is required"
@@ -172,9 +175,13 @@ class VendorFragment : BaseFragment() {
         beneficiary.lastName = lastName
 //        beneficiary.organizationId = PrefUtils.getNGOId()
         beneficiary.type = VENDOR_TYPE
+        beneficiary.address = address
+        beneficiary.country = country
+        beneficiary.state = state
 
         if(internetAvailabilityChecker.currentInternetAvailabilityStatus){
-            registerViewModel.vendorOnboarding(businessName, email, phone, password, pin, bvn, firstName, lastName)
+            registerViewModel.vendorOnboarding(businessName, email, phone, password, pin, bvn, firstName, lastName, address = address,
+                country=country, state=state)
         }else{
             offlineViewModel.insert(beneficiary)
             showToast(getString(R.string.no_internet))

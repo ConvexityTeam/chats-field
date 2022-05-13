@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.codose.chats.model.ModelCampaign
 import com.codose.chats.network.response.organization.campaign.Campaign
 
-@Database(entities = [Beneficiary::class, Campaign::class, ModelCampaign::class], version = 5, exportSchema = false)
+@Database(entities = [Beneficiary::class, Campaign::class, ModelCampaign::class], version = 6, exportSchema = false)
 abstract class BeneficiaryDatabase : RoomDatabase() {
     abstract fun beneficiaryDao() : BeneficiaryDao
     companion object {

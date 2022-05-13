@@ -10,4 +10,7 @@ data class VendorBody(
     val store_name: String,
     val first_name: String,
     val last_name: String,
+    val address: String,
+    val country: String,
+    val state: String
 )
