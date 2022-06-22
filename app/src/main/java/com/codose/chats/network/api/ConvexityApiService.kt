@@ -47,6 +47,7 @@ interface ConvexityApiService {
         @Part("gender") gender : RequestBody,
         @Part("dob") date : RequestBody,
         @Part("campaign") campaign : RequestBody,
+        @Part("pin") pin : RequestBody,
         @Header("Authorization") authorization : String = PrefUtils.getNGOToken()
     ) : Deferred<RegisterResponse>
 
@@ -69,6 +70,7 @@ interface ConvexityApiService {
         @Part("gender") gender : RequestBody,
         @Part("dob") date : RequestBody,
         @Part("campaign") campaign : RequestBody,
+        @Part("pin") pin : RequestBody,
         @Header("Authorization") authorization : String = PrefUtils.getNGOToken()
     ) : Deferred<RegisterResponse>
 

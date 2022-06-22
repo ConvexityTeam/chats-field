@@ -167,7 +167,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     }
 
     private fun setObservers() {
-        registerViewModel.onboardUser.observe(viewLifecycleOwner, {
+        registerViewModel.onboardUser.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Loading -> {
                     verifyProgress.show()
@@ -187,9 +187,9 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     registerVerifyBtn.isEnabled = true
                 }
             }
-        })
+        }
 
-        registerViewModel.nfcDetails.observe(viewLifecycleOwner, {
+        registerViewModel.nfcDetails.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Loading -> {
                     verifyProgress.show()
@@ -200,10 +200,9 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     showToast(data.message)
                     try {
                         File(profileImage!!).delete()
-                    }catch (t : Throwable){
+                    } catch (t: Throwable) {
                         Timber.e(t)
                     }
-
                     findNavController().navigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToOnboardingFragment())
                 }
                 is ApiResponse.Failure -> {
@@ -215,7 +214,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     }
                 }
             }
-        })
+        }
 
     }
 
@@ -240,6 +239,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         val mLocation = location.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mCampaign = mViewModel.campaign.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mNin = mViewModel.nin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val mPin = mViewModel.pin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
         val mFingers = ArrayList<File>()
 
@@ -273,6 +273,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         beneficiary!!.profilePic = profileImage!!
         beneficiary!!.isSpecialCase = mViewModel.specialCase
         beneficiary!!.nin = mViewModel.nin
+        beneficiary!!.pin = mViewModel.pin
         if(!mViewModel.specialCase){
             beneficiary!!.leftThumb = writeBitmapToFile(requireContext(),allFingers!![0]).absolutePath
             beneficiary!!.leftIndex = writeBitmapToFile(requireContext(),allFingers!![1]).absolutePath
@@ -300,7 +301,8 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     mDate = mDate,
                     location = mLocation,
                     campaign = mCampaign,
-                    nin = mNin
+                    nin = mNin,
+                    pin = mPin
                 )
             }else{
                 registerViewModel.onboardUser(
@@ -319,7 +321,9 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     mGender = mGender,
                     mDate = mDate,
                     location = mLocation,
-                    campaign = mCampaign)
+                    campaign = mCampaign,
+                    pin = mPin
+                )
             }
         }else{
             offlineViewModel.insert(beneficiary!!)

@@ -32,7 +32,7 @@ data class Beneficiary(
     var gender : String = "",
     var date : String = "",
     var campaignId :String = "",
-    var pin : Int = 0,
+    var pin : String = "",
     var nin : String = "",
     var isSpecialCase : Boolean = false,
     var type : Int = VENDOR_TYPE

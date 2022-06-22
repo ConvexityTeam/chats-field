@@ -46,6 +46,7 @@ class RegisterViewModel(
     var specialCase = false
     var nin = "";
     var campaign: String = "1"
+    var pin = "0000"
     fun onboardUser(
         organisationId: String,
         firstName: RequestBody,
@@ -63,6 +64,7 @@ class RegisterViewModel(
         mDate: RequestBody,
         location: RequestBody,
         campaign: RequestBody,
+        pin: RequestBody
     ) {
         onboardUser.value = ApiResponse.Loading()
         viewModelScope.launch {
@@ -83,7 +85,9 @@ class RegisterViewModel(
                     mGender,
                     mDate,
                     location,
-                    campaign)
+                    campaign,
+                    pin
+                )
                 data.apply {
                     profile_pic.delete()
                 }
@@ -109,6 +113,7 @@ class RegisterViewModel(
         mDate: RequestBody,
         location: RequestBody,
         campaign: RequestBody,
+        pin: RequestBody,
         nin: RequestBody,
     ) {
         onboardUser.value = ApiResponse.Loading()
@@ -130,6 +135,7 @@ class RegisterViewModel(
                     mDate,
                     location,
                     campaign,
+                    pin,
                     nin,
                 )
                 data.apply {

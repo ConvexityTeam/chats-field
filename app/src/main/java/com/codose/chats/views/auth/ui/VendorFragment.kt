@@ -2,10 +2,10 @@ package com.codose.chats.views.auth.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.telephony.PhoneNumberUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.codose.chats.R
 import com.codose.chats.offline.Beneficiary
@@ -19,6 +19,8 @@ import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import kotlinx.android.synthetic.main.fragment_vendor.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
+import java.util.*
 
 
 @InternalCoroutinesApi
@@ -167,9 +169,11 @@ class VendorFragment : BaseFragment() {
         }
         beneficiary.storeName = businessName
         beneficiary.email = email
-        beneficiary.phone = phone
+        val formattedPhoneNumberWithCountryCode = formatPhoneNumberWithCountryCode(phone)
+        Timber.d(formattedPhoneNumberWithCountryCode)
+        beneficiary.phone = formattedPhoneNumberWithCountryCode
         beneficiary.password = password
-        beneficiary.pin = pin.toInt()
+        beneficiary.pin = pin
         beneficiary.bvn = bvn
         beneficiary.firstName = firstName
         beneficiary.lastName = lastName
@@ -180,7 +184,7 @@ class VendorFragment : BaseFragment() {
         beneficiary.state = state
 
         if(internetAvailabilityChecker.currentInternetAvailabilityStatus){
-            registerViewModel.vendorOnboarding(businessName, email, phone, password, pin, bvn, firstName, lastName, address = address,
+            registerViewModel.vendorOnboarding(businessName, email, formattedPhoneNumberWithCountryCode, password, pin, bvn, firstName, lastName, address = address,
                 country=country, state=state)
         }else{
             offlineViewModel.insert(beneficiary)
@@ -188,6 +192,11 @@ class VendorFragment : BaseFragment() {
             findNavController().navigateUp()
         }
 
+    }
+
+    private fun formatPhoneNumberWithCountryCode(phoneNumber: String): String {
+        val numberToBeFormatted = phoneNumber.drop(1)
+        return "+234$numberToBeFormatted"
     }
 
     private fun openLogin(isCancelable : Boolean = true) {

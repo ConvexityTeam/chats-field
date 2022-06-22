@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.codose.chats.R
+import com.codose.chats.network.api.SessionManager
 import com.codose.chats.network.body.login.LoginBody
 import com.codose.chats.utils.*
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
@@ -16,13 +17,20 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.dialog_login.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 @InternalCoroutinesApi
 class LoginDialog : BottomSheetDialogFragment() {
     private val viewModel  by viewModel<RegisterViewModel>()
+
+    // Handling token bearer for field agent
+    private lateinit var sessionManager: SessionManager
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.CustomBottomSheet)
+        sessionManager = context?.let { SessionManager(it) }!!
     }
 
     override fun onCreateView(
@@ -45,16 +53,21 @@ class LoginDialog : BottomSheetDialogFragment() {
             openForgot()
         }
 
-        viewModel.login.observe(viewLifecycleOwner, {
+        viewModel.login.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Loading -> {
                     loginProgress.show()
                 }
                 is ApiResponse.Success -> {
                     val data = it.data.data
-                    PrefUtils.setNGOToken("Bearer "+data.token)
+                    PrefUtils.setNGOToken("Bearer " + data.token)
+                    Timber.d(data.token)
                     PrefUtils.setNGO(data.user.associatedOrganisations.first().OrganisationId, "")
-                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, Intent().putExtra("login",true))
+                    targetFragment?.onActivityResult(targetRequestCode,
+                        Activity.RESULT_OK,
+                        Intent().putExtra("login", true))
+                    sessionManager.saveToken("Bearer ${data.token}")
+                    Timber.d("Bearer: ${sessionManager.fetchToken()}")
                     findNavController().navigate(R.id.action_registerFragment_to_onboardingFragment)
                     dismiss()
                 }
@@ -63,9 +76,9 @@ class LoginDialog : BottomSheetDialogFragment() {
                     requireContext().toast(it.message)
                 }
             }
-        })
+        }
 
-        viewModel.userDetails.observe(viewLifecycleOwner, {
+        viewModel.userDetails.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Loading -> {
                     loginProgress.show()
@@ -81,7 +94,7 @@ class LoginDialog : BottomSheetDialogFragment() {
                     requireContext().toast("An error occurred")
                 }
             }
-        })
+        }
 
     }
 
