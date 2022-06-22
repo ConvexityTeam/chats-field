@@ -47,6 +47,8 @@ class RegisterFragment : BaseFragment() {
     private lateinit var arrayAdapter: ArrayAdapter<String>
     private lateinit var campaignSpinner: MaterialAutoCompleteTextView
 
+    private lateinit var phoneNumberWithCountryCode: String
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -130,7 +132,7 @@ class RegisterFragment : BaseFragment() {
     }
 
     private fun observeLoginDone() {
-        viewModel.login.observe(viewLifecycleOwner, {
+        viewModel.login.observe(viewLifecycleOwner) {
             Timber.v("XXXlogin vn reached ")
             when (it) {
                 is ApiResponse.Success -> {
@@ -138,7 +140,7 @@ class RegisterFragment : BaseFragment() {
                     findNavController().navigate(R.id.action_registerFragment_to_onboardingFragment)
                 }
             }
-        })
+        }
     }
 
     private fun changeLoggedInText() {
@@ -204,6 +206,8 @@ class RegisterFragment : BaseFragment() {
         if(registerPhoneEdit.isValid()){
             registerPhoneLayout.error = ""
             phone = registerPhoneEdit.text.toString()
+            phoneNumberWithCountryCode = formatPhoneNumberWithCountryCode(phone)
+            Timber.d(phoneNumberWithCountryCode)
         }else{
             registerPhoneLayout.error = "Phone number is required"
             return
@@ -244,8 +248,13 @@ class RegisterFragment : BaseFragment() {
                 }
             }
         }
-        findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToRegisterVerifyFragment(firstName,lastName,email,phone,password,latitude.toString(),longitude.toString(),organizationId!!,gender, date))
+        findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToRegisterVerifyFragment(firstName,lastName,email,phoneNumberWithCountryCode,password,latitude.toString(),longitude.toString(),organizationId!!,gender, date))
 
+    }
+
+    private fun formatPhoneNumberWithCountryCode(phoneNumber: String): String {
+        val numberToBeFormatted = phoneNumber.drop(1)
+        return "+234$numberToBeFormatted"
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

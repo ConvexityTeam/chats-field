@@ -15,6 +15,7 @@ import com.codose.chats.utils.*
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.dialog_login.*
+import kotlinx.android.synthetic.main.fragment_onboarding.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -66,13 +67,15 @@ class LoginDialog : BottomSheetDialogFragment() {
                     targetFragment?.onActivityResult(targetRequestCode,
                         Activity.RESULT_OK,
                         Intent().putExtra("login", true))
-                    sessionManager.saveToken("Bearer ${data.token}")
-                    Timber.d("Bearer: ${sessionManager.fetchToken()}")
                     findNavController().navigate(R.id.action_registerFragment_to_onboardingFragment)
                     dismiss()
                 }
                 is ApiResponse.Failure -> {
                     loginProgress.hide()
+                    if (it.code == 401) {
+                        doLogout()
+                        openLogin()
+                    }
                     requireContext().toast(it.message)
                 }
             }
@@ -126,10 +129,23 @@ class LoginDialog : BottomSheetDialogFragment() {
             }
     }
 
+    private fun doLogout() {
+        PrefUtils.setNGO(0, "")
+        logoutBtn.hide()
+    }
+
     private fun openForgot(isCancelable : Boolean = true) {
         val bottomSheetDialogFragment = ForgotDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = isCancelable
         bottomSheetDialogFragment.setTargetFragment(this, 700)
         bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),"BottomSheetDialog")
+    }
+
+    private fun openLogin(isCancelable: Boolean = true) {
+        val bottomSheetDialogFragment = LoginDialog.newInstance()
+        bottomSheetDialogFragment.isCancelable = isCancelable
+        bottomSheetDialogFragment.setTargetFragment(this, 700)
+        bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),
+            "BottomSheetDialog")
     }
 }
