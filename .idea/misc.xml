@@ -27,7 +27,7 @@
         <entry key="app/src/main/res/layout/fragment_onboarding.xml" value="0.2672631068739748" />
         <entry key="app/src/main/res/layout/fragment_register.xml" value="0.28020833333333334" />
         <entry key="app/src/main/res/layout/fragment_register_image.xml" value="0.25379033630037057" />
-        <entry key="app/src/main/res/layout/fragment_register_otp.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_register_otp.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_register_print.xml" value="0.19737272826094426" />
         <entry key="app/src/main/res/layout/fragment_register_verify.xml" value="0.3767441860465116" />
         <entry key="app/src/main/res/layout/fragment_vendor.xml" value="0.3098958333333333" />

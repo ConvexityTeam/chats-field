@@ -206,8 +206,8 @@ class RegisterFragment : BaseFragment() {
         if(registerPhoneEdit.isValid()){
             registerPhoneLayout.error = ""
             phone = registerPhoneEdit.text.toString()
-//            phoneNumberWithCountryCode = formatPhoneNumberWithCountryCode(phone)
-//            Timber.d(phoneNumberWithCountryCode)
+            phoneNumberWithCountryCode = formatPhoneNumberWithCountryCode(phone)
+            Timber.d(phoneNumberWithCountryCode)
         }else{
             registerPhoneLayout.error = "Phone number is required"
             return
@@ -248,7 +248,7 @@ class RegisterFragment : BaseFragment() {
                 }
             }
         }
-        findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToRegisterVerifyFragment(firstName,lastName,email,phone,password,latitude.toString(),longitude.toString(),organizationId!!,gender, date))
+        findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToRegisterVerifyFragment(firstName,lastName,email,phoneNumberWithCountryCode,password,latitude.toString(),longitude.toString(),organizationId!!,gender, date))
 
     }
 
