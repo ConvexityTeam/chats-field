@@ -12,6 +12,7 @@ import com.codose.chats.offline.Beneficiary
 import com.codose.chats.offline.OfflineViewModel
 import com.codose.chats.utils.*
 import com.codose.chats.utils.BluetoothConstants.VENDOR_TYPE
+import com.codose.chats.utils.Utils.toCountryCode
 import com.codose.chats.views.auth.dialog.LoginDialog
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.codose.chats.views.base.BaseFragment
@@ -169,9 +170,7 @@ class VendorFragment : BaseFragment() {
         }
         beneficiary.storeName = businessName
         beneficiary.email = email
-        val formattedPhoneNumberWithCountryCode = formatPhoneNumberWithCountryCode(phone)
-        Timber.d(formattedPhoneNumberWithCountryCode)
-        beneficiary.phone = formattedPhoneNumberWithCountryCode
+        beneficiary.phone = phone.toCountryCode()
         beneficiary.password = password
         beneficiary.pin = pin
         beneficiary.bvn = bvn
@@ -184,7 +183,7 @@ class VendorFragment : BaseFragment() {
         beneficiary.state = state
 
         if(internetAvailabilityChecker.currentInternetAvailabilityStatus){
-            registerViewModel.vendorOnboarding(businessName, email, formattedPhoneNumberWithCountryCode, password, pin, bvn, firstName, lastName, address = address,
+            registerViewModel.vendorOnboarding(businessName, email, phone.toCountryCode(), password, pin, bvn, firstName, lastName, address = address,
                 country=country, state=state)
         }else{
             offlineViewModel.insert(beneficiary)
@@ -194,10 +193,6 @@ class VendorFragment : BaseFragment() {
 
     }
 
-    private fun formatPhoneNumberWithCountryCode(phoneNumber: String): String {
-        val numberToBeFormatted = phoneNumber.drop(1)
-        return "+234$numberToBeFormatted"
-    }
 
     private fun openLogin(isCancelable : Boolean = true) {
         val bottomSheetDialogFragment = LoginDialog.newInstance()
