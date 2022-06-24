@@ -59,7 +59,7 @@ class CashForWorkFragment : Fragment() {
             if (it != null) {
                 cfw_progress.hide()
                 cashForWorksArray.clear()
-                Timber.v("All campaigns " + it.toString())
+                Timber.v("All campaigns %s", it.toString())
                 when (it.size) {
                     /*is ApiResponse.Failure -> {
                         cfw_progress.hide()

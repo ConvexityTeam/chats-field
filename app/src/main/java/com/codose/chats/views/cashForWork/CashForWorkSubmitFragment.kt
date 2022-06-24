@@ -67,7 +67,7 @@ class CashForWorkSubmitFragment : BaseFragment() {
     }
 
     private fun setObservers(){
-        cashForWorkViewModel.taskOperation.observe(viewLifecycleOwner, {
+        cashForWorkViewModel.taskOperation.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Failure -> {
                     cfw_submit_progress.hide()
@@ -84,6 +84,6 @@ class CashForWorkSubmitFragment : BaseFragment() {
                     findNavController().navigate(CashForWorkSubmitFragmentDirections.actionCashForWorkSubmitFragmentToOnboardingFragment())
                 }
             }
-        })
+        }
     }
 }
