@@ -5,6 +5,7 @@ import com.codose.chats.model.ModelCampaign
 import com.codose.chats.model.NFCModel
 import com.codose.chats.network.api.ConvexityApiService
 import com.codose.chats.network.api.RetrofitClient
+import com.codose.chats.network.api.SessionManager
 import com.codose.chats.network.body.VendorBody
 import com.codose.chats.network.body.login.LoginBody
 import com.codose.chats.network.response.NfcUpdateResponse
@@ -36,9 +37,10 @@ import java.lang.Exception
 class NetworkRepository(
     private val api: ConvexityApiService,
     private val offlineRepository: OfflineRepository,
-    private val context: Context,
+    private val context: Context
 ) {
 
+    private val sessionManager: SessionManager = SessionManager(context)
     suspend fun onboardUser(
         organizationId: String,
         firstName: RequestBody,
@@ -56,6 +58,7 @@ class NetworkRepository(
         mDate: RequestBody,
         location: RequestBody,
         campaign: RequestBody,
+        pin: RequestBody,
     ) : ApiResponse<RegisterResponse>{
         return try {
             val compressed = Compressor.compress(context, profile_pic)
@@ -83,7 +86,8 @@ class NetworkRepository(
                 prints,
                 mGender,
                 mDate,
-                campaign
+                campaign,
+                pin,
             ).await()
             ApiResponse.Success(data)
         }catch (e : HttpException){
@@ -110,6 +114,7 @@ class NetworkRepository(
         mDate: RequestBody,
         location: RequestBody,
         campaign: RequestBody,
+        pin: RequestBody,
         nin: RequestBody?,
     ) : ApiResponse<RegisterResponse>{
         return try {
@@ -138,7 +143,8 @@ class NetworkRepository(
                 image,
                 mGender,
                 mDate,
-                campaign
+                campaign,
+                pin,
             ).await()
             ApiResponse.Success(data)
         }catch (e : HttpException){

@@ -32,6 +32,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     private val mainViewModel by viewModel<RegisterViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
     private var currentBeneficiary = Beneficiary()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
@@ -41,10 +43,10 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             startUpload()
         }
         internetAvailabilityChecker.addInternetConnectivityListener(this)
-        mainViewModel.onboardUser.observe(this, {
+        mainViewModel.onboardUser.observe(this) {
             when (it) {
                 is ApiResponse.Loading -> {
-                    if(pendingUploadTextView.isVisible){
+                    if (pendingUploadTextView.isVisible) {
                         pendingProgress.show()
                     }
                 }
@@ -58,14 +60,14 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                         File(currentBeneficiary.rightIndex).delete()
                         File(currentBeneficiary.rightThumb).delete()
                         File(currentBeneficiary.profilePic).delete()
-                    }catch (t : Throwable){
+                    } catch (t: Throwable) {
 
                     }
                     offlineViewModel.delete(beneficiary = currentBeneficiary)
                 }
                 is ApiResponse.Failure -> {
                     pendingProgress.hide()
-                    if(it.code == 400){
+                    if (it.code == 400) {
                         try {
                             File(currentBeneficiary.leftLittle).delete()
                             File(currentBeneficiary.leftIndex).delete()
@@ -74,32 +76,32 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                             File(currentBeneficiary.rightIndex).delete()
                             File(currentBeneficiary.rightThumb).delete()
                             File(currentBeneficiary.profilePic).delete()
-                        }catch (t : Throwable){
+                        } catch (t: Throwable) {
 
                         }
                         offlineViewModel.delete(beneficiary = currentBeneficiary)
                     }
                 }
             }
-        })
+        }
 
-        offlineViewModel.getBeneficiaries.observe(this, {
+        offlineViewModel.getBeneficiaries.observe(this) {
             val count = it.count()
             pendingUploadTextView.text = "$count Pending uploads"
-            if(count > 0){
+            if (count > 0) {
                 pendingUploadTextView.setOnClickListener {
-                    if(internetAvailabilityChecker.currentInternetAvailabilityStatus){
+                    if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
                         startUpload()
-                    }else{
+                    } else {
                         this.toast("Internet not available.")
                     }
                 }
-            }else{
+            } else {
                 pendingUploadTextView.setOnClickListener {
                     this.toast("No pending uploads")
                 }
             }
-        })
+        }
     }
 
     override fun onInternetConnectivityChanged(isConnected: Boolean) {
@@ -115,27 +117,27 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     }
 
     private fun startUpload() {
-        offlineViewModel.getBeneficiaries.observe(this, {
-            if(it.isNotEmpty()){
+        offlineViewModel.getBeneficiaries.observe(this) {
+            if (it.isNotEmpty()) {
                 Timber.v("List is not empty")
-                if(currentBeneficiary != it.first()){
+                if (currentBeneficiary != it.first()) {
                     Timber.v("Initial = $currentBeneficiary")
                     currentBeneficiary = it.first()
                     Timber.v("Current = $currentBeneficiary")
-                    if(currentBeneficiary.type == VENDOR_TYPE){
+                    if (currentBeneficiary.type == VENDOR_TYPE) {
                         registerVendor(currentBeneficiary)
-                    }else{
+                    } else {
                         postOnboardData(beneficiary = currentBeneficiary)
                     }
-                }else{
-                    if(currentBeneficiary.type == VENDOR_TYPE){
+                } else {
+                    if (currentBeneficiary.type == VENDOR_TYPE) {
                         registerVendor(currentBeneficiary)
-                    }else{
+                    } else {
                         postOnboardData(beneficiary = currentBeneficiary)
                     }
                 }
             }
-        })
+        }
     }
 
     private fun postOnboardData(beneficiary: Beneficiary) {
@@ -168,6 +170,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             beneficiary.campaignId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mNin =
             beneficiary.nin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val mPin =
+            beneficiary.pin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mFingers = ArrayList<File>()
         if (!beneficiary.isSpecialCase) {
             mFingers.add(beneficiary.leftThumb.toFile())
@@ -207,6 +211,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                 mDate = mDate,
                 location = mLocation,
                 campaign = mCampaign,
+                pin = mPin,
                 nin = mNin)
         }else{
             mainViewModel.onboardUser(
@@ -225,7 +230,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                 mGender = mGender,
                 mDate = mDate,
                 location = mLocation,
-                campaign = mCampaign
+                campaign = mCampaign,
+                pin = mPin
             )
         }
     }

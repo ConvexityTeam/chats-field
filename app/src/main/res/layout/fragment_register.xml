@@ -291,6 +291,43 @@
                 android:text="No" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            android:id="@+id/inputPinText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/input_pin"
+            android:textAppearance="@style/TextAppearance.TextMedium"
+            android:textColor="@color/textColorSecondary"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registerNINLayout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputPinLayout"
+            style="@style/TextInputLayout.FormEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputPinText"
+            app:passwordToggleEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputPinEdit"
+                style="@style/TextInputEditText.Padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="1234"
+                android:inputType="number"
+                android:maxLength="4"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <TextView
             android:id="@+id/textView5"
@@ -446,7 +483,7 @@
             android:text="@string/next"
             app:layout_constraintEnd_toEndOf="@id/registerPhoneLayout"
             app:layout_constraintStart_toStartOf="@id/registerPhoneLayout"
-            app:layout_constraintTop_toBottomOf="@+id/registerNINLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/inputPinLayout" />
 
         <TextView
             android:id="@+id/textView8"

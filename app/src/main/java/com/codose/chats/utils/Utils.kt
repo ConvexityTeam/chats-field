@@ -76,4 +76,8 @@ object Utils {
         return DateTime.parse(this).toString(dtf)
 
     }
+
+    fun String.toCountryCode() : String {
+        return "+234${this.drop(1)}"
+    }
 }

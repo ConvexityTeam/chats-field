@@ -2,16 +2,17 @@ package com.codose.chats.views.auth.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.telephony.PhoneNumberUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.codose.chats.R
 import com.codose.chats.offline.Beneficiary
 import com.codose.chats.offline.OfflineViewModel
 import com.codose.chats.utils.*
 import com.codose.chats.utils.BluetoothConstants.VENDOR_TYPE
+import com.codose.chats.utils.Utils.toCountryCode
 import com.codose.chats.views.auth.dialog.LoginDialog
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.codose.chats.views.base.BaseFragment
@@ -19,6 +20,8 @@ import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import kotlinx.android.synthetic.main.fragment_vendor.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
+import java.util.*
 
 
 @InternalCoroutinesApi
@@ -167,9 +170,9 @@ class VendorFragment : BaseFragment() {
         }
         beneficiary.storeName = businessName
         beneficiary.email = email
-        beneficiary.phone = phone
+        beneficiary.phone = phone.toCountryCode()
         beneficiary.password = password
-        beneficiary.pin = pin.toInt()
+        beneficiary.pin = pin
         beneficiary.bvn = bvn
         beneficiary.firstName = firstName
         beneficiary.lastName = lastName
@@ -180,7 +183,7 @@ class VendorFragment : BaseFragment() {
         beneficiary.state = state
 
         if(internetAvailabilityChecker.currentInternetAvailabilityStatus){
-            registerViewModel.vendorOnboarding(businessName, email, phone, password, pin, bvn, firstName, lastName, address = address,
+            registerViewModel.vendorOnboarding(businessName, email, phone.toCountryCode(), password, pin, bvn, firstName, lastName, address = address,
                 country=country, state=state)
         }else{
             offlineViewModel.insert(beneficiary)
@@ -189,6 +192,7 @@ class VendorFragment : BaseFragment() {
         }
 
     }
+
 
     private fun openLogin(isCancelable : Boolean = true) {
         val bottomSheetDialogFragment = LoginDialog.newInstance()

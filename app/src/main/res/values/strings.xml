@@ -39,4 +39,5 @@
     <string name="address">Address</string>
     <string name="state">State</string>
     <string name="country">Country</string>
+    <string name="input_pin">Pin</string>
 </resources>

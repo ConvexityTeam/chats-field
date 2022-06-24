@@ -26,7 +26,7 @@ class CashForWorkFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cashForWorkViewModel.getCashForWorks(PrefUtils.getNGOId().toString())
+//        cashForWorkViewModel.getCashForWorks(PrefUtils.getNGOId().toString())
     }
 
     override fun onCreateView(
@@ -39,6 +39,8 @@ class CashForWorkFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        cashForWorkViewModel.getCashForWorks(PrefUtils.getNGOId().toString())
 
         adapter = CashForWorkAdapter(CashForWorkClickListener {
             findNavController().navigate(CashForWorkFragmentDirections.actionCashForWorkFragmentToCashForWorkTaskFragment(
@@ -55,11 +57,11 @@ class CashForWorkFragment : Fragment() {
     }
 
     private fun setObservers() {
-        cashForWorkViewModel.cashForWorkCampaign.observe(viewLifecycleOwner, {
-            if (it != null){
+        cashForWorkViewModel.cashForWorkCampaign.observe(viewLifecycleOwner) {
+            if (it != null) {
                 cfw_progress.hide()
                 cashForWorksArray.clear()
-                Timber.v("All campaigns "+it.toString())
+                Timber.v("All campaigns %s", it.toString())
                 when (it.size) {
                     /*is ApiResponse.Failure -> {
                         cfw_progress.hide()
@@ -78,28 +80,29 @@ class CashForWorkFragment : Fragment() {
                             cfw_empty.hide()
                         }
                     }*/
-                    0 ->{
+                    0 -> {
                         cfw_empty.show()
                         cfw_empty.txt_not_found.text = "No cash for works"
                     }
-                    else ->{
+                    else -> {
                         var i = 0
-                        for (cashForWork in it){
-                            if (cashForWork.type.equals("cash-for-work") && cashForWork.status.equals("active")){
+                        for (cashForWork in it) {
+                            if (cashForWork.type.equals("cash-for-work") && cashForWork.status.equals(
+                                    "active")
+                            ) {
                                 cashForWorksArray.add(cashForWork)
                             }
                         }
-                        if (cashForWorksArray.isEmpty()){
+                        if (cashForWorksArray.isEmpty()) {
                             cfw_empty.show()
                             cfw_empty.txt_not_found.text = "No cash for works"
-                        }
-                        else{
+                        } else {
                             val data =
                                 adapter.submitList(cashForWorksArray.toList())
                         }
                     }
                 }
             }
-        })
+        }
     }
 }

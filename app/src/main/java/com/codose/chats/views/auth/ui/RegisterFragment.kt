@@ -22,6 +22,7 @@ import com.codose.chats.model.ModelCampaign
 import com.codose.chats.network.response.organization.campaign.Campaign
 import com.codose.chats.offline.OfflineRepository
 import com.codose.chats.utils.*
+import com.codose.chats.utils.Utils.toCountryCode
 import com.codose.chats.views.auth.dialog.LoginDialog
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.codose.chats.views.base.BaseFragment
@@ -46,6 +47,7 @@ class RegisterFragment : BaseFragment() {
     private var campaignId: String? = null
     private lateinit var arrayAdapter: ArrayAdapter<String>
     private lateinit var campaignSpinner: MaterialAutoCompleteTextView
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -130,7 +132,7 @@ class RegisterFragment : BaseFragment() {
     }
 
     private fun observeLoginDone() {
-        viewModel.login.observe(viewLifecycleOwner, {
+        viewModel.login.observe(viewLifecycleOwner) {
             Timber.v("XXXlogin vn reached ")
             when (it) {
                 is ApiResponse.Success -> {
@@ -138,7 +140,7 @@ class RegisterFragment : BaseFragment() {
                     findNavController().navigate(R.id.action_registerFragment_to_onboardingFragment)
                 }
             }
-        })
+        }
     }
 
     private fun changeLoggedInText() {
@@ -244,9 +246,10 @@ class RegisterFragment : BaseFragment() {
                 }
             }
         }
-        findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToRegisterVerifyFragment(firstName,lastName,email,phone,password,latitude.toString(),longitude.toString(),organizationId!!,gender, date))
+        findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToRegisterVerifyFragment(firstName,lastName,email,phone.toCountryCode(),password,latitude.toString(),longitude.toString(),organizationId!!,gender, date))
 
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
