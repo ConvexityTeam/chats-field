@@ -26,7 +26,7 @@ class CashForWorkFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cashForWorkViewModel.getCashForWorks(PrefUtils.getNGOId().toString())
+//        cashForWorkViewModel.getCashForWorks(PrefUtils.getNGOId().toString())
     }
 
     override fun onCreateView(
@@ -39,6 +39,8 @@ class CashForWorkFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        cashForWorkViewModel.getCashForWorks(PrefUtils.getNGOId().toString())
 
         adapter = CashForWorkAdapter(CashForWorkClickListener {
             findNavController().navigate(CashForWorkFragmentDirections.actionCashForWorkFragmentToCashForWorkTaskFragment(
