@@ -22,6 +22,7 @@ import com.codose.chats.model.ModelCampaign
 import com.codose.chats.network.response.organization.campaign.Campaign
 import com.codose.chats.offline.OfflineRepository
 import com.codose.chats.utils.*
+import com.codose.chats.utils.Utils.toCountryCode
 import com.codose.chats.views.auth.dialog.LoginDialog
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.codose.chats.views.base.BaseFragment
@@ -47,7 +48,6 @@ class RegisterFragment : BaseFragment() {
     private lateinit var arrayAdapter: ArrayAdapter<String>
     private lateinit var campaignSpinner: MaterialAutoCompleteTextView
 
-    private lateinit var phoneNumberWithCountryCode: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -206,8 +206,6 @@ class RegisterFragment : BaseFragment() {
         if(registerPhoneEdit.isValid()){
             registerPhoneLayout.error = ""
             phone = registerPhoneEdit.text.toString()
-            phoneNumberWithCountryCode = formatPhoneNumberWithCountryCode(phone)
-            Timber.d(phoneNumberWithCountryCode)
         }else{
             registerPhoneLayout.error = "Phone number is required"
             return
@@ -248,14 +246,10 @@ class RegisterFragment : BaseFragment() {
                 }
             }
         }
-        findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToRegisterVerifyFragment(firstName,lastName,email,phoneNumberWithCountryCode,password,latitude.toString(),longitude.toString(),organizationId!!,gender, date))
+        findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToRegisterVerifyFragment(firstName,lastName,email,phone.toCountryCode(),password,latitude.toString(),longitude.toString(),organizationId!!,gender, date))
 
     }
 
-    private fun formatPhoneNumberWithCountryCode(phoneNumber: String): String {
-        val numberToBeFormatted = phoneNumber.drop(1)
-        return "+234$numberToBeFormatted"
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
