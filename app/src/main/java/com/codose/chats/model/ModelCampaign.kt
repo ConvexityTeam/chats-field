@@ -1,11 +1,14 @@
 package com.codose.chats.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 @Entity(tableName = "modelCampaign")
 
+@Parcelize
 data class ModelCampaign (
 
     @SerializedName("id")
@@ -39,4 +42,4 @@ data class ModelCampaign (
     val createdAt: String?,
     @SerializedName("updatedAt")
     val updatedAt: String
-)
+): Parcelable

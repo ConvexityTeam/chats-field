@@ -40,4 +40,19 @@
     <string name="state">State</string>
     <string name="country">Country</string>
     <string name="input_pin">Pin</string>
+    <string name="text_search">Search</string>
+    <string name="text_beneficiary_type">Beneficiary Type</string>
+    <string name="text_new_beneficiary">New Beneficiary</string>
+    <string name="text_existing_beneficiary">Existing Beneficiary</string>
+    <string name="text_phone_number">Phone number</string>
+    <string name="text_first_name">First name</string>
+    <string name="text_last_name">Last name</string>
+    <string name="text_email">Email</string>
+    <string name="text_nin">National Identity Number (NIN)</string>
+    <string name="text_search_header">Search by entering any of the user\'s information below</string>
+    <string name="text_beneficiary_does_not_exist">Beneficiary does not exist!</string>
+    <string name="text_gender">Gender</string>
+    <string name="text_campaign">Campaign</string>
+    <string name="text_select_a_campaign">Select a Campaign</string>
+    <string name="text_search_beneficiary">Search for existing beneficiary</string>
 </resources>

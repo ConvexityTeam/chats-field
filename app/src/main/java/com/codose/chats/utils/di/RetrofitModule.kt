@@ -43,7 +43,7 @@ val retrofitModule = module {
 
     single { provideGson() }
     single { provideHttpClient(get()) }
-    single { HttpLoggingInterceptor() }
+    single { HttpLoggingInterceptor().also { it.level = HttpLoggingInterceptor.Level.BODY } }
     single { CoroutineCallAdapterFactory() }
     single { provideRetrofit(get(), get(), get()) }
 }

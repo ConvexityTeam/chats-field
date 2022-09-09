@@ -9,12 +9,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.codose.chats.R
+import com.codose.chats.databinding.DialogLoginBinding
 import com.codose.chats.network.api.SessionManager
 import com.codose.chats.network.body.login.LoginBody
 import com.codose.chats.utils.*
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.dialog_login.*
 import kotlinx.android.synthetic.main.fragment_onboarding.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -22,6 +22,8 @@ import timber.log.Timber
 
 @InternalCoroutinesApi
 class LoginDialog : BottomSheetDialogFragment() {
+
+    private lateinit var binding: DialogLoginBinding
     private val viewModel  by viewModel<RegisterViewModel>()
 
     // Handling token bearer for field agent
@@ -38,26 +40,27 @@ class LoginDialog : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_login, container, false)
+    ): View {
+        binding = DialogLoginBinding.bind(inflater.inflate(R.layout.dialog_login, container, false))
+        return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loginButton.setOnClickListener {
+        binding.loginButton.setOnClickListener {
             validateFields()
         }
 
-        forgotPasswordText.setOnClickListener {
+        binding.forgotPasswordText.setOnClickListener {
             openForgot()
         }
 
         viewModel.login.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Loading -> {
-                    loginProgress.show()
+                    binding.loginProgress.show()
                 }
                 is ApiResponse.Success -> {
                     val data = it.data.data
@@ -71,7 +74,7 @@ class LoginDialog : BottomSheetDialogFragment() {
                     dismiss()
                 }
                 is ApiResponse.Failure -> {
-                    loginProgress.hide()
+                    binding.loginProgress.hide()
                     if (it.code == 401) {
                         doLogout()
                         openLogin()
@@ -84,16 +87,16 @@ class LoginDialog : BottomSheetDialogFragment() {
         viewModel.userDetails.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Loading -> {
-                    loginProgress.show()
+                    binding.loginProgress.show()
                 }
                 is ApiResponse.Success -> {
                     val data = it.data.data
-                    loginProgress.hide()
+                    binding.loginProgress.hide()
 
 
                 }
                 is ApiResponse.Failure -> {
-                    loginProgress.hide()
+                    binding.loginProgress.hide()
                     requireContext().toast("An error occurred")
                 }
             }
@@ -101,19 +104,19 @@ class LoginDialog : BottomSheetDialogFragment() {
 
     }
 
-    private fun validateFields() {
+    private fun validateFields() = with(binding) {
         val email = loginEmailEdit.text.toString()
         val password = loginPasswordEdit.text.toString()
-        if(loginEmailEdit.text.isNullOrBlank()){
+        if (loginEmailEdit.text.isNullOrBlank()) {
             loginEmailLayout.error = "Email is required"
             return
-        }else{
+        } else {
             loginEmailLayout.error = ""
         }
-        if(loginPasswordEdit.text.isNullOrBlank()){
+        if (loginPasswordEdit.text.isNullOrBlank()) {
             loginPasswordLayout.error = "Password is required"
             return
-        }else{
+        } else {
             loginPasswordLayout.error = ""
         }
         val loginBody = LoginBody(email, password)

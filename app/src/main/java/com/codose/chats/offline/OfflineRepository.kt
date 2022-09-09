@@ -4,8 +4,6 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import com.codose.chats.model.ModelCampaign
 import com.codose.chats.network.response.organization.campaign.Campaign
-import com.codose.chats.offline.Beneficiary
-import com.codose.chats.offline.BeneficiaryDao
 
 class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
 
