@@ -29,7 +29,7 @@ object RetrofitClient {
                 mClient = httpBuilder.build()
             }
             return mClient!!
-                           }
+        }
 
     private val gsonConverter: GsonConverterFactory
         get() {
@@ -52,6 +52,6 @@ object RetrofitClient {
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
-        return  retrofit
+        return retrofit
     }
 }

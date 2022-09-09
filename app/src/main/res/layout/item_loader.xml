@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.progressindicator.CircularProgressIndicator xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/progress_indicator"
+    android:layout_width="52dp"
+    android:layout_height="52dp"
+    android:indeterminate="true"
+    android:visibility="invisible"
+    app:trackCornerRadius="4dp"
+    app:trackThickness="8dp"
+    tools:visibility="visible" />

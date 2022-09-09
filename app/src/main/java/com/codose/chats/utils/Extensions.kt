@@ -2,13 +2,10 @@ package com.codose.chats.utils
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
-import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.core.net.toFile
-import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import java.io.*
 import java.text.ParseException
@@ -17,11 +14,11 @@ import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-fun View.show(){
+fun View.show() {
     this.visibility = View.VISIBLE
 }
 
-fun View.hide(){
+fun View.hide() {
     this.visibility = View.GONE
 }
 
@@ -29,11 +26,11 @@ fun Context.toast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
-fun String.toDateString() : String{
-    val sdf1 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+fun String.toDateString(): String {
+    val sdf1 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     val convertedDate: Date
     var formattedDate: String
-    val myFormat = "yyyy-MM-dd" //In which you need put here
+    val myFormat = "dd-MM-yyyy"
     val sdf = SimpleDateFormat(myFormat, Locale.US)
     try {
         convertedDate = sdf1.parse(this)
@@ -45,8 +42,8 @@ fun String.toDateString() : String{
     return formattedDate
 }
 
-fun String.toDateStringII() : String{
-    val sdf1 = SimpleDateFormat("yyyy-MM-dd")
+fun String.toDateStringII(): String {
+    val sdf1 = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val convertedDate: Date
     var formattedDate: String
     val myFormat = "yyyy-MM-dd'T'HH:mm:ss"
@@ -61,16 +58,16 @@ fun String.toDateStringII() : String{
     return formattedDate
 }
 
-fun Date.toDateTimeStringII() : String{
-    val formattedDate : String
+fun Date.toDateTimeStringII(): String {
+    val formattedDate: String
     val myFormat = "yyyy-MM-dd'T'HH:mm:ss"
     val sdf = SimpleDateFormat(myFormat, Locale.US)
     formattedDate = sdf.format(this)
     return formattedDate
 }
 
-fun String.getYouTubeId() : String{
-    return try{
+fun String.getYouTubeId(): String {
+    return try {
         val pattern = "(?<=youtu.be/|watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*"
         val compiledPattern: Pattern = Pattern.compile(pattern)
         val matcher: Matcher = compiledPattern.matcher(this)
@@ -79,19 +76,19 @@ fun String.getYouTubeId() : String{
         } else {
             "error"
         }
-    }catch (e : Exception){
-        Log.i("YOUTUBE ERROR :",e.message!!)
+    } catch (e: Exception) {
+        Log.i("YOUTUBE ERROR :", e.message!!)
         "error"
     }
 }
 
-fun Date.convertDateToString() : String{
+fun Date.convertDateToString(): String {
     val myFormat = "yyyy-MM-dd" //In which you need put here
     val sdf = SimpleDateFormat(myFormat, Locale.US)
     return sdf.format(this)
 }
 
-fun Date.convertDateTimeToString() : String{
+fun Date.convertDateTimeToString(): String {
     val myFormat = "yyyy-MM-dd hh:mm aa" //In which you need put here
     val sdf = SimpleDateFormat(myFormat, Locale.US)
     return sdf.format(this)
@@ -101,29 +98,33 @@ fun String?.isValidPhoneNo(): Boolean {
     return this != null && this.length >= 7 && this.length <= 17
 }
 
-fun TextInputEditText.isValid() : Boolean{
+fun TextInputEditText.isValid(): Boolean {
     return !this.text.isNullOrBlank()
 }
 
-fun Bitmap.toFile(context : Context, name : String) : File {
+fun Bitmap.toFile(context: Context, name: String): File {
     val f = File(context.cacheDir, name);
     f.createNewFile()
-    val bos =  ByteArrayOutputStream()
-    this.compress(Bitmap.CompressFormat.PNG, 50 , bos)
+    val bos = ByteArrayOutputStream()
+    this.compress(Bitmap.CompressFormat.PNG, 50, bos)
     val bitmapdata = bos.toByteArray()
-    val fos =  FileOutputStream(f)
+    val fos = FileOutputStream(f)
     fos.write(bitmapdata)
     fos.flush()
     fos.close()
     return f
 }
 
-fun String.toFile() : File{
-    return  File(this)
+fun String.toFile(): File {
+    return File(this)
 }
 
 @Throws(FileNotFoundException::class)
-fun writeBitmapToFile(applicationContext: Context, bitmap: Bitmap, child : String = "fingerprint_images"): File {
+fun writeBitmapToFile(
+    applicationContext: Context,
+    bitmap: Bitmap,
+    child: String = "fingerprint_images",
+): File {
     val name = String.format("chats-image-%s.png", UUID.randomUUID().toString())
     val outputDir = File(applicationContext.filesDir, child)
     if (!outputDir.exists()) {
@@ -145,4 +146,18 @@ fun writeBitmapToFile(applicationContext: Context, bitmap: Bitmap, child : Strin
     return outputFile
 }
 
+fun Fragment.showToast(message: String) {
+    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+}
 
+fun String?.toTitleCase(): String {
+    return if (isNullOrBlank()) {
+        ""
+    } else if (length == 1) {
+        uppercase()
+    } else if (this.length > 1) {
+        get(0).uppercase().plus(substring(1).lowercase())
+    } else {
+        ""
+    }
+}

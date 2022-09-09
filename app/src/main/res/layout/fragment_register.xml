@@ -23,7 +23,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
@@ -210,12 +209,12 @@
                 android:id="@+id/registerGenderEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.TextRegular"
-                android:paddingStart="16dp"
                 android:focusable="false"
+                android:paddingStart="16dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:text="Male" />
+                android:hint="Male"
+                android:textAppearance="@style/TextAppearance.TextRegular" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -228,7 +227,7 @@
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logged_in_text" />
+            app:layout_constraintTop_toBottomOf="@id/logged_in_text" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registerCampaignLayout"
@@ -246,12 +245,12 @@
                 android:id="@+id/registerCampaignEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.TextRegular"
-                android:paddingStart="16dp"
                 android:focusable="false"
+                android:hint="Select Campaigns"
+                android:paddingStart="16dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:hint="Select Campaigns"/>
+                android:textAppearance="@style/TextAppearance.TextRegular" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -283,12 +282,12 @@
                 android:id="@+id/registerSpecialCaseEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.TextRegular"
-                android:paddingStart="16dp"
                 android:focusable="false"
+                android:paddingStart="16dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:text="No" />
+                android:text="No"
+                android:textAppearance="@style/TextAppearance.TextRegular" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -325,7 +324,7 @@
                 android:layout_height="wrap_content"
                 android:hint="1234"
                 android:inputType="number"
-                android:maxLength="4"/>
+                android:maxLength="4" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -393,7 +392,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/_081000xxxxx"
                 android:inputType="phone"
-                android:maxLength="11" />
+                android:maxLength="15" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -469,8 +468,8 @@
                 android:layout_height="wrap_content"
                 android:hint="XXXXXXXXX"
                 android:inputType="number"
-                android:singleLine="true"
-                android:maxLength="11" />
+                android:maxLength="11"
+                android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
 

@@ -26,6 +26,8 @@ import com.codose.chats.utils.ApiResponse
 import com.codose.chats.utils.PrefUtils
 import com.codose.chats.utils.Utils
 import id.zelory.compressor.Compressor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -364,4 +366,9 @@ class NetworkRepository(
             ApiResponse.Failure(t.message!!)
         }
     }
+
+    suspend fun addBeneficiaryToCampaign(beneficiaryId: Int, campaignId: Int) =
+        withContext(Dispatchers.IO) {
+            api.addBeneficiaryToCampaign(beneficiaryId, campaignId)
+        }
 }

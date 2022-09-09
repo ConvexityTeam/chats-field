@@ -26,8 +26,8 @@
         tools:layout="@layout/fragment_onboarding">
         <!-- TODO comeback and change back to register fragment !-->
         <action
-            android:id="@+id/action_onboardingFragment_to_registerFragment"
-            app:destination="@id/registerFragment"
+            android:id="@+id/to_beneficiaryTypeFragment"
+            app:destination="@id/beneficiaryTypeFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -56,7 +56,7 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_registerFragment_to_registerVerifyFragment"
+            android:id="@+id/to_registerVerifyFragment"
             app:destination="@id/registerVerifyFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -292,4 +292,50 @@
             android:name="userId"
             app:argType="string" />
     </fragment>
+    <dialog
+        android:id="@+id/beneficiarySearchDialog"
+        android:name="com.codose.chats.views.beneficiary_search.BeneficiarySearchDialog"
+        android:label="BeneficiarySearchDialog"
+        tools:layout="@layout/dialog_beneficiary_search"/>
+    <fragment
+        android:id="@+id/beneficiaryTypeFragment"
+        android:name="com.codose.chats.views.beneficiary_onboarding.BeneficiaryTypeFragment"
+        android:label="fragment_beneficiary_type"
+        tools:layout="@layout/fragment_beneficiary_type" >
+        <action
+            android:id="@+id/to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/to_existingBeneficiaryFragment"
+            app:destination="@id/existingBeneficiaryFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/existingBeneficiaryFragment"
+        android:name="com.codose.chats.views.beneficiary_onboarding.ExistingBeneficiaryFragment"
+        android:label="fragment_existing_beneficiary"
+        tools:layout="@layout/fragment_existing_beneficiary">
+        <action
+            android:id="@+id/to_beneficiarySearchDialog"
+            app:destination="@id/beneficiarySearchDialog" />
+        <action
+            android:id="@+id/to_campaignDialog"
+            app:destination="@id/campaignDialog" />
+        <action
+            android:id="@+id/to_onboardingFragment"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/onboardingFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/campaignDialog"
+        android:name="com.codose.chats.views.beneficiary_onboarding.campaigns.CampaignDialog"
+        android:label="dialog_campaign"
+        tools:layout="@layout/dialog_campaign" />
 </navigation>

@@ -141,12 +141,12 @@
         app:layout_constraintStart_toStartOf="@+id/cfw_submit_back_btn"
         app:layout_constraintTop_toBottomOf="@+id/cfw_submit_title" />
 
-    <include
+   <!-- <include
         android:id="@+id/cfw_submit_progress"
         layout="@layout/progress_layout"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

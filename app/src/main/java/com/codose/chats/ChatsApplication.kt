@@ -1,17 +1,14 @@
-package com.codose.chats.utils
+package com.codose.chats
 
 import android.app.Application
 import android.content.ContextWrapper
 import androidx.appcompat.app.AppCompatDelegate
-import com.codose.chats.BuildConfig
-import com.codose.chats.offline.BeneficiaryDatabase
 import com.codose.chats.utils.di.apiModule
 import com.codose.chats.utils.di.repositoryModule
 import com.codose.chats.utils.di.retrofitModule
 import com.codose.chats.utils.di.viewModelModule
 import com.pixplicity.easyprefs.library.Prefs
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
-import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

@@ -9,27 +9,23 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import com.codose.chats.R
-import com.codose.chats.model.ModelCampaign
-import com.codose.chats.network.response.organization.campaign.Campaign
-import com.codose.chats.offline.OfflineRepository
+import com.codose.chats.databinding.FragmentRegisterBinding
 import com.codose.chats.utils.*
+import com.codose.chats.utils.BluetoothConstants.BENEFICIARY_BUNDLE_KEY
+import com.codose.chats.utils.BluetoothConstants.FRAGMENT_BENEFICIARY_RESULT_LISTENER
 import com.codose.chats.utils.Utils.toCountryCode
 import com.codose.chats.views.auth.dialog.LoginDialog
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
-import com.codose.chats.views.base.BaseFragment
+import com.codose.chats.views.beneficiary_search.BeneficiaryUi
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.robin.locationgetter.EasyLocation
-import kotlinx.android.synthetic.main.dialog_login.*
-import kotlinx.android.synthetic.main.fragment_register.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
@@ -37,97 +33,100 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @InternalCoroutinesApi
-class RegisterFragment : BaseFragment() {
+class RegisterFragment : Fragment(R.layout.fragment_register) {
+
+    private var _binding: FragmentRegisterBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var locationManager: LocationManager
     private var latitude: Double = 6.465422
     private var longitude: Double = 3.406448
-    private var organizationId: Int? = null
+    private val organizationId: Int by lazy { PrefUtils.getNGOId() }
     private val viewModel by sharedViewModel<RegisterViewModel>()
     private val myCalendar: Calendar = Calendar.getInstance()
     private var campaignId: String? = null
     private lateinit var arrayAdapter: ArrayAdapter<String>
     private lateinit var campaignSpinner: MaterialAutoCompleteTextView
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        _binding = FragmentRegisterBinding.bind(view)
+
+        locationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         viewModel.nfc = null
         viewModel.allFinger = null
         viewModel.profileImage = null
         viewModel.getAllCampaigns()
-        back_btn.setOnClickListener {
-            findNavController().navigateUp()
-        }
-        val adapter = ArrayAdapter(requireContext(),R.layout.spinner_drop_down, listOf("Male","Female"))
-        registerGenderEdit.setAdapter(adapter)
-        campaignSpinner = requireActivity().findViewById(R.id.registerCampaignEdit)
-        viewModel.getCampaigns.observe(viewLifecycleOwner) {
-            val array: ArrayList<String> = ArrayList()
-            for (campaign in it){
-                array.add(campaign.title!!)
-            }
-            arrayAdapter = ArrayAdapter(requireContext(),R.layout.spinner_drop_down, array)
-            campaignSpinner.setAdapter(arrayAdapter)
-            campaignSpinner.setOnItemClickListener { _, _, position, _ ->
-                campaignId = it[position].id.toString()
-            }
-        }
 
-        observeLoginDone()
-
-        val specialAdapter = ArrayAdapter(requireContext(),R.layout.spinner_drop_down, listOf("No","Yes"))
-        registerSpecialCaseEdit.setAdapter(specialAdapter)
-        registerNINLayout.hide()
-        txt_nin.hide()
-        registerSpecialCaseEdit.setOnItemClickListener { parent, view, position, id ->
-            if(position == 0){
-                registerNINLayout.hide()
-                txt_nin.hide()
-            }else{
-                registerNINLayout.show()
-                txt_nin.show()
+        binding.run {
+            backBtn.setOnClickListener {
+                findNavController().navigateUp()
             }
-        }
+            val adapter =
+                ArrayAdapter(requireContext(), R.layout.spinner_drop_down, listOf("Male", "Female"))
+            registerGenderEdit.setAdapter(adapter)
+            campaignSpinner = requireActivity().findViewById(R.id.registerCampaignEdit)
+            viewModel.getCampaigns.observe(viewLifecycleOwner) {
+                val array: ArrayList<String> = ArrayList()
+                for (campaign in it) {
+                    array.add(campaign.title!!)
+                }
+                arrayAdapter = ArrayAdapter(requireContext(), R.layout.spinner_drop_down, array)
+                campaignSpinner.setAdapter(arrayAdapter)
+                campaignSpinner.setOnItemClickListener { _, _, position, _ ->
+                    campaignId = it[position].id.toString()
+                }
+            }
 
-        change_account_text.setOnClickListener {
-            openLogin(true)
-            doLogout()
-        }
-        if(PrefUtils.getNGOId() == 0){
-            openLogin()
-            changeLoggedOutText()
-        }else{
-            changeLoggedInText()
-        }
-        registerDateEdit.setOnClickListener {
-            openCalendar()
-        }
-        if (ActivityCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        ) {
-            findNavController().navigateUp()
-            requireContext().toast("Location permission is required.")
-            return
-        }
-        try {
-            initLocation()
-        } catch (t: Throwable) {
-            requireContext().toast("Please Ensure that the Device GPS is turned on")
-            findNavController().navigateUp()
-        }
-        registerNextButton.setOnClickListener {
-            checkInputs()
+            observeLoginDone()
+
+            val specialAdapter =
+                ArrayAdapter(requireContext(), R.layout.spinner_drop_down, listOf("No", "Yes"))
+            registerSpecialCaseEdit.setAdapter(specialAdapter)
+            registerNINLayout.hide()
+            txtNin.hide()
+            registerSpecialCaseEdit.setOnItemClickListener { _, _, position, _ ->
+                if (position == 0) {
+                    registerNINLayout.hide()
+                    txtNin.hide()
+                } else {
+                    registerNINLayout.show()
+                    txtNin.show()
+                }
+            }
+
+            changeAccountText.setOnClickListener {
+                openLogin(true)
+                doLogout()
+            }
+            if (PrefUtils.getNGOId() == 0) {
+                openLogin()
+                changeLoggedOutText()
+            } else {
+                changeLoggedInText()
+            }
+            registerDateEdit.setOnClickListener {
+                openCalendar()
+            }
+            if (ActivityCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            ) {
+                findNavController().navigateUp()
+                requireContext().toast("Location permission is required.")
+                return
+            }
+            try {
+                initLocation()
+            } catch (t: Throwable) {
+                requireContext().toast("Please Ensure that the Device GPS is turned on")
+                findNavController().navigateUp()
+            }
+            registerNextButton.setOnClickListener {
+                checkInputs()
+            }
         }
     }
 
@@ -143,14 +142,14 @@ class RegisterFragment : BaseFragment() {
         }
     }
 
-    private fun changeLoggedInText() {
-        logged_in_text.text = "Logged In "
-        change_account_text.text = "Change Account? "
+    private fun changeLoggedInText() = with(binding) {
+        loggedInText.text = "Logged In "
+        changeAccountText.text = "Change Account? "
     }
 
-    private fun changeLoggedOutText() {
-        logged_in_text.text = "Not Logged In? "
-        change_account_text.text = "Log In"
+    private fun changeLoggedOutText() = with(binding) {
+        loggedInText.text = "Not Logged In? "
+        changeAccountText.text = "Log In"
     }
 
     private fun initLocation() {
@@ -171,7 +170,7 @@ class RegisterFragment : BaseFragment() {
         })
     }
 
-    private fun checkInputs() {
+    private fun checkInputs() = with(binding) {
         var firstName = ""
         var lastName = ""
         var email = ""
@@ -179,49 +178,49 @@ class RegisterFragment : BaseFragment() {
         var phone = ""
         var date = ""
         var gender = ""
-        organizationId = PrefUtils.getNGOId()
-        if(PrefUtils.getNGOId() == 0){
+        //organizationId = PrefUtils.getNGOId()
+        if (PrefUtils.getNGOId() == 0) {
             showToast("Please Log In")
             openLogin()
             return
         }
-        if(registerFirstNameEdit.isValid()){
+        if (registerFirstNameEdit.isValid()) {
             firstName = registerFirstNameEdit.text.toString()
             registerFirstNameLayout.error = ""
-        }else{
+        } else {
             registerFirstNameLayout.error = "First name is required"
             return
         }
-        if(registerLastNameEdit.isValid()){
+        if (registerLastNameEdit.isValid()) {
             registerLastNameLayout.error = ""
             lastName = registerLastNameEdit.text.toString()
-        }else{
+        } else {
             registerLastNameLayout.error = "Last name is required"
             return
         }
-        if(registerEmailEdit.isValid()){
+        if (registerEmailEdit.isValid()) {
             registerEmailLayout.error = ""
             email = registerEmailEdit.text.toString()
         }
-        if(registerPhoneEdit.isValid()){
+        if (registerPhoneEdit.isValid()) {
             registerPhoneLayout.error = ""
             phone = registerPhoneEdit.text.toString()
-        }else{
+        } else {
             registerPhoneLayout.error = "Phone number is required"
             return
         }
-        if(registerDateEdit.isValid()){
+        if (registerDateEdit.isValid()) {
             registerDateLayout.error = ""
             date = registerDateEdit.text.toString()
-        }else{
+        } else {
             registerDateLayout.error = "Date of birth is required"
             return
         }
 
-        if(campaignId == null){
+        if (campaignId == null) {
             registerCampaignLayout.error = "Select a campaign"
             return
-        }else{
+        } else {
             registerCampaignLayout.error = ""
         }
         gender = registerGenderEdit.text.toString()
@@ -231,7 +230,7 @@ class RegisterFragment : BaseFragment() {
         val isSpecialCase = registerSpecialCaseEdit.text.toString() == "Yes"
         viewModel.specialCase = isSpecialCase
 
-        if(isSpecialCase){
+        if (isSpecialCase) {
             when {
                 registerNINEdit.text.isNullOrBlank() -> {
                     showToast("NIN is required.")
@@ -246,18 +245,29 @@ class RegisterFragment : BaseFragment() {
                 }
             }
         }
-        findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToRegisterVerifyFragment(firstName,lastName,email,phone.toCountryCode(),password,latitude.toString(),longitude.toString(),organizationId!!,gender, date))
+        findNavController().navigate(RegisterFragmentDirections.toRegisterVerifyFragment(
+            firstName,
+            lastName,
+            email,
+            phone.toCountryCode(),
+            password,
+            latitude.toString(),
+            longitude.toString(),
+            organizationId,
+            gender,
+            date
+        ))
 
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(PrefUtils.getNGOId() == 0){
+        if (PrefUtils.getNGOId() == 0) {
             openLogin()
             changeLoggedOutText()
         } else {
-            organizationId = PrefUtils.getNGOId()
+            //organizationId = PrefUtils.getNGOId()
             changeLoggedInText()
         }
     }
@@ -275,8 +285,8 @@ class RegisterFragment : BaseFragment() {
             requireContext(), date, myCalendar[Calendar.YEAR], myCalendar[Calendar.MONTH],
             myCalendar[Calendar.DAY_OF_MONTH]
         )
-        datePicker.setButton(DialogInterface.BUTTON_POSITIVE,"OK", datePicker)
-        datePicker.setButton(DialogInterface.BUTTON_NEGATIVE,"CANCEL", datePicker)
+        datePicker.setButton(DialogInterface.BUTTON_POSITIVE, "OK", datePicker)
+        datePicker.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL", datePicker)
         datePicker.datePicker.maxDate = System.currentTimeMillis()
 
         datePicker.show()
@@ -284,7 +294,7 @@ class RegisterFragment : BaseFragment() {
 
     private fun updateLabel() {
         val date = myCalendar.time
-        registerDateEdit.setText(date.convertDateToString())
+        binding.registerDateEdit.setText(date.convertDateToString())
     }
 
     private fun openLogin(isCancelable: Boolean = true) {
@@ -298,5 +308,10 @@ class RegisterFragment : BaseFragment() {
     private fun doLogout() {
         PrefUtils.setNGO(0, "")
         changeLoggedOutText()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

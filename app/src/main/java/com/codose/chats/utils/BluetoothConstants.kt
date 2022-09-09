@@ -93,4 +93,10 @@ object BluetoothConstants {
 
     const val EXTRA_DEVICE_ADDRESS = "device_address"
 
+    const val FRAGMENT_BENEFICIARY_RESULT_LISTENER: String = "existing_beneficiary_fragment_result_listener"
+    const val FRAGMENT_CAMPAIGN_RESULT_LISTENER: String = "campaign_id_fragment_result_listener"
+    const val BENEFICIARY_BUNDLE_KEY: String = "beneficiary_key"
+    const val CAMPAIGN_BUNDLE_KEY: String = "campaign_id_key"
+
+    const val API_SUCCESS: String = "success"
 }
