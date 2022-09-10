@@ -3,6 +3,7 @@ package com.codose.chats.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -100,6 +101,10 @@ fun String?.isValidPhoneNo(): Boolean {
 
 fun TextInputEditText.isValid(): Boolean {
     return !this.text.isNullOrBlank()
+}
+
+fun String.isEmailValid(): Boolean {
+    return Pattern.matches(Patterns.EMAIL_ADDRESS.pattern(), this)
 }
 
 fun Bitmap.toFile(context: Context, name: String): File {

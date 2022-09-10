@@ -85,7 +85,7 @@ class CashForWorkImageFragment : BaseFragment() {
         setObservers()
     }
 
-    private fun submitImages(desc : String){
+    private fun submitImages(desc: String) {
         val imagesPart = ArrayList<File>()
 
         cashForWorkViewModel.imageList.value!!.forEachIndexed { index, bitmap ->
@@ -112,7 +112,7 @@ class CashForWorkImageFragment : BaseFragment() {
     }
 
     private fun setObservers() {
-        cashForWorkViewModel.taskOperation.observe(viewLifecycleOwner, {
+        cashForWorkViewModel.taskOperation.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Failure -> {
                     cfw_image_submit_progress.hide()
@@ -128,7 +128,7 @@ class CashForWorkImageFragment : BaseFragment() {
                     findNavController().navigate(CashForWorkImageFragmentDirections.actionCashForWorkImageFragmentToOnboardingFragment())
                 }
             }
-        })
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

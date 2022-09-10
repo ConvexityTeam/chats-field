@@ -99,4 +99,7 @@ object BluetoothConstants {
     const val CAMPAIGN_BUNDLE_KEY: String = "campaign_id_key"
 
     const val API_SUCCESS: String = "success"
+    const val API_ERROR: String = "error"
+
+    const val ACTIVE_CASH_FOR_WORK: String = "active"
 }

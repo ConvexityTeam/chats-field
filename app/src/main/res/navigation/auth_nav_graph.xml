@@ -276,7 +276,8 @@
     <fragment
         android:id="@+id/cashForWorkImageFragment"
         android:name="com.codose.chats.views.cashForWork.CashForWorkImageFragment"
-        android:label="CashForWorkImageFragment">
+        android:label="CashForWorkImageFragment"
+        tools:layout="@layout/fragment_cash_for_work_image">
         <action
             android:id="@+id/action_cashForWorkImageFragment_to_onboardingFragment"
             app:destination="@id/onboardingFragment"

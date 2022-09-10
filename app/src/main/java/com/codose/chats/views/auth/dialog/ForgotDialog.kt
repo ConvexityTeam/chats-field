@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import com.codose.chats.R
 import com.codose.chats.utils.ApiResponse
 import com.codose.chats.utils.hide
@@ -13,10 +12,8 @@ import com.codose.chats.utils.toast
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.dialog_forgot.*
-import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@InternalCoroutinesApi
 class ForgotDialog : BottomSheetDialogFragment() {
     private val viewModel  by viewModel<RegisterViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +37,7 @@ class ForgotDialog : BottomSheetDialogFragment() {
             validateFields()
         }
 
-        viewModel.forgot.observe(viewLifecycleOwner, {
+        viewModel.forgot.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Loading -> {
                     forgotProgress.show()
@@ -54,14 +51,14 @@ class ForgotDialog : BottomSheetDialogFragment() {
                 }
                 is ApiResponse.Failure -> {
                     forgotProgress.hide()
-                    if(it.code in 400..499){
+                    if (it.code in 400..499) {
                         requireContext().toast("Unauthorized. Please check your credentials.")
-                    }else{
+                    } else {
                         requireContext().toast("An error occurred")
                     }
                 }
             }
-        })
+        }
     }
 
     private fun validateFields() {

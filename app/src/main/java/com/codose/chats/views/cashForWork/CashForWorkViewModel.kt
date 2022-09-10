@@ -1,6 +1,7 @@
 package com.codose.chats.views.cashForWork
 
 import android.graphics.Bitmap
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,28 +12,34 @@ import com.codose.chats.network.response.progress.SubmitProgressModel
 import com.codose.chats.network.response.tasks.GetTasksModel
 import com.codose.chats.network.response.tasks.details.TaskDetailsModel
 import com.codose.chats.utils.ApiResponse
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MultipartBody
+import timber.log.Timber
 import java.io.File
 
 class CashForWorkViewModel(private val networkRepository: NetworkRepository) : ViewModel() {
     val cashForWorks = MutableLiveData<ApiResponse<CampaignByOrganizationModel>>()
-    val cashForWorkCampaign = MutableLiveData<List<ModelCampaign>>()
     val tasks = MutableLiveData<ApiResponse<GetTasksModel>>()
     val taskDetails = MutableLiveData<ApiResponse<TaskDetailsModel>>()
     val taskOperation = MutableLiveData<ApiResponse<SubmitProgressModel>>()
     val imageList = MutableLiveData<ArrayList<Bitmap>>(arrayListOf())
 
-    fun getCashForWorks(organizationId: String) {
+    private val _cashForWorkCampaign = MutableLiveData<List<ModelCampaign>>()
+    val cashForWorkCampaign: LiveData<List<ModelCampaign>> = _cashForWorkCampaign
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e(throwable)
+    }
+
+    fun getCashForWorks() {
         cashForWorks.value = ApiResponse.Loading()
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val data = networkRepository.getAllCashForWorkCampaigns()
-                cashForWorkCampaign.postValue(data)
-                //cashForWorks.postValue()
+        viewModelScope.launch(exceptionHandler) {
+            val data = withContext(Dispatchers.IO) {
+                networkRepository.getAllCashForWorkCampaigns()
             }
+            _cashForWorkCampaign.value = data
         }
     }
 
@@ -80,6 +87,4 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
             }
         }
     }
-
-
 }

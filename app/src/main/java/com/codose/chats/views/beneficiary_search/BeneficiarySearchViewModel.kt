@@ -49,6 +49,8 @@ class BeneficiarySearchViewModel(private val service: ConvexityApiService) : Vie
                 } else {
                     _uiState.postValue(BeneficiarySearchUiState.EmptyBeneficiaries)
                 }
+            } else if (response.code == 401) {
+                _uiState.value = BeneficiarySearchUiState.Error("Session expired. Log in and try again")
             } else {
                 _uiState.value = BeneficiarySearchUiState.Error(response.message)
             }

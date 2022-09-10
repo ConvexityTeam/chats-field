@@ -23,7 +23,7 @@ class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
     }
 
     @WorkerThread
-    suspend fun insertAllCashForWork(campaigns: List<ModelCampaign>){
+    suspend fun insertAllCashForWork(campaigns: List<ModelCampaign>) {
         beneficiaryDao?.insertAllCashForWork(campaigns)
     }
 
@@ -40,5 +40,4 @@ class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
     fun getAllCampaigns() : LiveData<List<ModelCampaign>>{
         return beneficiaryDao!!.geAllLiveCampaigns()
     }
-
 }

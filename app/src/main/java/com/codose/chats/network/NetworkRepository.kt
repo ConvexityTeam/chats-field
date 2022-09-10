@@ -31,6 +31,8 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.*
 import timber.log.Timber
 import java.io.File
@@ -269,17 +271,17 @@ class NetworkRepository(
         }
     }
 
-    suspend fun getAllCashForWorkCampaigns(): List<ModelCampaign>{
-        return try{
-            val apiService =  RetrofitClient.apiService().create(ConvexityApiService::class.java)
-            var data = apiService.getAllCampaigns(PrefUtils.getNGOId(), "cash-for-work").data
-            Timber.v("XXXgetAllCampaigns: called"+data.toString())
-            offlineRepository.insertAllCashForWork(data)
-            data
-        }
-        catch (e: Exception){
-            Timber.v("XXXgetAllCampaigns"+e.message)
-            var data: List<ModelCampaign> = ArrayList()
+    suspend fun getAllCashForWorkCampaigns(): List<ModelCampaign> {
+        return try {
+            withContext(Dispatchers.IO) {
+                val data = api.getAllCampaigns(PrefUtils.getNGOId(), "cash-for-work").data
+                Timber.v("XXXgetAllCampaigns: called$data")
+                offlineRepository.insertAllCashForWork(data)
+                data
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            val data: List<ModelCampaign> = ArrayList()
             data
         }
     }
@@ -327,21 +329,23 @@ class NetworkRepository(
         images :  ArrayList<File>,
     ): ApiResponse<SubmitProgressModel> {
         return try {
-            val taskIdBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),taskId)
-            val userIdBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),userId)
-            val descriptionBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),description)
+            val taskIdBody = taskId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val userIdBody = userId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val descriptionBody =
+                description.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val imageParts = ArrayList<MultipartBody.Part>()
-            images.forEach{
-                val compressed = Compressor.compress(context, it)
-                val mBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), compressed)
-                val image = MultipartBody.Part.createFormData(
-                    "images",
+            images.forEachIndexed { index, image ->
+                val compressed = Compressor.compress(context, image)
+                val mBody = compressed.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                val imagePart = MultipartBody.Part.createFormData(
+                    "images_$index",
                     compressed.absolutePath.substringAfterLast("/"),
                     mBody
                 )
-                imageParts.add(image)
+                imageParts.add(imagePart)
             }
-            val data = api.postTaskEvidence(taskIdBody, userIdBody,descriptionBody, imageParts).await()
+            val data =
+                api.postTaskEvidence(taskIdBody, userIdBody, descriptionBody, imageParts).await()
             ApiResponse.Success(data)
         } catch (e : HttpException) {
             val message = Utils.getErrorMessage(e)

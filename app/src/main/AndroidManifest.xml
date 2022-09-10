@@ -34,7 +34,7 @@
         <meta-data
             android:name="io.sentry.dsn"
             android:value="https://253d2c749a5b4cc3a787759880719ba2@o449946.ingest.sentry.io/5521610" />
-        <activity android:name="com.codose.chats.MainActivity" />
+        <activity android:name="com.codose.chats.views.MainActivity" />
     </application>
 
 </manifest>

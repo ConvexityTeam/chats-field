@@ -8,16 +8,16 @@ import com.codose.chats.network.response.organization.campaign.Campaign
 
 @Dao
 interface BeneficiaryDao {
-    @Insert
+    @Insert(onConflict = REPLACE)
     suspend fun insertBeneficiary(beneficiary: Beneficiary)
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     suspend fun insertCampaigns(campaigns: List<Campaign>)
 
     @Insert(onConflict = REPLACE)
     suspend fun insertAllCampaigns(allCampaigns: List<ModelCampaign>)
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     suspend fun insertAllCashForWork(allCampaigns: List<ModelCampaign>)
 
     @Delete

@@ -130,7 +130,7 @@ interface ConvexityApiService {
         @Part("taskId") taskId: RequestBody,
         @Part("userId") userId: RequestBody,
         @Part("description") description: RequestBody,
-        @Part images: ArrayList<MultipartBody.Part>,
+        @Part("images") images: ArrayList<MultipartBody.Part>,
         @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
     ): Deferred<SubmitProgressModel>
 
@@ -139,8 +139,9 @@ interface ConvexityApiService {
 
     @GET("organisations/{id}/campaigns/")
     suspend fun getAllCampaigns(
-        @Path("id") id: Int, @Query("type") type: String,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
+        @Path("id") id: Int,
+        @Query("type") type: String,
+        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
     ): GetAllCampaignsResponse
 
     @GET("organisation/{organisation_id}/beneficiaries")
