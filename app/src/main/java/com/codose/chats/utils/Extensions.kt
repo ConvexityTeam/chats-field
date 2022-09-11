@@ -7,8 +7,14 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.codose.chats.utils.BluetoothConstants.COMPLETE
+import com.codose.chats.utils.BluetoothConstants.INCOMPLETE
 import com.google.android.material.textfield.TextInputEditText
+import retrofit2.HttpException
+import timber.log.Timber
 import java.io.*
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -151,7 +157,7 @@ fun writeBitmapToFile(
     return outputFile
 }
 
-fun Fragment.showToast(message: String) {
+fun Fragment.showToast(message: String?) {
     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
 }
 
@@ -164,5 +170,34 @@ fun String?.toTitleCase(): String {
         get(0).uppercase().plus(substring(1).lowercase())
     } else {
         ""
+    }
+}
+
+fun Throwable.handleThrowable(): String {
+    Timber.e(this)
+    return when (this) {
+        is SocketTimeoutException -> "Pleas check your network connection. Make sure you're connected to a good network"
+        is UnknownHostException -> "Please check your internet connection and try again"
+        is HttpException -> {
+            when (this.code()) {
+                in 401..403 -> "Your session has expired, kindly login again"
+                404 -> "The resource you are looking for cannot be found"
+                in 500..599 -> "It's not you, it's us. Please try again later"
+                else -> "Something went wrong"
+            }
+        }
+        else -> "Something went wrong"
+    }
+}
+
+fun Boolean?.toStatusString(): String {
+    return if (this != null) {
+        if (this == true) {
+            COMPLETE
+        } else {
+            INCOMPLETE
+        }
+    } else {
+        INCOMPLETE
     }
 }

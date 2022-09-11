@@ -9,6 +9,7 @@ import com.codose.chats.databinding.FragmentCashForWorkBinding
 import com.codose.chats.utils.*
 import com.codose.chats.utils.BluetoothConstants.ACTIVE_CASH_FOR_WORK
 import com.codose.chats.views.auth.adapter.CashForWorkAdapter
+import com.codose.chats.views.cashForWork.model.Job
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CashForWorkFragment : Fragment(R.layout.fragment_cash_for_work) {
@@ -18,12 +19,10 @@ class CashForWorkFragment : Fragment(R.layout.fragment_cash_for_work) {
     private val cashForWorkViewModel by viewModel<CashForWorkViewModel>()
 
     private val adapter: CashForWorkAdapter by lazy {
-        CashForWorkAdapter {
-            findNavController().navigate(CashForWorkFragmentDirections.actionCashForWorkFragmentToCashForWorkTaskFragment(
-                cfwId = it.id.toString(),
-                cfwName = it.title!!,
-            ))
-        }
+        CashForWorkAdapter(
+            onLoadTaskClick = ::toCashForWorkTask,
+            onBeneficiaryClick = ::toBeneficiary
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,7 +34,7 @@ class CashForWorkFragment : Fragment(R.layout.fragment_cash_for_work) {
 
         binding.run {
             cfwRv.adapter = adapter
-            cfwBackBtn.setOnClickListener{
+            cfwBackBtn.setOnClickListener {
                 findNavController().navigateUp()
             }
             cfwProgress.root.show()
@@ -57,5 +56,13 @@ class CashForWorkFragment : Fragment(R.layout.fragment_cash_for_work) {
                 }
             }
         }
+    }
+
+    private fun toCashForWorkTask(jobs: List<Job>) {
+        findNavController().navigate(CashForWorkFragmentDirections.toCashForWorkTaskFragment(jobs.toTypedArray()))
+    }
+
+    private fun toBeneficiary(campaignId: Int) {
+        findNavController().navigate(CashForWorkFragmentDirections.toBeneficiaryListFragment(campaignId))
     }
 }

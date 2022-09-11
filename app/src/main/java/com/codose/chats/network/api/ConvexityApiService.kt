@@ -115,14 +115,14 @@ interface ConvexityApiService {
     @GET("cash-for-work/tasks/{id}")
     fun getTasks(
         @Path("id") campaignId: String,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
+        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
     ): Deferred<GetTasksModel>
 
-    @GET("cash-for-work/task/{id}")
-    fun getTasksDetails(
-        @Path("id") taskId: String,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
-    ): Deferred<TaskDetailsModel>
+    @GET("cash-for-work/task/{taskId}")
+    suspend fun getTasksDetails(
+        @Path("taskId") taskId: String,
+        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
+    ): BaseResponse<TaskDetailsModel>
 
     @POST("cash-for-work/task/submit-progress")
     @Multipart
@@ -131,7 +131,7 @@ interface ConvexityApiService {
         @Part("userId") userId: RequestBody,
         @Part("description") description: RequestBody,
         @Part("images") images: ArrayList<MultipartBody.Part>,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
+        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
     ): Deferred<SubmitProgressModel>
 
     @POST("cash-for-work/task/progress/confirm")
@@ -145,7 +145,10 @@ interface ConvexityApiService {
     ): GetAllCampaignsResponse
 
     @GET("organisation/{organisation_id}/beneficiaries")
-    suspend fun getBeneficiariesByOrganisation(@Path("organisation_id") organisationId: Int): BaseResponse<List<Beneficiary>>
+    suspend fun getBeneficiariesByOrganisation(
+        @Path("organisation_id") organisationId: Int = PrefUtils.getNGOId(),
+        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
+    ): BaseResponse<List<Beneficiary>>
 
     @GET("organisations/non-org-beneficiary")
     suspend fun getExistingBeneficiary(

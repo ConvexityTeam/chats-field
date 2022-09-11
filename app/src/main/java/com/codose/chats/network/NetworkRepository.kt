@@ -8,6 +8,7 @@ import com.codose.chats.network.api.RetrofitClient
 import com.codose.chats.network.api.SessionManager
 import com.codose.chats.network.body.VendorBody
 import com.codose.chats.network.body.login.LoginBody
+import com.codose.chats.network.response.BaseResponse
 import com.codose.chats.network.response.NfcUpdateResponse
 import com.codose.chats.network.response.RegisterResponse
 import com.codose.chats.network.response.UserDetailsResponse
@@ -310,16 +311,8 @@ class NetworkRepository(
         }
     }
 
-    suspend fun getTasksDetails(taskId : String): ApiResponse<TaskDetailsModel> {
-        return try {
-            val data = api.getTasksDetails(taskId).await()
-            ApiResponse.Success(data)
-        } catch (e : HttpException) {
-            val message = Utils.getErrorMessage(e)
-            ApiResponse.Failure(message, e.code())
-        } catch (t : Throwable) {
-            ApiResponse.Failure(t.message!!)
-        }
+    suspend fun getTasksDetails(taskId: String): BaseResponse<TaskDetailsModel> {
+        return withContext(Dispatchers.IO) { api.getTasksDetails(taskId) }
     }
 
     suspend fun postTaskEvidence(
@@ -374,5 +367,10 @@ class NetworkRepository(
     suspend fun addBeneficiaryToCampaign(beneficiaryId: Int, campaignId: Int) =
         withContext(Dispatchers.IO) {
             api.addBeneficiaryToCampaign(beneficiaryId, campaignId)
+        }
+
+    suspend fun getBeneficiaryByOrganisation() =
+        withContext(Dispatchers.IO) {
+            api.getBeneficiariesByOrganisation()
         }
 }

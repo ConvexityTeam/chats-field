@@ -3,10 +3,10 @@ package com.codose.chats
 import android.app.Application
 import android.content.ContextWrapper
 import androidx.appcompat.app.AppCompatDelegate
-import com.codose.chats.utils.di.apiModule
-import com.codose.chats.utils.di.repositoryModule
-import com.codose.chats.utils.di.retrofitModule
-import com.codose.chats.utils.di.viewModelModule
+import com.codose.chats.di.apiModule
+import com.codose.chats.di.repositoryModule
+import com.codose.chats.di.retrofitModule
+import com.codose.chats.di.viewModelModule
 import com.pixplicity.easyprefs.library.Prefs
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import org.koin.android.ext.koin.androidContext

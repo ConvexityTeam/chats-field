@@ -6,7 +6,7 @@ data class BaseResponse<T>(
     @SerializedName("code")
     val code: Int,
     @SerializedName("data")
-    val `data`: T,
+    val `data`: T? = null,
     @SerializedName("message")
     val message: String,
     @SerializedName("status")

@@ -6,31 +6,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.cashForWork.CashForWorkFragment">
+
     <ImageButton
-        android:id="@+id/cfw_task_details_back_btn"
+        android:id="@+id/back_btn"
         style="@style/ImageButton.Default"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
+        android:contentDescription="@null"
         android:src="@drawable/ic_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/cfw_task_details_title"
+        android:id="@+id/task_details_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Cash for work"
         android:textAppearance="@style/TextAppearance.TextMedium"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/cfw_task_details_back_btn"
-        app:layout_constraintStart_toEndOf="@+id/cfw_task_details_back_btn"
-        app:layout_constraintTop_toTopOf="@+id/cfw_task_details_back_btn" />
+        app:layout_constraintBottom_toBottomOf="@id/back_btn"
+        app:layout_constraintStart_toEndOf="@id/back_btn"
+        app:layout_constraintTop_toTopOf="@id/back_btn"
+        tools:text="Cash for work details" />
 
     <TextView
-        android:id="@+id/cfw_task_details_status"
+        android:id="@+id/task_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -41,25 +43,26 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cfw_task_details_title" />
+        app:layout_constraintTop_toBottomOf="@id/task_details_title"
+        tools:text="Complete" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cfw_task_details_rv"
+        android:id="@+id/task_details_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/cfw_task_details_status"
-        tools:listitem="@layout/item_cash_for_work_item" />
+        app:layout_constraintTop_toBottomOf="@id/task_status"
+        tools:listitem="@layout/item_existing_beneficiary" />
 
     <include
-        android:id="@+id/cfw_task_details_progress"
-        layout="@layout/progress_layout"
+        android:id="@+id/progress_indicator"
+        layout="@layout/item_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,7 +70,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <include
-        android:id="@+id/cfw_task_details_empty"
+        android:id="@+id/task_details_empty"
         layout="@layout/layout_empty"
         android:layout_width="0dp"
         android:layout_height="0dp"

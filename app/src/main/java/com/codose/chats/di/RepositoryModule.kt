@@ -1,4 +1,4 @@
-package com.codose.chats.utils.di
+package com.codose.chats.di
 
 import android.content.Context
 import com.codose.chats.network.NetworkRepository

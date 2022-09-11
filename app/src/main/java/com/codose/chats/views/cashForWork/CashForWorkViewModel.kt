@@ -10,7 +10,6 @@ import com.codose.chats.network.NetworkRepository
 import com.codose.chats.network.response.campaign.CampaignByOrganizationModel
 import com.codose.chats.network.response.progress.SubmitProgressModel
 import com.codose.chats.network.response.tasks.GetTasksModel
-import com.codose.chats.network.response.tasks.details.TaskDetailsModel
 import com.codose.chats.utils.ApiResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +21,6 @@ import java.io.File
 class CashForWorkViewModel(private val networkRepository: NetworkRepository) : ViewModel() {
     val cashForWorks = MutableLiveData<ApiResponse<CampaignByOrganizationModel>>()
     val tasks = MutableLiveData<ApiResponse<GetTasksModel>>()
-    val taskDetails = MutableLiveData<ApiResponse<TaskDetailsModel>>()
     val taskOperation = MutableLiveData<ApiResponse<SubmitProgressModel>>()
     val imageList = MutableLiveData<ArrayList<Bitmap>>(arrayListOf())
 
@@ -49,16 +47,6 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
             withContext(Dispatchers.IO) {
                 val data = networkRepository.getTasks(campaignId)
                 tasks.postValue(data)
-            }
-        }
-    }
-
-    fun getTaskDetails(taskId: String) {
-        taskDetails.value = ApiResponse.Loading()
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val data = networkRepository.getTasksDetails(taskId)
-                taskDetails.postValue(data)
             }
         }
     }

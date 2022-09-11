@@ -2,15 +2,16 @@ package com.codose.chats.model
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.codose.chats.views.cashForWork.model.Job
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Entity(tableName = "modelCampaign")
 
 @Parcelize
-data class ModelCampaign (
-
+data class ModelCampaign(
     @SerializedName("id")
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
@@ -41,5 +42,43 @@ data class ModelCampaign (
     @SerializedName("createdAt")
     val createdAt: String?,
     @SerializedName("updatedAt")
-    val updatedAt: String
-): Parcelable
+    val updatedAt: String,
+    @SerializedName("Jobs")
+    @Ignore
+    val jobs: List<Job>,
+) : Parcelable {
+    constructor(
+        id: Int,
+        OrganisationId: Int,
+        title: String?,
+        type: String?,
+        spending: String?,
+        description: String?,
+        status: String?,
+        is_funded: String?,
+        funded_with: String?,
+        budget: String?,
+        location: String?,
+        start_date: String?,
+        end_date: String?,
+        createdAt: String?,
+        updatedAt: String
+    ) : this(
+        id,
+        OrganisationId,
+        title,
+        type,
+        spending,
+        description,
+        status,
+        is_funded,
+        funded_with,
+        budget,
+        location,
+        start_date,
+        end_date,
+        createdAt,
+        updatedAt,
+        emptyList()
+    )
+}

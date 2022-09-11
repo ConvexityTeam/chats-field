@@ -3,6 +3,7 @@ package com.codose.chats.views.auth.adapter
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,6 +11,7 @@ import com.codose.chats.R
 import com.codose.chats.databinding.ItemCashForWorkItemBinding
 import com.codose.chats.model.ModelCampaign
 import com.codose.chats.utils.Utils.toDateTime
+import com.codose.chats.views.cashForWork.model.Job
 
 /*
 Created by
@@ -18,8 +20,10 @@ Oshodin Osemwingie
 on 17/07/2020.
 */
 
-class CashForWorkAdapter(private val onItemClick: (ModelCampaign) -> Unit) :
-    ListAdapter<ModelCampaign, CashForWorkAdapter.MyViewHolder>(CashForWorkDiffCallback()) {
+class CashForWorkAdapter(
+    private val onLoadTaskClick: (List<Job>) -> Unit,
+    private val onBeneficiaryClick: (Int) -> Unit
+) : ListAdapter<ModelCampaign, CashForWorkAdapter.MyViewHolder>(CashForWorkDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(ItemCashForWorkItemBinding.bind(LayoutInflater.from(parent.context)
@@ -38,7 +42,10 @@ class CashForWorkAdapter(private val onItemClick: (ModelCampaign) -> Unit) :
             txtCashForWorkTitle.text = item.title
             txtCashForWorkAmount.text = "₦" + item.budget
             txtCashForWorkCreated.text = item.createdAt?.toDateTime()
-            root.setOnClickListener { onItemClick.invoke(item) }
+            loadTasksButton.setOnClickListener { onLoadTaskClick.invoke(item.jobs) }
+            beneficiariesButton.setOnClickListener { onBeneficiaryClick(item.id) }
+            completionGroup.isGone = true
+            reportButton.isGone = true
         }
     }
 

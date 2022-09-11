@@ -64,4 +64,14 @@
     <string name="text_date_of_birth">Date of Birth</string>
     <string name="text_nin_abbrev">NIN</string>
     <string name="text_change_account">Change Account?</string>
+    <string name="text_created">Created</string>
+    <string name="text_amount">Amount</string>
+    <string name="text_load_tasks">Load Tasks</string>
+    <string name="text_beneficiaries">Beneficiaries</string>
+    <string name="text_cash_for_work">Cash for work</string>
+    <string name="text_no_task_found">No Task Found</string>
+    <string name="text_select">Select</string>
+    <string name="text_report">Report</string>
+    <string name="text_status">Status</string>
+    <string name="text_no_worker_found">No worker found</string>
 </resources>

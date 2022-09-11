@@ -102,4 +102,7 @@ object BluetoothConstants {
     const val API_ERROR: String = "error"
 
     const val ACTIVE_CASH_FOR_WORK: String = "active"
+
+    const val COMPLETE: String = "Complete"
+    const val INCOMPLETE: String = "Incomplete"
 }

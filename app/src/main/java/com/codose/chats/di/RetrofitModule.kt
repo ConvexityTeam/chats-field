@@ -1,4 +1,4 @@
-package com.codose.chats.utils.di
+package com.codose.chats.di
 
 import com.codose.chats.utils.BluetoothConstants
 import com.google.gson.Gson

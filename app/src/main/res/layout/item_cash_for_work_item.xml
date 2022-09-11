@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="4dp"
+    android:layout_marginHorizontal="16dp"
     android:layout_marginTop="4dp"
-    android:layout_marginEnd="4dp"
     android:layout_marginBottom="12dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
@@ -34,43 +33,108 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Amount"
+            android:text="@string/text_amount"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorDark"
-            app:layout_constraintStart_toStartOf="@+id/txt_cash_for_work_title"
-            app:layout_constraintTop_toBottomOf="@+id/txt_cash_for_work_title" />
+            app:layout_constraintStart_toStartOf="@id/txt_cash_for_work_title"
+            app:layout_constraintTop_toBottomOf="@id/txt_cash_for_work_title" />
 
         <TextView
             android:id="@+id/txt_cash_for_work_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
             android:textAppearance="@style/TextAppearance.TextRegular"
             android:textColor="@color/textColorDark"
-            app:layout_constraintBottom_toBottomOf="@+id/textView20"
-            app:layout_constraintEnd_toEndOf="@+id/txt_cash_for_work_title"
-            app:layout_constraintTop_toTopOf="@+id/textView20" />
+            app:layout_constraintBottom_toBottomOf="@id/textView20"
+            app:layout_constraintEnd_toEndOf="@id/txt_cash_for_work_title"
+            app:layout_constraintTop_toTopOf="@id/textView20"
+            tools:text="N12,000" />
 
         <TextView
             android:id="@+id/txt_cash_for_work_created"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
             android:textAppearance="@style/TextAppearance.TextRegular"
             android:textColor="@color/textColorDark"
-            app:layout_constraintBottom_toBottomOf="@+id/textView27"
-            app:layout_constraintEnd_toEndOf="@+id/txt_cash_for_work_amount"
-            app:layout_constraintTop_toTopOf="@+id/textView27" />
+            app:layout_constraintBottom_toBottomOf="@id/textView27"
+            app:layout_constraintEnd_toEndOf="@id/txt_cash_for_work_amount"
+            app:layout_constraintTop_toTopOf="@id/textView27"
+            tools:text="@tools:sample/date/ddmmyy" />
 
         <TextView
             android:id="@+id/textView27"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Created"
+            android:text="@string/text_created"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorDark"
-            app:layout_constraintStart_toStartOf="@+id/textView20"
-            app:layout_constraintTop_toBottomOf="@+id/textView20" />
+            app:layout_constraintStart_toStartOf="@id/textView20"
+            app:layout_constraintTop_toBottomOf="@id/textView20" />
+
+        <TextView
+            android:id="@+id/completionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/text_status"
+            android:textAppearance="@style/TextAppearance.TextMedium"
+            android:textColor="@color/textColorDark"
+            app:layout_constraintStart_toStartOf="@id/textView27"
+            app:layout_constraintTop_toBottomOf="@id/textView27" />
+
+        <TextView
+            android:id="@+id/completionValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.TextRegular"
+            android:textColor="@color/textColorDark"
+            app:layout_constraintBottom_toBottomOf="@id/completionLabel"
+            app:layout_constraintEnd_toEndOf="@id/txt_cash_for_work_amount"
+            app:layout_constraintTop_toTopOf="@id/completionLabel"
+            tools:text="Incomplete" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loadTasksButton"
+            style="@style/Widget.MaterialComponents.Button.Primary"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_load_tasks"
+            app:layout_constraintStart_toStartOf="@id/textView27"
+            app:layout_constraintTop_toBottomOf="@id/completionLabel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/beneficiariesButton"
+            style="@style/Widget.MaterialComponents.Button.Primary"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_beneficiaries"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/completionValue" />
+
+        <androidx.constraintlayout.widget.Group
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cashForWorkButtons"
+            app:constraint_referenced_ids="loadTasksButton, beneficiariesButton" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/completionGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="completionLabel, completionValue" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reportButton"
+            style="@style/Widget.MaterialComponents.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_report"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/loadTasksButton" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
