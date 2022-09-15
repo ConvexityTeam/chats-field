@@ -13,7 +13,6 @@ import com.codose.chats.network.body.login.LoginBody
 import com.codose.chats.utils.*
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.fragment_onboarding.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -73,7 +72,7 @@ class LoginDialog : BottomSheetDialogFragment() {
                     binding.loginProgress.hide()
                     if (it.code == 401) {
                         doLogout()
-                        openLogin()
+                        //openLogin()
                     }
                     requireContext().toast(it.message)
                 }
@@ -128,7 +127,7 @@ class LoginDialog : BottomSheetDialogFragment() {
 
     private fun doLogout() {
         PrefUtils.setNGO(0, "")
-        logoutBtn.hide()
+        //logoutBtn.hide()
     }
 
     private fun openForgot(isCancelable : Boolean = true) {

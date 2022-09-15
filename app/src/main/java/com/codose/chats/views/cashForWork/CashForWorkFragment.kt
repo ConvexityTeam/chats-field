@@ -32,7 +32,7 @@ class CashForWorkFragment : Fragment(R.layout.fragment_cash_for_work) {
 
         cashForWorkViewModel.getCashForWorks()
 
-        binding.run {
+        binding.apply {
             cfwRv.adapter = adapter
             cfwBackBtn.setOnClickListener {
                 findNavController().navigateUp()

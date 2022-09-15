@@ -1,20 +1,10 @@
 package com.codose.chats.utils
 
 import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.database.sqlite.SQLiteDatabase
-import android.os.Handler
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.ListView
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
-import com.codose.chats.offline.Beneficiary
-import java.util.*
 
 object BluetoothConstants {
     const val sDirectory = ""
-    const val BASE_URL = "https://api.chats.cash/v1/"
+    const val BASE_URL = "https://staging-api.chats.cash/v1/"
     const val TAG = "BluetoothReader"
     const val CONNECTION_CODE = 908
     val permissions = arrayOf(

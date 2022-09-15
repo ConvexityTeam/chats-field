@@ -14,8 +14,8 @@ android {
         applicationId "com.codose.bluetoothsensor"
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 4
-        versionName "1.0.0-beta04"
+        versionCode 5
+        versionName "1.0.0-beta05"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
