@@ -50,9 +50,9 @@ class CashForWorkFragment : Fragment(R.layout.fragment_cash_for_work) {
                     binding.cfwEmpty.txtNotFound.text = getString(R.string.empty_cash_for_work)
                 } else {
                     binding.cfwProgress.root.hide()
-                    adapter.submitList(it.filter { campaign ->
+                    adapter.submitList(it/*.filter { campaign ->
                         campaign.status.equals(ACTIVE_CASH_FOR_WORK, ignoreCase = true)
-                    })
+                    }*/)
                 }
             }
         }

@@ -240,11 +240,8 @@
             android:id="@+id/action_cashForWorkTaskDetailsFragment_to_cashForWorkImageFragment"
             app:destination="@id/cashForWorkImageFragment" />
         <argument
-            android:name="taskId"
-            app:argType="integer" />
-        <argument
-            android:name="taskName"
-            app:argType="string" />
+            android:name="job"
+            app:argType="com.codose.chats.views.cashForWork.model.Job" />
     </fragment>
     <fragment
         android:id="@+id/cashForWorkSubmitFragment"

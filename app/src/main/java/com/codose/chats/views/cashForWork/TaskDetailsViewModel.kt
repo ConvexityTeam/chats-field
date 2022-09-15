@@ -25,7 +25,7 @@ class TaskDetailsViewModel(private val repository: NetworkRepository) : ViewMode
             val response = repository.getTasksDetails(taskId)
             if (response.code in 200..202 && response.status == API_SUCCESS) {
                 response.data?.let {
-                    _uiState.postValue(TaskDetailsUiState.Success(it.data.task))
+                    //_uiState.postValue(TaskDetailsUiState.Success(it))
                 }
             } else {
                 _uiState.postValue(TaskDetailsUiState.Error(response.message))

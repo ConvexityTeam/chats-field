@@ -19,8 +19,10 @@ class CashForWorkTaskFragment : Fragment(R.layout.fragment_cash_for_work_task) {
     private val args by navArgs<CashForWorkTaskFragmentArgs>()
 
     private val adapter: JobAdapter by lazy {
-        JobAdapter(onReportClick = { taskId, taskName ->
-            findNavController().navigate(CashForWorkTaskFragmentDirections.toCashForWorkTaskDetailsFragment(taskId, taskName))
+        JobAdapter(onReportClick = {
+            findNavController().navigate(CashForWorkTaskFragmentDirections.toCashForWorkTaskDetailsFragment(
+                it)
+            )
         })
     }
 
@@ -29,7 +31,7 @@ class CashForWorkTaskFragment : Fragment(R.layout.fragment_cash_for_work_task) {
 
         _binding = FragmentCashForWorkTaskBinding.bind(view)
 
-        binding.cfwTaskBackBtn.setOnClickListener{
+        binding.cfwTaskBackBtn.setOnClickListener {
             findNavController().navigateUp()
         }
 

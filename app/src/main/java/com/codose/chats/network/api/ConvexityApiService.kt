@@ -19,6 +19,7 @@ import com.codose.chats.network.response.organization.campaign.CampaignResponse
 import com.codose.chats.network.response.progress.PostCompletionBody
 import com.codose.chats.network.response.progress.SubmitProgressModel
 import com.codose.chats.network.response.tasks.GetTasksModel
+import com.codose.chats.network.response.tasks.details.Task
 import com.codose.chats.network.response.tasks.details.TaskDetailsModel
 import com.codose.chats.views.beneficiary_onboarding.model.AddBeneficiaryResponse
 import kotlinx.coroutines.Deferred
@@ -122,7 +123,13 @@ interface ConvexityApiService {
         @Header("Authorization") authorization: String
     ): Deferred<GetTasksModel>
 
-    @GET("cash-for-work/task/{taskId}")
+    /*@GET("cash-for-work/task/{taskId}")
+    suspend fun getTasksDetails(
+        @Path("taskId") taskId: String,
+        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
+    ): BaseResponse<TaskDetailsModel>*/
+
+    @GET("tasks/cash-for-work/task/{taskId}")
     suspend fun getTasksDetails(
         @Path("taskId") taskId: String,
         @Header("Authorization") authorization: String
@@ -141,7 +148,7 @@ interface ConvexityApiService {
     @POST("cash-for-work/task/progress/confirm")
     fun postTaskCompleted(@Body postCompletionBody: PostCompletionBody): Deferred<SubmitProgressModel>
 
-    @GET("organisations/{id}/campaigns/")
+    @GET("organisations/{id}/campaigns/all")
     suspend fun getAllCampaigns(
         @Path("id") id: Int,
         @Query("type") type: String,

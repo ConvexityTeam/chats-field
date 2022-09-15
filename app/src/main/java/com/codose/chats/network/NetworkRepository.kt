@@ -22,6 +22,7 @@ import com.codose.chats.network.response.organization.campaign.CampaignResponse
 import com.codose.chats.network.response.progress.PostCompletionBody
 import com.codose.chats.network.response.progress.SubmitProgressModel
 import com.codose.chats.network.response.tasks.GetTasksModel
+import com.codose.chats.network.response.tasks.details.Task
 import com.codose.chats.network.response.tasks.details.TaskDetailsModel
 import com.codose.chats.offline.OfflineRepository
 import com.codose.chats.utils.ApiResponse

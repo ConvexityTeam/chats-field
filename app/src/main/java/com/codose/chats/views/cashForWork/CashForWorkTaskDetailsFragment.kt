@@ -3,12 +3,14 @@ package com.codose.chats.views.cashForWork
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.codose.chats.R
 import com.codose.chats.databinding.FragmentCashForWorkTaskDetailsBinding
 import com.codose.chats.utils.hide
 import com.codose.chats.utils.showToast
+import com.codose.chats.utils.toStatusString
 import com.codose.chats.views.auth.adapter.WorkerAdapter
 import com.codose.chats.views.auth.adapter.WorkerClickListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -34,14 +36,47 @@ class CashForWorkTaskDetailsFragment : Fragment(R.layout.fragment_cash_for_work_
             ))*/
         //})
 
-        binding.taskDetailsTitle.text = args.taskName
+        binding.taskDetailsTitle.text = args.job.name
 
         binding.backBtn.setOnClickListener {
             findNavController().navigateUp()
         }
 
-        viewModel.getTaskDetails(taskId = args.taskId.toString())
+        viewModel.getTaskDetails(taskId = args.job.id.toString())
         setObservers()
+        setupUi()
+    }
+
+    private fun setupUi() = with(binding) {
+        val job = args.job
+        taskStatus.text =  job.isCompleted.toStatusString()
+        if (job.isCompleted) {
+            taskStatus.apply {
+                setBackgroundResource(R.drawable.transparent_rectangle_green)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+            }
+        } else {
+            taskStatus.apply {
+                setBackgroundResource(R.drawable.transparent_rectangle_yellow)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.colorYellow))
+            }
+        }
+        /*if (data.data.task.status == "pending") {
+            taskStatus.apply {
+                setBackgroundResource(R.drawable.transparent_rectangle_blue)
+                setTextColor(resources.getColor(R.color.colorBlue))
+            }
+        } else if (data.data.task.status == "fulfilled") {
+            taskStatus.apply {
+                setBackgroundResource(R.drawable.transparent_rectangle_green)
+                setTextColor(resources.getColor(R.color.colorPrimary))
+            }
+        } else {
+            taskStatus.apply {
+                setBackgroundResource(R.drawable.transparent_rectangle_yellow)
+                setTextColor(resources.getColor(R.color.colorYellow))
+            }
+        }*/
     }
 
     private fun setObservers() = with(binding) {
