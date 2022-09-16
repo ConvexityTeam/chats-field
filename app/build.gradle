@@ -7,6 +7,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+            keyAlias 'releaseKey'
+            storePassword 'chats_android'
+            storeFile file('../keystore/chats.keystore')
+            keyPassword 'chats_android'
+        }
+    }
     compileSdkVersion 32
     buildToolsVersion "30.0.3"
 
@@ -14,10 +22,11 @@ android {
         applicationId "com.codose.bluetoothsensor"
         minSdkVersion 23
         targetSdkVersion 32
-        versionCode 5
-        versionName "1.0.0-beta05"
+        versionCode 6
+        versionName "1.0.0-beta06"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
