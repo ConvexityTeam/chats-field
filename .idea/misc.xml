@@ -23,16 +23,18 @@
         <entry key="app/src/main/res/drawable/transparent_rectangle_green.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/drawable/transparent_rectangle_yellow.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.125" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25833333333333336" />
         <entry key="app/src/main/res/layout/dialog_beneficiary_search.xml" value="0.30324675324675326" />
         <entry key="app/src/main/res/layout/dialog_campaign.xml" value="0.25833333333333336" />
         <entry key="app/src/main/res/layout/dialog_login.xml" value="0.3182291666666667" />
         <entry key="app/src/main/res/layout/fragment_base.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_beneficiary_list.xml" value="0.4041666666666667" />
         <entry key="app/src/main/res/layout/fragment_beneficiary_type.xml" value="0.25729166666666664" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work.xml" value="0.20907420656412676" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work_image.xml" value="0.23530938300641668" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work_submit.xml" value="0.165" />
-        <entry key="app/src/main/res/layout/fragment_cash_for_work_task.xml" value="1.7470604090270863" />
-        <entry key="app/src/main/res/layout/fragment_cash_for_work_task_details.xml" value="0.5997575997127674" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work_task.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work_task_details.xml" value="0.25833333333333336" />
         <entry key="app/src/main/res/layout/fragment_existing_beneficiary.xml" value="0.25729166666666664" />
         <entry key="app/src/main/res/layout/fragment_image_capture.xml" value="0.125" />
         <entry key="app/src/main/res/layout/fragment_onboarding.xml" value="0.2672631068739748" />

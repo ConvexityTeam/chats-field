@@ -14,8 +14,8 @@ android {
         applicationId "com.codose.bluetoothsensor"
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 4
-        versionName "1.0.0-beta04"
+        versionCode 5
+        versionName "1.0.0-beta05"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -55,9 +55,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
 
-    implementation 'com.pixplicity.easyprefs:library:1.9.0'
-
-
     def version_lifecycle = "2.4.0-alpha01"
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$version_lifecycle"
@@ -69,7 +66,6 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.3.0'
     implementation 'androidx.room:room-ktx:2.3.0'
     implementation 'androidx.room:room-rxjava2:2.3.0'
-
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'

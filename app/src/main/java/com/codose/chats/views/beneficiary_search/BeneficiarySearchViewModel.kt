@@ -4,25 +4,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codose.chats.network.NetworkRepository
 import com.codose.chats.network.api.ConvexityApiService
 import com.codose.chats.network.response.beneficiary_onboarding.Beneficiary
 import com.codose.chats.utils.BluetoothConstants.API_SUCCESS
+import com.codose.chats.utils.handleThrowable
 import com.codose.chats.utils.toDateString
 import com.codose.chats.utils.toTitleCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
-class BeneficiarySearchViewModel(private val service: ConvexityApiService) : ViewModel() {
+class BeneficiarySearchViewModel(private val repository: NetworkRepository) : ViewModel() {
 
     private val _uiState = MutableLiveData<BeneficiarySearchUiState>()
     val uiState: LiveData<BeneficiarySearchUiState> = _uiState
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        _uiState.value = BeneficiarySearchUiState.Error("Couldn't load beneficiaries, try again")
-        Timber.e(throwable)
+        _uiState.value = BeneficiarySearchUiState.Error(throwable.handleThrowable())
     }
 
     fun loadBeneficiaries(
@@ -30,25 +30,29 @@ class BeneficiarySearchViewModel(private val service: ConvexityApiService) : Vie
         lastName: String? = null,
         email: String? = null,
         phone: String? = null,
-        nin: String? = null
+        nin: String? = null,
     ) {
         _uiState.value = BeneficiarySearchUiState.Loading
         viewModelScope.launch(exceptionHandler) {
-            val response = withContext(Dispatchers.IO) {
-                service.getExistingBeneficiary(
-                    firstName = firstName,
-                    lastName = lastName,
-                    email = email,
-                    nin = nin,
-                    phone = phone)
-            }
+            val response = repository.getExistingBeneficiaries(
+                firstName = firstName,
+                lastName = lastName,
+                email = email,
+                nin = nin,
+                phone = phone
+            )
             if (response.status == API_SUCCESS && response.code in 200..202) {
                 val beneficiaries = response.data
-                if (beneficiaries.isNotEmpty()) {
-                    _uiState.postValue(BeneficiarySearchUiState.Success(beneficiaries.map { it.mapToUi() }))
-                } else {
-                    _uiState.postValue(BeneficiarySearchUiState.EmptyBeneficiaries)
+                beneficiaries?.let { beneficiaryItems ->
+                    if (beneficiaryItems.isNotEmpty()) {
+                        _uiState.postValue(BeneficiarySearchUiState.Success(beneficiaryItems.map { it.mapToUi() }))
+                    } else {
+                        _uiState.postValue(BeneficiarySearchUiState.EmptyBeneficiaries)
+                    }
                 }
+            } else if (response.code in 401..403) {
+                _uiState.value =
+                    BeneficiarySearchUiState.Error("Session expired. Log in and try again")
             } else {
                 _uiState.value = BeneficiarySearchUiState.Error(response.message)
             }

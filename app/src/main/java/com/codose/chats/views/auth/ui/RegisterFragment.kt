@@ -13,20 +13,17 @@ import android.view.View
 import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.codose.chats.R
 import com.codose.chats.databinding.FragmentRegisterBinding
 import com.codose.chats.utils.*
-import com.codose.chats.utils.BluetoothConstants.BENEFICIARY_BUNDLE_KEY
-import com.codose.chats.utils.BluetoothConstants.FRAGMENT_BENEFICIARY_RESULT_LISTENER
 import com.codose.chats.utils.Utils.toCountryCode
-import com.codose.chats.views.auth.dialog.LoginDialog
+import com.codose.chats.views.auth.login.LoginDialog
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
-import com.codose.chats.views.beneficiary_search.BeneficiaryUi
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.robin.locationgetter.EasyLocation
 import kotlinx.coroutines.InternalCoroutinesApi
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 import java.util.*
@@ -41,7 +38,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     private lateinit var locationManager: LocationManager
     private var latitude: Double = 6.465422
     private var longitude: Double = 3.406448
-    private val organizationId: Int by lazy { PrefUtils.getNGOId() }
+    private val preferenceUtil: PreferenceUtil by inject()
+    private val organizationId: Int by lazy { preferenceUtil.getNGOId() }
     private val viewModel by sharedViewModel<RegisterViewModel>()
     private val myCalendar: Calendar = Calendar.getInstance()
     private var campaignId: String? = null
@@ -100,7 +98,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 openLogin(true)
                 doLogout()
             }
-            if (PrefUtils.getNGOId() == 0) {
+            if (organizationId == 0) {
                 openLogin()
                 changeLoggedOutText()
             } else {
@@ -178,8 +176,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         var phone = ""
         var date = ""
         var gender = ""
-        //organizationId = PrefUtils.getNGOId()
-        if (PrefUtils.getNGOId() == 0) {
+        if (organizationId == 0) {
             showToast("Please Log In")
             openLogin()
             return
@@ -198,9 +195,17 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             registerLastNameLayout.error = "Last name is required"
             return
         }
-        if (registerEmailEdit.isValid()) {
+        if (registerEmailEdit.text.isNullOrBlank()) {
+            email = UUID.randomUUID().toString()
             registerEmailLayout.error = ""
-            email = registerEmailEdit.text.toString()
+        } else {
+            if (registerEmailEdit.text.toString().isEmailValid()) {
+                registerEmailLayout.error = ""
+                email = registerEmailEdit.text.toString()
+            } else {
+                registerEmailLayout.error = "Invalid email address"
+                return@with
+            }
         }
         if (registerPhoneEdit.isValid()) {
             registerPhoneLayout.error = ""
@@ -263,11 +268,10 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (PrefUtils.getNGOId() == 0) {
+        if (preferenceUtil.getNGOId() == 0) {
             openLogin()
             changeLoggedOutText()
         } else {
-            //organizationId = PrefUtils.getNGOId()
             changeLoggedInText()
         }
     }
@@ -275,7 +279,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     private fun openCalendar() {
         val date =
-            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
                 myCalendar[Calendar.YEAR] = year
                 myCalendar[Calendar.MONTH] = monthOfYear
                 myCalendar[Calendar.DAY_OF_MONTH] = dayOfMonth
@@ -300,13 +304,11 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     private fun openLogin(isCancelable: Boolean = true) {
         val bottomSheetDialogFragment = LoginDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = isCancelable
-        bottomSheetDialogFragment.setTargetFragment(this, 700)
-        bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),
-            "BottomSheetDialog")
+        bottomSheetDialogFragment.show(parentFragmentManager, "BottomSheetDialog")
     }
 
     private fun doLogout() {
-        PrefUtils.setNGO(0, "")
+        preferenceUtil.clearPreference()
         changeLoggedOutText()
     }
 

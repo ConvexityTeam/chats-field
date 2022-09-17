@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
-        android:name="com.codose.chats.views.auth.ui.OnboardingFragment"
+        android:name="com.codose.chats.views.auth.onboarding.OnboardingFragment"
         android:label="fragment_onboarding"
         tools:layout="@layout/fragment_onboarding">
         <!-- TODO comeback and change back to register fragment !-->
@@ -33,14 +33,14 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_onboardingFragment_to_vendorFragment"
+            android:id="@+id/to_vendorFragment"
             app:destination="@id/vendorFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_onboardingFragment_to_cashForWorkFragment"
+            android:id="@+id/to_cashForWorkFragment"
             app:destination="@id/cashForWorkFragment" />
     </fragment>
     <fragment
@@ -189,7 +189,7 @@
         android:label="fragment_register_image"
         tools:layout="@layout/fragment_register_image">
         <action
-            android:id="@+id/action_registerImageFragment_to_imageCaptureFragment"
+            android:id="@+id/to_imageCaptureFragment"
             app:destination="@id/imageCaptureFragment" />
         <action
             android:id="@+id/action_registerImageFragment_to_registerVerifyFragment"
@@ -210,8 +210,11 @@
         android:label="fragment_cash_for_work"
         tools:layout="@layout/fragment_cash_for_work">
         <action
-            android:id="@+id/action_cashForWorkFragment_to_cashForWorkTaskFragment"
+            android:id="@+id/to_cashForWorkTaskFragment"
             app:destination="@id/cashForWorkTaskFragment" />
+        <action
+            android:id="@+id/to_beneficiaryListFragment"
+            app:destination="@id/beneficiaryListFragment" />
     </fragment>
     <fragment
         android:id="@+id/cashForWorkTaskFragment"
@@ -219,29 +222,26 @@
         android:label="fragment_cash_for_work_task"
         tools:layout="@layout/fragment_cash_for_work_task">
         <action
-            android:id="@+id/action_cashForWorkTaskFragment_to_cashForWorkTaskDetailsFragment"
+            android:id="@+id/to_cashForWorkTaskDetailsFragment"
             app:destination="@id/cashForWorkTaskDetailsFragment" />
         <argument
-            android:name="cfwId"
-            app:argType="string" />
-        <argument
-            android:name="cfwName"
-            app:argType="string" />
+            android:name="jobs"
+            app:argType="com.codose.chats.views.cashForWork.model.Job[]" />
     </fragment>
     <fragment
         android:id="@+id/cashForWorkTaskDetailsFragment"
         android:name="com.codose.chats.views.cashForWork.CashForWorkTaskDetailsFragment"
         android:label="fragment_cash_for_work_task_details"
         tools:layout="@layout/fragment_cash_for_work_task_details">
-        <argument
-            android:name="taskId"
-            app:argType="string" />
         <action
             android:id="@+id/action_cashForWorkTaskDetailsFragment_to_cashForWorkSubmitFragment"
             app:destination="@id/cashForWorkSubmitFragment" />
         <action
             android:id="@+id/action_cashForWorkTaskDetailsFragment_to_cashForWorkImageFragment"
             app:destination="@id/cashForWorkImageFragment" />
+        <argument
+            android:name="taskId"
+            app:argType="integer" />
         <argument
             android:name="taskName"
             app:argType="string" />
@@ -276,7 +276,8 @@
     <fragment
         android:id="@+id/cashForWorkImageFragment"
         android:name="com.codose.chats.views.cashForWork.CashForWorkImageFragment"
-        android:label="CashForWorkImageFragment">
+        android:label="CashForWorkImageFragment"
+        tools:layout="@layout/fragment_cash_for_work_image">
         <action
             android:id="@+id/action_cashForWorkImageFragment_to_onboardingFragment"
             app:destination="@id/onboardingFragment"
@@ -338,4 +339,13 @@
         android:name="com.codose.chats.views.beneficiary_onboarding.campaigns.CampaignDialog"
         android:label="dialog_campaign"
         tools:layout="@layout/dialog_campaign" />
+    <fragment
+        android:id="@+id/beneficiaryListFragment"
+        android:name="com.codose.chats.views.beneficiary_list.BeneficiaryListFragment"
+        android:label="fragment_beneficiary_list"
+        tools:layout="@layout/fragment_beneficiary_list">
+        <argument
+            android:name="campaignId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

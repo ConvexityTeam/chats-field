@@ -1,4 +1,4 @@
-package com.codose.chats.utils.di
+package com.codose.chats.di
 
 import com.codose.chats.network.api.ConvexityApiService
 import org.koin.dsl.module

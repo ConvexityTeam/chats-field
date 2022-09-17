@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codose.chats.network.NetworkRepository
 import com.codose.chats.utils.BluetoothConstants.API_SUCCESS
+import com.codose.chats.utils.handleThrowable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class ExistingBeneficiaryViewModel(
     private val repository: NetworkRepository
@@ -18,8 +18,7 @@ class ExistingBeneficiaryViewModel(
     val uiState: LiveData<ExistingBeneficiaryUiState> = _uiState
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        _uiState.value = ExistingBeneficiaryUiState.Error(throwable.localizedMessage)
-        Timber.e(throwable)
+        _uiState.value = ExistingBeneficiaryUiState.Error(throwable.handleThrowable())
     }
 
     init {

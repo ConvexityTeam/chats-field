@@ -1,17 +1,17 @@
 package com.codose.chats.views.auth.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.codose.chats.R
-import com.codose.chats.network.response.tasks.Task
+import com.codose.chats.databinding.ItemCashForWorkItemBinding
 import com.codose.chats.utils.Utils.toDateTime
-import kotlinx.android.synthetic.main.item_cash_for_work_item.view.*
+import com.codose.chats.utils.toStatusString
+import com.codose.chats.views.cashForWork.model.Job
 
 /*
 Created by
@@ -19,50 +19,41 @@ Oshodin Osemwingie
 
 on 17/07/2020.
 */
-class TaskAdapter(val clickListener: TaskClickListener) :
-    ListAdapter<Task, TaskAdapter.MyViewHolder>(TaskDiffCallback()) {
 
-    class MyViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
+class JobAdapter(private val onReportClick:(Int, String) -> Unit) :
+    ListAdapter<Job, JobAdapter.MyViewHolder>(JobDiffCallback()) {
+
+    inner class MyViewHolder(private val binding : ItemCashForWorkItemBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(
-            item: Task,
-            clickListener: TaskClickListener
-        ) {
-            itemView.txt_cash_for_work_title.text = item.name
-            itemView.setOnClickListener {
-                clickListener.onClick(item)
-            }
-            itemView.txt_cash_for_work_amount.text = "₦"+ item.amount
-            itemView.txt_cash_for_work_created.text = item.createdAt.toDateTime()
+        fun bind(item: Job) = with(binding) {
+            txtCashForWorkTitle.text = item.name
+            txtCashForWorkAmount.text = "₦"+ item.amount
+            txtCashForWorkCreated.text = item.createdAt.toDateTime()
+            completionValue.text = item.isCompleted.toStatusString()
+            cashForWorkButtons.isGone = true
+            reportButton.setOnClickListener { onReportClick.invoke(item.id, item.name) }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return from(parent)
-    }
-
-
-    private fun from(parent: ViewGroup) : MyViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(R.layout.item_cash_for_work_item,parent,false)
-        return MyViewHolder(view)
+        return MyViewHolder(ItemCashForWorkItemBinding.bind(LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_cash_for_work_item, parent, false))
+        )
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item, clickListener)
-    }
-}
-
-class TaskClickListener(val clickListener: (type: Task) -> Unit) {
-    fun onClick(type: Task) = clickListener(type)
-}
-class TaskDiffCallback : DiffUtil.ItemCallback<Task>(){
-    override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
-        return oldItem == newItem
+        holder.bind(getItem(position))
     }
 
-    override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
-        return oldItem == newItem
+    companion object {
+        class JobDiffCallback : DiffUtil.ItemCallback<Job>(){
+            override fun areItemsTheSame(oldItem: Job, newItem: Job): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: Job, newItem: Job): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 }

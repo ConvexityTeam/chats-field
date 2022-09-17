@@ -9,4 +9,5 @@
     android:visibility="invisible"
     app:trackCornerRadius="4dp"
     app:trackThickness="8dp"
+    app:indicatorColor="@color/colorPrimary"
     tools:visibility="visible" />

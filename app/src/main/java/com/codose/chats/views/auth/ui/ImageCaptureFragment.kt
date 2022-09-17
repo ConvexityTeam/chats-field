@@ -1,7 +1,6 @@
 package com.codose.chats.views.auth.ui
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -28,7 +27,6 @@ import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import kotlinx.android.synthetic.main.fragment_image_capture.*
-import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 import java.io.File
@@ -38,10 +36,8 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-
 typealias LumaListener = (luma: Double) -> Unit
 
-@InternalCoroutinesApi
 class ImageCaptureFragment : BaseFragment() {
     private var isCaptured : Boolean = false
     private var blinkCount = 0
@@ -50,7 +46,7 @@ class ImageCaptureFragment : BaseFragment() {
     private var eyesOpenCount = 0
     inner class ImageProcessor : ImageAnalysis.Analyzer {
 
-        @SuppressLint("UnsafeExperimentalUsageError")
+        @androidx.camera.core.ExperimentalGetImage
         override fun analyze(imageProxy: ImageProxy) {
             val mediaImage = imageProxy.image
             if (mediaImage != null) {

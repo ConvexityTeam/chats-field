@@ -8,9 +8,11 @@ import com.codose.chats.network.api.RetrofitClient
 import com.codose.chats.network.api.SessionManager
 import com.codose.chats.network.body.VendorBody
 import com.codose.chats.network.body.login.LoginBody
+import com.codose.chats.network.response.BaseResponse
 import com.codose.chats.network.response.NfcUpdateResponse
 import com.codose.chats.network.response.RegisterResponse
 import com.codose.chats.network.response.UserDetailsResponse
+import com.codose.chats.network.response.beneficiary_onboarding.Beneficiary
 import com.codose.chats.network.response.campaign.CampaignByOrganizationModel
 import com.codose.chats.network.response.forgot.ForgotBody
 import com.codose.chats.network.response.forgot.ForgotPasswordResponse
@@ -23,7 +25,7 @@ import com.codose.chats.network.response.tasks.GetTasksModel
 import com.codose.chats.network.response.tasks.details.TaskDetailsModel
 import com.codose.chats.offline.OfflineRepository
 import com.codose.chats.utils.ApiResponse
-import com.codose.chats.utils.PrefUtils
+import com.codose.chats.utils.PreferenceUtil
 import com.codose.chats.utils.Utils
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +33,8 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.*
 import timber.log.Timber
 import java.io.File
@@ -39,7 +43,8 @@ import java.lang.Exception
 class NetworkRepository(
     private val api: ConvexityApiService,
     private val offlineRepository: OfflineRepository,
-    private val context: Context
+    private val context: Context,
+    private val preferenceUtil: PreferenceUtil
 ) {
 
     private val sessionManager: SessionManager = SessionManager(context)
@@ -90,6 +95,7 @@ class NetworkRepository(
                 mDate,
                 campaign,
                 pin,
+                authorization = preferenceUtil.getNGOToken()
             ).await()
             ApiResponse.Success(data)
         }catch (e : HttpException){
@@ -147,6 +153,7 @@ class NetworkRepository(
                 mDate,
                 campaign,
                 pin,
+                authorization = preferenceUtil.getNGOToken()
             ).await()
             ApiResponse.Success(data)
         }catch (e : HttpException){
@@ -173,7 +180,7 @@ class NetworkRepository(
         return try {
             val requestBody = VendorBody(bvn,email,businessName,password,phone,pin,businessName, firstName, lastName,
                 address = address, country = country, state = state)
-            val data = api.vendorOnboarding(requestBody).await()
+            val data = api.vendorOnboarding(requestBody, authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
         }catch (e : HttpException){
             val message = Utils.getErrorMessage(e)
@@ -194,23 +201,25 @@ class NetworkRepository(
 
     suspend fun getUserDetails(id : String) : ApiResponse<UserDetailsResponse>{
         return try {
-            val data = api.getUserDetails(id).await()
+            val data = api.getUserDetails(id, authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
         }catch (t : Throwable){
             ApiResponse.Failure(t.message!!)
         }
     }
 
-    suspend fun loginNGO(loginBody: LoginBody) : ApiResponse<LoginResponse>{
+    @Deprecated(message = "Replaced with Coroutine-supported methods", level = DeprecationLevel.WARNING)
+    suspend fun loginNGO(loginBody: LoginBody): ApiResponse<LoginResponse> {
+        ApiResponse.Loading<LoginResponse>()
         return try {
             val data = api.loginNGO(loginBody).await()
-            PrefUtils.setNGOToken("Bearer "+data.data.token)
+            preferenceUtil.setNGOToken("Bearer " + data.data.token)
             getCampaigns()
             ApiResponse.Success(data)
-        }catch (e : HttpException){
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        }catch (t : Throwable){
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
@@ -230,7 +239,7 @@ class NetworkRepository(
 
     suspend fun postNFCDetails(nfcModel: NFCModel): ApiResponse<NfcUpdateResponse> {
         return try {
-            val data = api.postNfcDetails(nfcModel).await()
+            val data = api.postNfcDetails(nfcModel, authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
         }catch (e : HttpException){
             val message = Utils.getErrorMessage(e)
@@ -242,7 +251,7 @@ class NetworkRepository(
 
     suspend fun getCampaigns(): ApiResponse<CampaignResponse> {
         return try {
-            val data = api.getCampaigns().await()
+            val data = api.getCampaigns(authorization = preferenceUtil.getNGOToken()).await()
             Timber.v("Campaign: $data")
             offlineRepository.insertCampaign(data.data)
             ApiResponse.Success(data)
@@ -257,36 +266,55 @@ class NetworkRepository(
     suspend fun getAllCampaigns(): List<ModelCampaign>{
         return try{
             val apiService =  RetrofitClient.apiService().create(ConvexityApiService::class.java)
-            var data = apiService.getAllCampaigns(PrefUtils.getNGOId(), "campaign").data
-            Timber.v("XXXgetAllCampaigns: called"+data.toString())
+            val data = apiService.getAllCampaigns(preferenceUtil.getNGOId(), "campaign", authorization = preferenceUtil.getNGOToken()).data
+            Timber.v("XXXgetAllCampaigns: called$data")
             offlineRepository.insertAllCampaign(data)
             data
         }
         catch (e: Exception){
-            Timber.v("XXXgetAllCampaigns"+e.message)
-            var data: List<ModelCampaign> = ArrayList()
+            Timber.v("XXXgetAllCampaigns %s", e.message)
+            val data: List<ModelCampaign> = ArrayList()
             data
         }
     }
 
-    suspend fun getAllCashForWorkCampaigns(): List<ModelCampaign>{
-        return try{
-            val apiService =  RetrofitClient.apiService().create(ConvexityApiService::class.java)
-            var data = apiService.getAllCampaigns(PrefUtils.getNGOId(), "cash-for-work").data
-            Timber.v("XXXgetAllCampaigns: called"+data.toString())
-            offlineRepository.insertAllCashForWork(data)
-            data
+    suspend fun getExistingBeneficiaries(
+        firstName: String? = null,
+        lastName: String? = null,
+        email: String? = null,
+        phone: String? = null,
+        nin: String? = null
+    ): BaseResponse<List<Beneficiary>> {
+        return withContext(Dispatchers.IO) {
+            api.getExistingBeneficiary(
+                firstName = firstName,
+                lastName = lastName,
+                email = email,
+                nin = nin,
+                phone = phone,
+                authorization = preferenceUtil.getNGOToken()
+            )
         }
-        catch (e: Exception){
-            Timber.v("XXXgetAllCampaigns"+e.message)
-            var data: List<ModelCampaign> = ArrayList()
+    }
+
+    suspend fun getAllCashForWorkCampaigns(): List<ModelCampaign> {
+        return try {
+            withContext(Dispatchers.IO) {
+                val data = api.getAllCampaigns(preferenceUtil.getNGOId(), "cash-for-work", authorization = preferenceUtil.getNGOToken()).data
+                Timber.v("XXXgetAllCampaigns: called$data")
+                offlineRepository.insertAllCashForWork(data)
+                data
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            val data: List<ModelCampaign> = ArrayList()
             data
         }
     }
 
     suspend fun getCampaignByOrganization(organizationId : String): ApiResponse<CampaignByOrganizationModel> {
         return try {
-            val data = api.getCampaignsByOrganization(organizationId).await()
+            val data = api.getCampaignsByOrganization(organizationId, authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
         } catch (e : HttpException) {
             val message = Utils.getErrorMessage(e)
@@ -298,7 +326,7 @@ class NetworkRepository(
 
     suspend fun getTasks(campaignId : String): ApiResponse<GetTasksModel> {
         return try {
-            val data = api.getTasks(campaignId).await()
+            val data = api.getTasks(campaignId, authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
         } catch (e : HttpException) {
             val message = Utils.getErrorMessage(e)
@@ -308,16 +336,8 @@ class NetworkRepository(
         }
     }
 
-    suspend fun getTasksDetails(taskId : String): ApiResponse<TaskDetailsModel> {
-        return try {
-            val data = api.getTasksDetails(taskId).await()
-            ApiResponse.Success(data)
-        } catch (e : HttpException) {
-            val message = Utils.getErrorMessage(e)
-            ApiResponse.Failure(message, e.code())
-        } catch (t : Throwable) {
-            ApiResponse.Failure(t.message!!)
-        }
+    suspend fun getTasksDetails(taskId: String): BaseResponse<TaskDetailsModel> {
+        return withContext(Dispatchers.IO) { api.getTasksDetails(taskId, authorization = preferenceUtil.getNGOToken()) }
     }
 
     suspend fun postTaskEvidence(
@@ -327,21 +347,23 @@ class NetworkRepository(
         images :  ArrayList<File>,
     ): ApiResponse<SubmitProgressModel> {
         return try {
-            val taskIdBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),taskId)
-            val userIdBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),userId)
-            val descriptionBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),description)
+            val taskIdBody = taskId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val userIdBody = userId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val descriptionBody =
+                description.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val imageParts = ArrayList<MultipartBody.Part>()
-            images.forEach{
-                val compressed = Compressor.compress(context, it)
-                val mBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), compressed)
-                val image = MultipartBody.Part.createFormData(
-                    "images",
+            images.forEachIndexed { index, image ->
+                val compressed = Compressor.compress(context, image)
+                val mBody = compressed.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                val imagePart = MultipartBody.Part.createFormData(
+                    "images_$index",
                     compressed.absolutePath.substringAfterLast("/"),
                     mBody
                 )
-                imageParts.add(image)
+                imageParts.add(imagePart)
             }
-            val data = api.postTaskEvidence(taskIdBody, userIdBody,descriptionBody, imageParts).await()
+            val data =
+                api.postTaskEvidence(taskIdBody, userIdBody, descriptionBody, imageParts, authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
         } catch (e : HttpException) {
             val message = Utils.getErrorMessage(e)
@@ -369,6 +391,14 @@ class NetworkRepository(
 
     suspend fun addBeneficiaryToCampaign(beneficiaryId: Int, campaignId: Int) =
         withContext(Dispatchers.IO) {
-            api.addBeneficiaryToCampaign(beneficiaryId, campaignId)
+            api.addBeneficiaryToCampaign(beneficiaryId, campaignId, authorization = preferenceUtil.getNGOToken())
+        }
+
+    suspend fun getBeneficiaryByOrganisation() =
+        withContext(Dispatchers.IO) {
+            api.getBeneficiariesByOrganisation(
+                organisationId = preferenceUtil.getNGOId(),
+                authorization = preferenceUtil.getNGOToken()
+            )
         }
 }

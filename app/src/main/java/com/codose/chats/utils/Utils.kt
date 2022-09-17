@@ -4,7 +4,6 @@ import android.content.Context
 import com.google.gson.JsonParser
 import com.nabinbhandari.android.permissions.PermissionHandler
 import com.nabinbhandari.android.permissions.Permissions
-import kotlinx.android.synthetic.main.item_cash_for_work_item.view.*
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
@@ -66,15 +65,14 @@ object Utils {
             JsonParser().parse(errorJsonString)
                 .asJsonObject["message"]
                 .asString
-        }catch (e : Exception){
+        } catch (e: Exception) {
             "An error occurred."
         }
     }
 
-    fun  String.toDateTime() : String {
+    fun  String?.toDateTime() : String {
         val dtf: DateTimeFormatter = DateTimeFormat.forPattern("dd-MMM-yyyy HH:mm:ss")
         return DateTime.parse(this).toString(dtf)
-
     }
 
     fun String.toCountryCode() : String {

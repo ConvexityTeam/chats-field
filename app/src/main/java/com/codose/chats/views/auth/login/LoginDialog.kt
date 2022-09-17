@@ -1,0 +1,115 @@
+package com.codose.chats.views.auth.login
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResult
+import com.codose.chats.R
+import com.codose.chats.databinding.DialogLoginBinding
+import com.codose.chats.network.api.SessionManager
+import com.codose.chats.network.body.login.LoginBody
+import com.codose.chats.utils.*
+import com.codose.chats.utils.BluetoothConstants.FRAGMENT_LOGIN_RESULT_KEY
+import com.codose.chats.utils.BluetoothConstants.LOGIN_BUNDLE_KEY
+import com.codose.chats.views.auth.dialog.ForgotDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
+class LoginDialog : BottomSheetDialogFragment() {
+
+    private lateinit var binding: DialogLoginBinding
+    private val viewModel by viewModel<LoginViewModel>()
+
+    // Handling token bearer for field agent
+    private lateinit var sessionManager: SessionManager
+    private val preferenceUtil: PreferenceUtil by inject()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.CustomBottomSheet)
+        sessionManager = context?.let { SessionManager(it) }!!
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        binding = DialogLoginBinding.bind(inflater.inflate(R.layout.dialog_login, container, false))
+        return binding.root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.loginButton.setOnClickListener {
+            validateFields()
+        }
+
+        binding.forgotPasswordText.setOnClickListener {
+            openForgot()
+        }
+
+        setupObservers()
+    }
+
+    private fun setupObservers() = with(binding) {
+        viewModel.uiState.observe(viewLifecycleOwner) {
+            when (it) {
+                is LoginViewModel.LoginState.Error -> {
+                    loginProgress.root.isVisible = false
+                    loginButton.isVisible = true
+                    requireContext().toast(it.errorMessage)
+                }
+                LoginViewModel.LoginState.Loading -> {
+                    loginProgress.root.isVisible = true
+                    loginButton.isInvisible = true
+                }
+                is LoginViewModel.LoginState.Success -> {
+                    val data = it.result
+                    preferenceUtil.setNGO(data.user.associatedOrganisations.first().OrganisationId, "")
+                    preferenceUtil.setNGOToken("Bearer " + data.token)
+                    setFragmentResult(FRAGMENT_LOGIN_RESULT_KEY, bundleOf(LOGIN_BUNDLE_KEY to true))
+                    dismiss()
+                    showToast("Login successful")
+                    loginButton.isVisible = true
+                }
+            }
+        }
+    }
+
+    private fun validateFields() = with(binding) {
+        val email = loginEmailEdit.text.toString()
+        val password = loginPasswordEdit.text.toString()
+        if (loginEmailEdit.text.isNullOrBlank()) {
+            loginEmailLayout.error = "Email is required"
+            return
+        } else {
+            loginEmailLayout.error = ""
+        }
+        if (loginPasswordEdit.text.isNullOrBlank()) {
+            loginPasswordLayout.error = "Password is required"
+            return
+        } else {
+            loginPasswordLayout.error = ""
+        }
+        val loginBody = LoginBody(email, password)
+        viewModel.login(loginBody)
+    }
+
+    companion object {
+        fun newInstance(): LoginDialog = LoginDialog()
+    }
+
+    private fun openForgot(isCancelable: Boolean = true) {
+        val bottomSheetDialogFragment = ForgotDialog.newInstance()
+        bottomSheetDialogFragment.isCancelable = isCancelable
+        bottomSheetDialogFragment.show(parentFragmentManager, "BottomSheetDialog")
+    }
+}

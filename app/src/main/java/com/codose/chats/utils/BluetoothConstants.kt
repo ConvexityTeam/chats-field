@@ -1,20 +1,11 @@
 package com.codose.chats.utils
 
 import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.database.sqlite.SQLiteDatabase
-import android.os.Handler
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.ListView
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
-import com.codose.chats.offline.Beneficiary
-import java.util.*
+import com.codose.chats.BuildConfig
 
 object BluetoothConstants {
     const val sDirectory = ""
-    const val BASE_URL = "https://api.chats.cash/v1/"
+    const val BASE_URL = "https://staging-api.chats.cash/v1/"
     const val TAG = "BluetoothReader"
     const val CONNECTION_CODE = 908
     val permissions = arrayOf(
@@ -98,5 +89,16 @@ object BluetoothConstants {
     const val BENEFICIARY_BUNDLE_KEY: String = "beneficiary_key"
     const val CAMPAIGN_BUNDLE_KEY: String = "campaign_id_key"
 
+    const val FRAGMENT_LOGIN_RESULT_KEY: String = "login_result_key"
+    const val LOGIN_BUNDLE_KEY: String = "login_bundle_key"
+
     const val API_SUCCESS: String = "success"
+    const val API_ERROR: String = "error"
+
+    const val ACTIVE_CASH_FOR_WORK: String = "active"
+
+    const val COMPLETE: String = "Complete"
+    const val INCOMPLETE: String = "Incomplete"
+
+    const val SHARED_PREFERENCE_NAME: String = BuildConfig.APPLICATION_ID.plus("_preference")
 }

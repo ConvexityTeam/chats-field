@@ -1,8 +1,6 @@
 package com.codose.chats.views.auth.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.telephony.PhoneNumberUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,21 +11,18 @@ import com.codose.chats.offline.OfflineViewModel
 import com.codose.chats.utils.*
 import com.codose.chats.utils.BluetoothConstants.VENDOR_TYPE
 import com.codose.chats.utils.Utils.toCountryCode
-import com.codose.chats.views.auth.dialog.LoginDialog
+import com.codose.chats.views.auth.login.LoginDialog
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.codose.chats.views.base.BaseFragment
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import kotlinx.android.synthetic.main.fragment_vendor.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
-import java.util.*
-
 
 @InternalCoroutinesApi
 class VendorFragment : BaseFragment() {
 
-    private val beneficiary : Beneficiary = Beneficiary()
+    private val beneficiary: Beneficiary = Beneficiary()
     private val registerViewModel by viewModel<RegisterViewModel>()
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
@@ -41,14 +36,9 @@ class VendorFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(PrefUtils.getNGOId() == 0){
-            logged_in_text2.hide()
-            change_account_text2.hide()
-            openLogin(true)
-        }else{
-            logged_in_text2.show()
-            change_account_text2.show()
-        }
+
+        logged_in_text2.show()
+        change_account_text2.show()
 
         back_btn.setOnClickListener {
             findNavController().navigateUp()
@@ -97,37 +87,37 @@ class VendorFragment : BaseFragment() {
         val email = vendorEmailEdit.text.toString()
         val phone = vendorPhoneEdit.text.toString()
         val password = Utils.generatePassword()
-        val pin =  Utils.generatePIN()
+        val pin = Utils.generatePIN()
         val bvn = vendorBvnEdit.text.toString()
         val address = vendorAddressEdit.text.toString()
         val country = vendorCountryEdit.text.toString()
         val state = vendorStateEdit.text.toString()
 
-        if(vendorFirstNameEdit.text.isNullOrBlank()){
+        if (vendorFirstNameEdit.text.isNullOrBlank()) {
             vendorFirstNameLayout.error = "First name is required"
             return
-        }else{
+        } else {
             vendorFirstNameLayout.error = ""
         }
 
-        if(vendorLastNameEdit.text.isNullOrBlank()){
+        if (vendorLastNameEdit.text.isNullOrBlank()) {
             vendorLastNameLayout.error = "Last name is required"
             return
-        }else{
+        } else {
             vendorLastNameLayout.error = ""
         }
 
-        if(vendorBusinessNameEdit.text.isNullOrBlank()){
+        if (vendorBusinessNameEdit.text.isNullOrBlank()) {
             vendorBusinessNameLayout.error = "Business name is required"
             return
-        }else{
+        } else {
             vendorBusinessNameLayout.error = ""
         }
 
-        if(vendorEmailEdit.text.isNullOrBlank()){
+        if (vendorEmailEdit.text.isNullOrBlank()) {
             vendorEmailLayout.error = "Email Address is required"
             return
-        }else{
+        } else {
             vendorEmailLayout.error = ""
         }
 
@@ -142,18 +132,18 @@ class VendorFragment : BaseFragment() {
 //            vendorPasswordLayout.error = ""
 //        }
 
-        if(vendorPhoneEdit.text.isNullOrBlank()){
+        if (vendorPhoneEdit.text.isNullOrBlank()) {
             vendorPhoneLayout.error = "Phone number is required"
             return
-        }else{
-            if(vendorPhoneEdit.text.toString().length != 11){
+        } else {
+            if (vendorPhoneEdit.text.toString().length != 11) {
                 vendorPhoneLayout.error = "Invalid Phone Number"
                 return
             }
             vendorPhoneLayout.error = ""
         }
 
-        if(vendorBvnEdit.text.isNullOrBlank()){
+        if (vendorBvnEdit.text.isNullOrBlank()) {
             vendorBvnLayout.error = "BVN is required"
             return
         } else {
@@ -164,10 +154,7 @@ class VendorFragment : BaseFragment() {
                 return
             }
         }
-        if(PrefUtils.getNGOId() == 0){
-            openLogin()
-            return
-        }
+
         beneficiary.storeName = businessName
         beneficiary.email = email
         beneficiary.phone = phone.toCountryCode()
@@ -182,35 +169,28 @@ class VendorFragment : BaseFragment() {
         beneficiary.country = country
         beneficiary.state = state
 
-        if(internetAvailabilityChecker.currentInternetAvailabilityStatus){
-            registerViewModel.vendorOnboarding(businessName, email, phone.toCountryCode(), password, pin, bvn, firstName, lastName, address = address,
-                country=country, state=state)
-        }else{
+        if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
+            registerViewModel.vendorOnboarding(businessName,
+                email,
+                phone.toCountryCode(),
+                password,
+                pin,
+                bvn,
+                firstName,
+                lastName,
+                address = address,
+                country = country,
+                state = state)
+        } else {
             offlineViewModel.insert(beneficiary)
             showToast(getString(R.string.no_internet))
             findNavController().navigateUp()
         }
-
     }
 
-
-    private fun openLogin(isCancelable : Boolean = true) {
+    private fun openLogin(isCancelable: Boolean = true) {
         val bottomSheetDialogFragment = LoginDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = isCancelable
-        bottomSheetDialogFragment.setTargetFragment(this, 700)
-        bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),"BottomSheetDialog")
+        bottomSheetDialogFragment.show(parentFragmentManager, "BottomSheetDialog")
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(PrefUtils.getNGOId() == 0){
-            openLogin()
-            logged_in_text2.hide()
-            change_account_text2.hide()
-        }else{
-            logged_in_text2.show()
-            change_account_text2.show()
-        }
-    }
-
 }

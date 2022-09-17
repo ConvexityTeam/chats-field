@@ -1,4 +1,4 @@
-package com.codose.chats.views.auth.ui
+package com.codose.chats.views.auth.onboarding
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -6,35 +6,46 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.codose.chats.R
 import com.codose.chats.databinding.FragmentOnboardingBinding
-import com.codose.chats.utils.PrefUtils
-import com.codose.chats.utils.hide
-import com.codose.chats.utils.show
-import com.codose.chats.utils.toast
+import com.codose.chats.utils.*
+import com.codose.chats.utils.BluetoothConstants.FRAGMENT_LOGIN_RESULT_KEY
+import com.codose.chats.utils.BluetoothConstants.LOGIN_BUNDLE_KEY
 import com.codose.chats.views.auth.adapter.OnBoarding
 import com.codose.chats.views.auth.adapter.OnboardingAdapter
-import com.codose.chats.views.auth.dialog.LoginDialog
+import com.codose.chats.views.auth.login.LoginDialog
+import com.codose.chats.views.auth.ui.ImageCaptureFragment
+import com.codose.chats.views.auth.ui.RegisterImageFragmentDirections
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_auth.*
-import kotlinx.coroutines.InternalCoroutinesApi
-import timber.log.Timber
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@InternalCoroutinesApi
 class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private var _binding: FragmentOnboardingBinding? = null
     private val binding get() = _binding!!
+    private val viewModel by viewModel<OnboardingViewModel>()
+    private val adapter: OnboardingAdapter by lazy { OnboardingAdapter() }
+    private val preferenceUtil: PreferenceUtil by inject()
 
-    private lateinit var adapter: OnboardingAdapter
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setFragmentResultListener(FRAGMENT_LOGIN_RESULT_KEY) { _, bundle ->
+            val result = bundle.getBoolean(LOGIN_BUNDLE_KEY)
+            binding.logoutBtn.isVisible = result
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentOnboardingBinding.bind(view)
 
-        adapter = OnboardingAdapter(requireContext())
         requireActivity().pendingUploadTextView.show()
         val onboardings = arrayListOf<OnBoarding>()
         onboardings.add(OnBoarding(getString(R.string.onb_title_1),
@@ -49,34 +60,16 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         adapter.submitList(onboardings)
         binding.run {
             onboardingViewPager.adapter = adapter
-            TabLayoutMediator(onboardingTab, onboardingViewPager) { tab, position ->
+            TabLayoutMediator(onboardingTab, onboardingViewPager) { _, _ -> }.attach()
 
-            }.attach()
-
-            Timber.v("token is " + PrefUtils.getNGOId().toString())
-            Timber.v("token is " + PrefUtils.getNGOToken().toString())
-            onboardingCashForWorkBtn.setOnClickListener {
-                openCashForWork()
-            }
-
-            onboardingSignUpBtn.setOnClickListener {
-                findNavController().navigate(OnboardingFragmentDirections.toBeneficiaryTypeFragment())
-            }
-
-            logoutBtn.setOnClickListener {
-                doLogout()
-            }
-
-            if (PrefUtils.getNGOId() == 0) {
+            if (preferenceUtil.getNGOId() == 0) {
                 logoutBtn.hide()
             } else {
                 logoutBtn.show()
             }
-
-            onboardingLogInBtn.setOnClickListener {
-                findNavController().navigate(OnboardingFragmentDirections.actionOnboardingFragmentToVendorFragment())
-            }
         }
+
+        setupClickListeners()
 
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
@@ -86,8 +79,16 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         }
     }
 
+    private fun setupClickListeners() = with(binding) {
+        onboardingCashForWorkBtn.setOnClickListener { openCashForWork() }
+        beneficiaryOnboardingBtn.setOnClickListener { openBeneficiaryOnboarding() }
+        logoutBtn.setOnClickListener { doLogout() }
+        vendorOnboardingBtn.setOnClickListener { openVendorOnboarding() }
+    }
+
     private fun doLogout() {
-        PrefUtils.setNGO(0, "")
+        preferenceUtil.clearPreference()
+        viewModel.clearAllTables()
         binding.logoutBtn.hide()
     }
 
@@ -104,7 +105,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     ) {
         if (requestCode == ImageCaptureFragment.REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                findNavController().navigate(RegisterImageFragmentDirections.actionRegisterImageFragmentToImageCaptureFragment())
+                findNavController().navigate(RegisterImageFragmentDirections.toImageCaptureFragment())
             } else {
                 requireContext().toast("Permissions not granted by the user.")
                 findNavController().navigateUp()
@@ -122,10 +123,26 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     }
 
     private fun openCashForWork() {
-        if (PrefUtils.getNGOId() == 0) {
+        if (preferenceUtil.getNGOId() == 0) {
             openLogin()
         } else {
-            findNavController().navigate(OnboardingFragmentDirections.actionOnboardingFragmentToCashForWorkFragment())
+            findNavController().navigate(OnboardingFragmentDirections.toCashForWorkFragment())
+        }
+    }
+
+    private fun openBeneficiaryOnboarding() {
+        if (preferenceUtil.getNGOId() == 0) {
+            openLogin()
+        } else {
+            findNavController().navigate(OnboardingFragmentDirections.toBeneficiaryTypeFragment())
+        }
+    }
+
+    private fun openVendorOnboarding() {
+        if (preferenceUtil.getNGOId() == 0) {
+            openLogin()
+        } else {
+            findNavController().navigate(OnboardingFragmentDirections.toVendorFragment())
         }
     }
 
@@ -137,9 +154,6 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     private fun openLogin(isCancelable: Boolean = true) {
         val bottomSheetDialogFragment = LoginDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = isCancelable
-        bottomSheetDialogFragment.setTargetFragment(this, 700)
-        bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),
-            "BottomSheetDialog")
+        bottomSheetDialogFragment.show(parentFragmentManager, "BottomSheetDialog")
     }
-
 }
