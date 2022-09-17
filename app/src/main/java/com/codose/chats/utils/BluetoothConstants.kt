@@ -1,6 +1,7 @@
 package com.codose.chats.utils
 
 import android.Manifest
+import com.codose.chats.BuildConfig
 
 object BluetoothConstants {
     const val sDirectory = ""
@@ -95,4 +96,6 @@ object BluetoothConstants {
 
     const val COMPLETE: String = "Complete"
     const val INCOMPLETE: String = "Incomplete"
+
+    const val SHARED_PREFERENCE_NAME: String = BuildConfig.APPLICATION_ID.plus("_preference")
 }

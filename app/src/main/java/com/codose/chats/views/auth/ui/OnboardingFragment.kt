@@ -10,31 +10,28 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.codose.chats.R
 import com.codose.chats.databinding.FragmentOnboardingBinding
-import com.codose.chats.utils.PrefUtils
-import com.codose.chats.utils.hide
-import com.codose.chats.utils.show
-import com.codose.chats.utils.toast
+import com.codose.chats.offline.BeneficiaryDatabase
+import com.codose.chats.utils.*
 import com.codose.chats.views.auth.adapter.OnBoarding
 import com.codose.chats.views.auth.adapter.OnboardingAdapter
-import com.codose.chats.views.auth.dialog.LoginDialog
+import com.codose.chats.views.auth.login.LoginDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_auth.*
-import kotlinx.coroutines.InternalCoroutinesApi
-import timber.log.Timber
+import org.koin.android.ext.android.inject
 
-@InternalCoroutinesApi
 class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private var _binding: FragmentOnboardingBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapter: OnboardingAdapter
+    private val adapter: OnboardingAdapter by lazy { OnboardingAdapter() }
+    private val preferenceUtil: PreferenceUtil by inject()
+    private val database: BeneficiaryDatabase by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentOnboardingBinding.bind(view)
 
-        adapter = OnboardingAdapter(requireContext())
         requireActivity().pendingUploadTextView.show()
         val onboardings = arrayListOf<OnBoarding>()
         onboardings.add(OnBoarding(getString(R.string.onb_title_1),
@@ -49,34 +46,16 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         adapter.submitList(onboardings)
         binding.run {
             onboardingViewPager.adapter = adapter
-            TabLayoutMediator(onboardingTab, onboardingViewPager) { tab, position ->
+            TabLayoutMediator(onboardingTab, onboardingViewPager) { _, _ -> }.attach()
 
-            }.attach()
-
-            Timber.v("token is " + PrefUtils.getNGOId().toString())
-            Timber.v("token is " + PrefUtils.getNGOToken().toString())
-            onboardingCashForWorkBtn.setOnClickListener {
-                openCashForWork()
-            }
-
-            onboardingSignUpBtn.setOnClickListener {
-                findNavController().navigate(OnboardingFragmentDirections.toBeneficiaryTypeFragment())
-            }
-
-            logoutBtn.setOnClickListener {
-                doLogout()
-            }
-
-            if (PrefUtils.getNGOId() == 0) {
+            if (preferenceUtil.getNGOId() == 0) {
                 logoutBtn.hide()
             } else {
                 logoutBtn.show()
             }
-
-            onboardingLogInBtn.setOnClickListener {
-                findNavController().navigate(OnboardingFragmentDirections.actionOnboardingFragmentToVendorFragment())
-            }
         }
+
+        setupClickListeners()
 
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
@@ -86,8 +65,16 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         }
     }
 
+    private fun setupClickListeners() = with(binding) {
+        onboardingCashForWorkBtn.setOnClickListener { openCashForWork() }
+        beneficiaryOnboardingBtn.setOnClickListener { openBeneficiaryOnboarding() }
+        logoutBtn.setOnClickListener { doLogout() }
+        vendorOnboardingBtn.setOnClickListener { openVendorOnboarding() }
+    }
+
     private fun doLogout() {
-        PrefUtils.setNGO(0, "")
+        preferenceUtil.clearPreference()
+        database.clearAllTables()
         binding.logoutBtn.hide()
     }
 
@@ -122,10 +109,26 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     }
 
     private fun openCashForWork() {
-        if (PrefUtils.getNGOId() == 0) {
+        if (preferenceUtil.getNGOId() == 0) {
             openLogin()
         } else {
-            findNavController().navigate(OnboardingFragmentDirections.actionOnboardingFragmentToCashForWorkFragment())
+            findNavController().navigate(OnboardingFragmentDirections.toCashForWorkFragment())
+        }
+    }
+
+    private fun openBeneficiaryOnboarding() {
+        if (preferenceUtil.getNGOId() == 0) {
+            openLogin()
+        } else {
+            findNavController().navigate(OnboardingFragmentDirections.toBeneficiaryTypeFragment())
+        }
+    }
+
+    private fun openVendorOnboarding() {
+        if (preferenceUtil.getNGOId() == 0) {
+            openLogin()
+        } else {
+            findNavController().navigate(OnboardingFragmentDirections.toVendorFragment())
         }
     }
 
@@ -137,9 +140,6 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     private fun openLogin(isCancelable: Boolean = true) {
         val bottomSheetDialogFragment = LoginDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = isCancelable
-        bottomSheetDialogFragment.setTargetFragment(this, 700)
-        bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),
-            "BottomSheetDialog")
+        bottomSheetDialogFragment.show(parentFragmentManager, "BottomSheetDialog")
     }
-
 }

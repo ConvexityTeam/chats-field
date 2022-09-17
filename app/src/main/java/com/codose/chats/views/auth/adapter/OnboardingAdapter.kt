@@ -1,16 +1,15 @@
 package com.codose.chats.views.auth.adapter
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.codose.chats.R
 import kotlinx.android.synthetic.main.onboarding_item_layout.view.*
-
 
 /*
 Created by
@@ -18,18 +17,18 @@ Oshodin Osemwingie
 
 on 17/07/2020.
 */
-class OnboardingAdapter(val context : Context) :
+
+class OnboardingAdapter :
     ListAdapter<OnBoarding, OnboardingAdapter.MyViewHolder>(OnBoardingDiffCallback()) {
 
-    class MyViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
-        @SuppressLint("SetTextI18n")
-        fun bind(
-            context: Context,
-            item: OnBoarding
-        ) {
+    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(item: OnBoarding) = with(itemView) {
             itemView.onbDesc.text = item.desc
             itemView.onbTitle.text = item.title
-            itemView.onboardingImageView.setImageDrawable(context.resources.getDrawable(item.image))
+            itemView.onboardingImageView.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
+                item.image,
+                context.theme)
+            )
         }
     }
 
@@ -37,19 +36,19 @@ class OnboardingAdapter(val context : Context) :
         return from(parent)
     }
 
-
-    private fun from(parent: ViewGroup) : MyViewHolder {
+    private fun from(parent: ViewGroup): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(R.layout.onboarding_item_layout,parent,false)
+        val view = layoutInflater.inflate(R.layout.onboarding_item_layout, parent, false)
         return MyViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(context, item)
+        holder.bind(item)
     }
 }
-class OnBoardingDiffCallback : DiffUtil.ItemCallback<OnBoarding>(){
+
+class OnBoardingDiffCallback : DiffUtil.ItemCallback<OnBoarding>() {
     override fun areItemsTheSame(oldItem: OnBoarding, newItem: OnBoarding): Boolean {
         return oldItem == newItem
     }
@@ -60,7 +59,7 @@ class OnBoardingDiffCallback : DiffUtil.ItemCallback<OnBoarding>(){
 }
 
 data class OnBoarding(
-    val title : String,
-    val desc : String,
-    val image : Int
+    val title: String,
+    val desc: String,
+    @DrawableRes val image: Int,
 )

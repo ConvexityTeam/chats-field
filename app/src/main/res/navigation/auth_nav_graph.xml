@@ -33,14 +33,14 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_onboardingFragment_to_vendorFragment"
+            android:id="@+id/to_vendorFragment"
             app:destination="@id/vendorFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_onboardingFragment_to_cashForWorkFragment"
+            android:id="@+id/to_cashForWorkFragment"
             app:destination="@id/cashForWorkFragment" />
     </fragment>
     <fragment

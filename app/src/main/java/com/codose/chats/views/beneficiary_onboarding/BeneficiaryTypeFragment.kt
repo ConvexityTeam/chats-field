@@ -6,14 +6,16 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.codose.chats.R
 import com.codose.chats.databinding.FragmentBeneficiaryTypeBinding
-import com.codose.chats.utils.PrefUtils
+import com.codose.chats.utils.PreferenceUtil
 import com.codose.chats.utils.showToast
-import com.codose.chats.views.auth.dialog.LoginDialog
+import com.codose.chats.views.auth.login.LoginDialog
+import org.koin.android.ext.android.inject
 
 class BeneficiaryTypeFragment : Fragment(R.layout.fragment_beneficiary_type) {
 
     private var _binding: FragmentBeneficiaryTypeBinding? = null
     private val binding get() = _binding!!
+    private val preferenceUtil: PreferenceUtil by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -22,7 +24,7 @@ class BeneficiaryTypeFragment : Fragment(R.layout.fragment_beneficiary_type) {
 
         setupClickListeners()
 
-        if (PrefUtils.getNGOId() == 0) {
+        if (preferenceUtil.getNGOId() == 0) {
             openLogin()
         }
     }
@@ -30,7 +32,7 @@ class BeneficiaryTypeFragment : Fragment(R.layout.fragment_beneficiary_type) {
     private fun setupClickListeners() = with(binding) {
         backBtn.setOnClickListener { findNavController().navigateUp() }
         newBeneficiaryButton.setOnClickListener {
-            if (PrefUtils.getNGOId() == 0) {
+            if (preferenceUtil.getNGOId() == 0) {
                 showToast("Please Log In")
                 openLogin()
                 return@setOnClickListener
@@ -38,7 +40,7 @@ class BeneficiaryTypeFragment : Fragment(R.layout.fragment_beneficiary_type) {
             findNavController().navigate(BeneficiaryTypeFragmentDirections.toRegisterFragment())
         }
         existingBeneficiaryButton.setOnClickListener {
-            if (PrefUtils.getNGOId() == 0) {
+            if (preferenceUtil.getNGOId() == 0) {
                 showToast("Please Log In")
                 openLogin()
                 return@setOnClickListener

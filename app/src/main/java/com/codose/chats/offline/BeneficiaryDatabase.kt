@@ -7,15 +7,18 @@ import androidx.room.RoomDatabase
 import com.codose.chats.model.ModelCampaign
 import com.codose.chats.network.response.organization.campaign.Campaign
 
-@Database(entities = [Beneficiary::class, Campaign::class, ModelCampaign::class], version = 6, exportSchema = false)
+@Database(entities = [Beneficiary::class, Campaign::class, ModelCampaign::class],
+    version = 6,
+    exportSchema = false)
 abstract class BeneficiaryDatabase : RoomDatabase() {
-    abstract fun beneficiaryDao() : BeneficiaryDao
+    abstract fun beneficiaryDao(): BeneficiaryDao
+
     companion object {
         @Volatile
-        private var INSTANCE: BeneficiaryDatabase? =null
+        private var INSTANCE: BeneficiaryDatabase? = null
 
-        fun getDatabase(context: Context) : BeneficiaryDatabase {
-            return INSTANCE ?: synchronized(this){
+        fun getDatabase(context: Context): BeneficiaryDatabase {
+            return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     BeneficiaryDatabase::class.java,

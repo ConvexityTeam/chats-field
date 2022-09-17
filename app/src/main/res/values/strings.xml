@@ -74,4 +74,11 @@
     <string name="text_report">Report</string>
     <string name="text_status">Status</string>
     <string name="text_no_worker_found">No worker found</string>
+    <string name="text_pending_uploads">Pending Uploads</string>
+    <string name="text_beneficiary_onboarding">Beneficiary Onboarding</string>
+    <string name="text_vendor_onboarding">Vendor Onboarding</string>
+    <string name="text_logout_button">Logout button</string>
+    <string name="text_forgot_password">Forgot Password?</string>
+    <string name="text_email_et">Email</string>
+    <string name="text_sign_up">Sign Up</string>
 </resources>

@@ -12,6 +12,7 @@ import com.codose.chats.network.response.campaign.CampaignByOrganizationModel
 import com.codose.chats.network.response.campaign.GetAllCampaignsResponse
 import com.codose.chats.network.response.forgot.ForgotBody
 import com.codose.chats.network.response.forgot.ForgotPasswordResponse
+import com.codose.chats.network.response.login.Data
 import com.codose.chats.network.response.login.LoginResponse
 import com.codose.chats.network.response.organization.OrganizationResponse
 import com.codose.chats.network.response.organization.campaign.CampaignResponse
@@ -19,7 +20,6 @@ import com.codose.chats.network.response.progress.PostCompletionBody
 import com.codose.chats.network.response.progress.SubmitProgressModel
 import com.codose.chats.network.response.tasks.GetTasksModel
 import com.codose.chats.network.response.tasks.details.TaskDetailsModel
-import com.codose.chats.utils.PrefUtils
 import com.codose.chats.views.beneficiary_onboarding.model.AddBeneficiaryResponse
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
@@ -49,7 +49,7 @@ interface ConvexityApiService {
         @Part("dob") date: RequestBody,
         @Part("campaign") campaign: RequestBody,
         @Part("pin") pin: RequestBody,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
+        @Header("Authorization") authorization: String
     ): Deferred<RegisterResponse>
 
     @Multipart
@@ -72,26 +72,30 @@ interface ConvexityApiService {
         @Part("dob") date: RequestBody,
         @Part("campaign") campaign: RequestBody,
         @Part("pin") pin: RequestBody,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
+        @Header("Authorization") authorization: String
     ): Deferred<RegisterResponse>
 
     @POST("vendors/auth/register")
     fun vendorOnboarding(
         @Body requestBody: VendorBody,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
+        @Header("Authorization") authorization: String
     ): Deferred<RegisterResponse>
 
     @POST("vendors/auth/{userId}")
     fun getUserDetails(
         @Path("userId") userId: String,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
+        @Header("Authorization") authorization: String
     ): Deferred<UserDetailsResponse>
 
     @GET("ngos")
     fun getNGOs(): Deferred<OrganizationResponse>
 
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Replaced with Coroutine-supported methods")
     @POST("auth/login")
     fun loginNGO(@Body loginBody: LoginBody): Deferred<LoginResponse>
+
+    @POST("auth/login")
+    suspend fun loginNgo(@Body loginBody: LoginBody): BaseResponse<Data>
 
     @POST("users/reset-password")
     fun sendForgotMail(@Body forgotBody: ForgotBody): Deferred<ForgotPasswordResponse>
@@ -99,29 +103,29 @@ interface ConvexityApiService {
     @PUT("users/nfc_update")
     fun postNfcDetails(
         @Body nfcModel: NFCModel,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
+        @Header("Authorization") authorization: String
     ): Deferred<NfcUpdateResponse>
 
     @GET("campaigns/all/")
-    fun getCampaigns(@Header("Authorization") authorization: String = PrefUtils.getNGOToken()): Deferred<CampaignResponse>
+    fun getCampaigns(@Header("Authorization") authorization: String): Deferred<CampaignResponse>
 
     @GET("campaigns/organisation/{id}")
     fun getCampaignsByOrganization(
         @Path("id") id: String,
         @Query("type") type: String = "cash-for-work",
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken(),
+        @Header("Authorization") authorization: String
     ): Deferred<CampaignByOrganizationModel>
 
     @GET("cash-for-work/tasks/{id}")
     fun getTasks(
         @Path("id") campaignId: String,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
+        @Header("Authorization") authorization: String
     ): Deferred<GetTasksModel>
 
     @GET("cash-for-work/task/{taskId}")
     suspend fun getTasksDetails(
         @Path("taskId") taskId: String,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
+        @Header("Authorization") authorization: String
     ): BaseResponse<TaskDetailsModel>
 
     @POST("cash-for-work/task/submit-progress")
@@ -131,7 +135,7 @@ interface ConvexityApiService {
         @Part("userId") userId: RequestBody,
         @Part("description") description: RequestBody,
         @Part("images") images: ArrayList<MultipartBody.Part>,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
+        @Header("Authorization") authorization: String
     ): Deferred<SubmitProgressModel>
 
     @POST("cash-for-work/task/progress/confirm")
@@ -141,13 +145,13 @@ interface ConvexityApiService {
     suspend fun getAllCampaigns(
         @Path("id") id: Int,
         @Query("type") type: String,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
+        @Header("Authorization") authorization: String
     ): GetAllCampaignsResponse
 
     @GET("organisation/{organisation_id}/beneficiaries")
     suspend fun getBeneficiariesByOrganisation(
-        @Path("organisation_id") organisationId: Int = PrefUtils.getNGOId(),
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
+        @Path("organisation_id") organisationId: Int,
+        @Header("Authorization") authorization: String
     ): BaseResponse<List<Beneficiary>>
 
     @GET("organisations/non-org-beneficiary")
@@ -157,13 +161,13 @@ interface ConvexityApiService {
         @Query("email") email: String? = null,
         @Query("nin") nin: String? = null,
         @Query("phone") phone: String? = null,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
+        @Header("Authorization") authorization: String
     ): BaseResponse<List<Beneficiary>>
 
     @POST("beneficiaries/{beneficiary_id}/campaigns/{campaign_id}/join")
     suspend fun addBeneficiaryToCampaign(
         @Path("beneficiary_id") beneficiaryId: Int,
         @Path("campaign_id") campaignId: Int,
-        @Header("Authorization") authorization: String = PrefUtils.getNGOToken()
+        @Header("Authorization") authorization: String
     ): BaseResponse<AddBeneficiaryResponse>
 }
