@@ -89,6 +89,9 @@ object BluetoothConstants {
     const val BENEFICIARY_BUNDLE_KEY: String = "beneficiary_key"
     const val CAMPAIGN_BUNDLE_KEY: String = "campaign_id_key"
 
+    const val FRAGMENT_LOGIN_RESULT_KEY: String = "login_result_key"
+    const val LOGIN_BUNDLE_KEY: String = "login_bundle_key"
+
     const val API_SUCCESS: String = "success"
     const val API_ERROR: String = "error"
 

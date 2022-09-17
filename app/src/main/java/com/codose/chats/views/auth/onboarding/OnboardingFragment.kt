@@ -1,4 +1,4 @@
-package com.codose.chats.views.auth.ui
+package com.codose.chats.views.auth.onboarding
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -6,27 +6,41 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.codose.chats.R
 import com.codose.chats.databinding.FragmentOnboardingBinding
-import com.codose.chats.offline.BeneficiaryDatabase
 import com.codose.chats.utils.*
+import com.codose.chats.utils.BluetoothConstants.FRAGMENT_LOGIN_RESULT_KEY
+import com.codose.chats.utils.BluetoothConstants.LOGIN_BUNDLE_KEY
 import com.codose.chats.views.auth.adapter.OnBoarding
 import com.codose.chats.views.auth.adapter.OnboardingAdapter
 import com.codose.chats.views.auth.login.LoginDialog
+import com.codose.chats.views.auth.ui.ImageCaptureFragment
+import com.codose.chats.views.auth.ui.RegisterImageFragmentDirections
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_auth.*
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private var _binding: FragmentOnboardingBinding? = null
     private val binding get() = _binding!!
-
+    private val viewModel by viewModel<OnboardingViewModel>()
     private val adapter: OnboardingAdapter by lazy { OnboardingAdapter() }
     private val preferenceUtil: PreferenceUtil by inject()
-    private val database: BeneficiaryDatabase by inject()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setFragmentResultListener(FRAGMENT_LOGIN_RESULT_KEY) { _, bundle ->
+            val result = bundle.getBoolean(LOGIN_BUNDLE_KEY)
+            binding.logoutBtn.isVisible = result
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -74,7 +88,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private fun doLogout() {
         preferenceUtil.clearPreference()
-        database.clearAllTables()
+        viewModel.clearAllTables()
         binding.logoutBtn.hide()
     }
 
@@ -91,7 +105,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     ) {
         if (requestCode == ImageCaptureFragment.REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                findNavController().navigate(RegisterImageFragmentDirections.actionRegisterImageFragmentToImageCaptureFragment())
+                findNavController().navigate(RegisterImageFragmentDirections.toImageCaptureFragment())
             } else {
                 requireContext().toast("Permissions not granted by the user.")
                 findNavController().navigateUp()

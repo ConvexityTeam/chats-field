@@ -4,13 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResult
 import com.codose.chats.R
 import com.codose.chats.databinding.DialogLoginBinding
 import com.codose.chats.network.api.SessionManager
 import com.codose.chats.network.body.login.LoginBody
 import com.codose.chats.utils.*
+import com.codose.chats.utils.BluetoothConstants.FRAGMENT_LOGIN_RESULT_KEY
+import com.codose.chats.utils.BluetoothConstants.LOGIN_BUNDLE_KEY
 import com.codose.chats.views.auth.dialog.ForgotDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.android.ext.android.inject
@@ -71,6 +75,7 @@ class LoginDialog : BottomSheetDialogFragment() {
                     val data = it.result
                     preferenceUtil.setNGO(data.user.associatedOrganisations.first().OrganisationId, "")
                     preferenceUtil.setNGOToken("Bearer " + data.token)
+                    setFragmentResult(FRAGMENT_LOGIN_RESULT_KEY, bundleOf(LOGIN_BUNDLE_KEY to true))
                     dismiss()
                     showToast("Login successful")
                     loginButton.isVisible = true

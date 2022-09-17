@@ -2,6 +2,7 @@ package com.codose.chats.di
 
 import com.codose.chats.offline.OfflineViewModel
 import com.codose.chats.views.auth.login.LoginViewModel
+import com.codose.chats.views.auth.onboarding.OnboardingViewModel
 import com.codose.chats.views.beneficiary_search.BeneficiarySearchViewModel
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.codose.chats.views.beneficiary_list.BeneficiaryListViewModel
@@ -29,4 +30,5 @@ val viewModelModule = module {
     viewModel { BeneficiaryListViewModel(repository = get()) }
     viewModel { TaskDetailsViewModel(repository = get()) }
     viewModel { LoginViewModel(repository = get()) }
+    viewModel { OnboardingViewModel(database = get()) }
 }

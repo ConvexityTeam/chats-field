@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
-        android:name="com.codose.chats.views.auth.ui.OnboardingFragment"
+        android:name="com.codose.chats.views.auth.onboarding.OnboardingFragment"
         android:label="fragment_onboarding"
         tools:layout="@layout/fragment_onboarding">
         <!-- TODO comeback and change back to register fragment !-->
@@ -189,7 +189,7 @@
         android:label="fragment_register_image"
         tools:layout="@layout/fragment_register_image">
         <action
-            android:id="@+id/action_registerImageFragment_to_imageCaptureFragment"
+            android:id="@+id/to_imageCaptureFragment"
             app:destination="@id/imageCaptureFragment" />
         <action
             android:id="@+id/action_registerImageFragment_to_registerVerifyFragment"

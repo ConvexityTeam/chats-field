@@ -13,7 +13,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import com.bumptech.glide.Glide
 import com.codose.chats.R
 import com.codose.chats.utils.toast
@@ -61,7 +60,7 @@ class RegisterImageFragment : Fragment() {
 
     private fun requestCameraPermission() {
         if (allPermissionsGranted()) {
-            findNavController().navigate(RegisterImageFragmentDirections.actionRegisterImageFragmentToImageCaptureFragment())
+            findNavController().navigate(RegisterImageFragmentDirections.toImageCaptureFragment())
         } else {
             ActivityCompat.requestPermissions(
                 requireActivity(),
@@ -77,7 +76,7 @@ class RegisterImageFragment : Fragment() {
     ) {
         if (requestCode == ImageCaptureFragment.REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                findNavController().navigate(RegisterImageFragmentDirections.actionRegisterImageFragmentToImageCaptureFragment())
+                findNavController().navigate(RegisterImageFragmentDirections.toImageCaptureFragment())
             } else {
                 requireContext().toast("Permissions not granted by the user.")
                 findNavController().navigateUp()
