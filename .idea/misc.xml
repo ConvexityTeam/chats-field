@@ -32,7 +32,7 @@
         <entry key="app/src/main/res/layout/fragment_beneficiary_type.xml" value="0.25729166666666664" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work.xml" value="0.20907420656412676" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work_image.xml" value="0.23530938300641668" />
-        <entry key="app/src/main/res/layout/fragment_cash_for_work_submit.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work_submit.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work_task.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work_task_details.xml" value="0.25833333333333336" />
         <entry key="app/src/main/res/layout/fragment_existing_beneficiary.xml" value="0.25729166666666664" />

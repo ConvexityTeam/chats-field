@@ -2,7 +2,6 @@ package com.codose.chats.utils
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
@@ -84,7 +83,7 @@ fun String.getYouTubeId(): String {
             "error"
         }
     } catch (e: Exception) {
-        Log.i("YOUTUBE ERROR :", e.message!!)
+        Timber.i(e.message!!)
         "error"
     }
 }
@@ -118,9 +117,9 @@ fun Bitmap.toFile(context: Context, name: String): File {
     f.createNewFile()
     val bos = ByteArrayOutputStream()
     this.compress(Bitmap.CompressFormat.PNG, 50, bos)
-    val bitmapdata = bos.toByteArray()
+    val bitmapData = bos.toByteArray()
     val fos = FileOutputStream(f)
-    fos.write(bitmapdata)
+    fos.write(bitmapData)
     fos.flush()
     fos.close()
     return f
@@ -178,14 +177,7 @@ fun Throwable.handleThrowable(): String {
     return when (this) {
         is SocketTimeoutException -> "Pleas check your network connection. Make sure you're connected to a good network"
         is UnknownHostException -> "Please check your internet connection and try again"
-        is HttpException -> {
-            when (this.code()) {
-                in 401..403 -> "Your session has expired, kindly login again"
-                404 -> "The resource you are looking for cannot be found"
-                in 500..599 -> "It's not you, it's us. Please try again later"
-                else -> "Something went wrong"
-            }
-        }
+        is HttpException -> Utils.getErrorMessage(this)
         else -> "Something went wrong"
     }
 }

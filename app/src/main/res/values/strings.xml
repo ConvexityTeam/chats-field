@@ -81,4 +81,6 @@
     <string name="text_forgot_password">Forgot Password?</string>
     <string name="text_email_et">Email</string>
     <string name="text_sign_up">Sign Up</string>
+    <string name="text_upload_picture">Upload Picture</string>
+    <string name="text_upload_picture_details">Upload a clear picture showing task completion</string>
 </resources>

@@ -2,88 +2,75 @@ package com.codose.chats.views.cashForWork
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.codose.chats.R
+import com.codose.chats.databinding.FragmentCashForWorkSubmitBinding
 import com.codose.chats.utils.*
-import com.codose.chats.views.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_cash_for_work.*
-import kotlinx.android.synthetic.main.fragment_cash_for_work_submit.*
-import kotlinx.android.synthetic.main.fragment_cash_for_work_task_details.*
-import okhttp3.MultipartBody
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 
+class CashForWorkSubmitFragment : Fragment(R.layout.fragment_cash_for_work_submit) {
 
-class CashForWorkSubmitFragment : BaseFragment() {
-
+    private var _binding: FragmentCashForWorkSubmitBinding? = null
+    private val binding get() = _binding!!
     private val cashForWorkViewModel by viewModel<CashForWorkViewModel>()
-    private lateinit var taskId : String
-    private lateinit var taskName : String
-    private lateinit var userName : String
-    private lateinit var userId : String
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val args = CashForWorkSubmitFragmentArgs.fromBundle(requireArguments())
-        taskId = args.taskId
-        taskName = args.taskName
-        userName = args.userName
-        userId = args.userId
-    }
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cash_for_work_submit, container, false)
-    }
+    private val args by navArgs<CashForWorkSubmitFragmentArgs>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        cfw_submit_name.text = userName
-        cfw_submit_title.text = taskName
-        cfw_submit_back_btn.setOnClickListener {
-            findNavController().navigateUp()
+        _binding = FragmentCashForWorkSubmitBinding.bind(view)
+
+        binding.apply {
+            cfwSubmitName.text = args.userName
+            cfwSubmitTitle.text = args.taskName
         }
 
-        cfw_submit_btn.setOnClickListener{
-            cashForWorkViewModel.postTaskCompleted(taskId, userId)
-        }
-
-        cfw_picture_card.setOnClickListener{
-            findNavController().navigate(CashForWorkSubmitFragmentDirections.actionCashForWorkSubmitFragmentToCashForWorkImageFragment(
-                taskId = taskId,
-                userId = userId,
-                taskName = taskName
-            ))
-        }
-
+        setupClickListeners()
         setObservers()
     }
 
-    private fun setObservers(){
+    private fun setObservers() = with(binding) {
         cashForWorkViewModel.taskOperation.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Failure -> {
-                    cfw_submit_progress.hide()
+                    cfwSubmitProgress.root.hide()
                     requireContext().toast(it.message)
                     findNavController().navigateUp()
                 }
                 is ApiResponse.Loading -> {
-                    cfw_submit_progress.show()
+                    cfwSubmitProgress.root.show()
                 }
                 is ApiResponse.Success -> {
-                    cfw_submit_progress.hide()
+                    cfwSubmitProgress.root.hide()
                     val data = it.data
                     requireContext().toast(data.message)
-                    findNavController().navigate(CashForWorkSubmitFragmentDirections.actionCashForWorkSubmitFragmentToOnboardingFragment())
+                    findNavController().navigate(CashForWorkSubmitFragmentDirections.toOnboardingFragment())
                 }
             }
         }
+    }
+
+    private fun setupClickListeners() = with(binding) {
+        cfwSubmitBackBtn.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        cfwSubmitBtn.setOnClickListener {
+            cashForWorkViewModel.postTaskCompleted(args.taskId, args.userId)
+        }
+
+        cfwPictureCard.setOnClickListener {
+            findNavController().navigate(CashForWorkSubmitFragmentDirections.toCashForWorkImageFragment(
+                taskId = args.taskId,
+                userId = args.userId,
+                taskName = args.taskName
+            ))
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

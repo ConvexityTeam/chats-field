@@ -19,9 +19,8 @@ import com.codose.chats.network.response.organization.campaign.CampaignResponse
 import com.codose.chats.network.response.progress.PostCompletionBody
 import com.codose.chats.network.response.progress.SubmitProgressModel
 import com.codose.chats.network.response.tasks.GetTasksModel
-import com.codose.chats.network.response.tasks.details.Task
-import com.codose.chats.network.response.tasks.details.TaskDetailsModel
 import com.codose.chats.views.beneficiary_onboarding.model.AddBeneficiaryResponse
+import com.codose.chats.views.cashForWork.model.TaskDetailsResponse
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -133,7 +132,7 @@ interface ConvexityApiService {
     suspend fun getTasksDetails(
         @Path("taskId") taskId: String,
         @Header("Authorization") authorization: String
-    ): BaseResponse<TaskDetailsModel>
+    ): BaseResponse<TaskDetailsResponse>
 
     @POST("cash-for-work/task/submit-progress")
     @Multipart

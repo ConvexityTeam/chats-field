@@ -26,10 +26,18 @@ interface BeneficiaryDao {
     @Query("SELECT * FROM beneficiary")
     fun getAllBeneficiary() : LiveData<List<Beneficiary>>
 
-
     @Query("SELECT * FROM campaign")
     fun getCampaigns() : LiveData<List<Campaign>>
 
-    @Query("SELECT * FROM modelCampaign")
-    fun geAllLiveCampaigns(): LiveData<List<ModelCampaign>>
+    @Query("SELECT * FROM modelCampaign WHERE type is :type")
+    fun geAllLiveCampaigns(type: String): LiveData<List<ModelCampaign>>
+
+    @Query("DELETE FROM campaign")
+    suspend fun deleteCampaigns()
+
+    @Query("DELETE FROM modelCampaign")
+    suspend fun deleteModelCampaigns()
+
+    @Query("DELETE FROM beneficiary")
+    suspend fun deleteBeneficiaries()
 }

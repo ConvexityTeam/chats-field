@@ -22,12 +22,11 @@ import com.codose.chats.network.response.organization.campaign.CampaignResponse
 import com.codose.chats.network.response.progress.PostCompletionBody
 import com.codose.chats.network.response.progress.SubmitProgressModel
 import com.codose.chats.network.response.tasks.GetTasksModel
-import com.codose.chats.network.response.tasks.details.Task
-import com.codose.chats.network.response.tasks.details.TaskDetailsModel
 import com.codose.chats.offline.OfflineRepository
 import com.codose.chats.utils.ApiResponse
 import com.codose.chats.utils.PreferenceUtil
 import com.codose.chats.utils.Utils
+import com.codose.chats.views.cashForWork.model.TaskDetailsResponse
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -337,7 +336,7 @@ class NetworkRepository(
         }
     }
 
-    suspend fun getTasksDetails(taskId: String): BaseResponse<TaskDetailsModel> {
+    suspend fun getTasksDetails(taskId: String): BaseResponse<TaskDetailsResponse> {
         return withContext(Dispatchers.IO) { api.getTasksDetails(taskId, authorization = preferenceUtil.getNGOToken()) }
     }
 
