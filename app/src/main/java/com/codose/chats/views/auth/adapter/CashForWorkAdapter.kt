@@ -1,6 +1,5 @@
 package com.codose.chats.views.auth.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isGone
@@ -37,10 +36,9 @@ class CashForWorkAdapter(
 
     inner class MyViewHolder(private val binding: ItemCashForWorkItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        @SuppressLint("SetTextI18n")
         fun bind(item: ModelCampaign) = with(binding) {
             txtCashForWorkTitle.text = item.title
-            txtCashForWorkAmount.text = "₦" + item.budget
+            txtCashForWorkAmount.text = String.format("₦%s", item.budget)
             txtCashForWorkCreated.text = item.createdAt?.toDateTime()
             loadTasksButton.setOnClickListener { onLoadTaskClick.invoke(item.jobs) }
             beneficiariesButton.setOnClickListener { onBeneficiaryClick(item.id) }

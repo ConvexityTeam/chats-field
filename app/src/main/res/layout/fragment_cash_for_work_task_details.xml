@@ -58,7 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/task_status"
-        tools:listitem="@layout/item_existing_beneficiary" />
+        tools:listitem="@layout/item_cash_for_work_beneficiary" />
 
     <include
         android:id="@+id/progress_indicator"

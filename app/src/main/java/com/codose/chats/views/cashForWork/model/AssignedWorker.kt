@@ -1,18 +1,28 @@
 package com.codose.chats.views.cashForWork.model
 
+import com.google.gson.annotations.SerializedName
+
 data class AssignedWorker(
-    val Assigned_CreatedAt: String,
-    val Assigned_Status: String,
-    val Assigned_UpdatedAt: String,
-    val TaskAssignment: TaskAssignment,
+    @SerializedName("Assigned_CreatedAt")
+    val assignedCreatedAt: String,
+    @SerializedName("Assigned_Status")
+    val assignedStatus: String,
+    @SerializedName("Assigned_UpdatedAt")
+    val assignedUpdatedAt: String,
+    @SerializedName("TaskAssignment")
+    val taskAssignment: TaskAssignment,
     val dob: String,
     val email: String,
-    val first_name: String,
+    @SerializedName("first_name")
+    val firstName: String,
     val gender: String,
     val id: Int,
-    val last_name: String,
+    @SerializedName("last_name")
+    val lastName: String,
     val location: String,
-    val marital_status: Any,
+    @SerializedName("marital_status")
+    val maritalStatus: Any,
     val phone: String,
-    val profile_pic: String
+    @SerializedName("profile_pic")
+    val profilePic: String
 )

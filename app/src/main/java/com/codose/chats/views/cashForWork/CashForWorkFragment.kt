@@ -7,7 +7,6 @@ import androidx.navigation.fragment.findNavController
 import com.codose.chats.R
 import com.codose.chats.databinding.FragmentCashForWorkBinding
 import com.codose.chats.utils.*
-import com.codose.chats.utils.BluetoothConstants.ACTIVE_CASH_FOR_WORK
 import com.codose.chats.views.auth.adapter.CashForWorkAdapter
 import com.codose.chats.views.cashForWork.model.Job
 import org.koin.androidx.viewmodel.ext.android.viewModel

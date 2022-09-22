@@ -346,6 +346,7 @@ class NetworkRepository(
         description : String,
         images :  ArrayList<File>,
     ): ApiResponse<SubmitProgressModel> {
+        ApiResponse.Loading<SubmitProgressModel>()
         return try {
             val taskIdBody = taskId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val userIdBody = userId.toRequestBody("multipart/form-data".toMediaTypeOrNull())

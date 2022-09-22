@@ -22,7 +22,12 @@ class CashForWorkTaskDetailsFragment : Fragment(R.layout.fragment_cash_for_work_
     private val binding get() = _binding!!
     private val viewModel by viewModel<TaskDetailsViewModel>()
     private val args by navArgs<CashForWorkTaskDetailsFragmentArgs>()
-    private val workAdapter: WorkerAdapter by lazy { WorkerAdapter(onItemClick = ::toImageDetails) }
+    private val workAdapter: WorkerAdapter by lazy {
+        WorkerAdapter(
+            onItemClick = ::toImageDetails,
+            onAddWorkerClick = ::addWorker
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -71,8 +76,8 @@ class CashForWorkTaskDetailsFragment : Fragment(R.layout.fragment_cash_for_work_
                 is TaskDetailsViewModel.TaskDetailsUiState.Success -> {
                     progressIndicator.root.hide()
                     val task = it.task
-                    workAdapter.submitList(task.AssignedWorkers)
-                    if (task.AssignedWorkers.isEmpty()) {
+                    workAdapter.submitList(task.assignedWorkers)
+                    if (task.assignedWorkers.isEmpty()) {
                         taskDetailsEmpty.root.show()
                         taskDetailsEmpty.txtNotFound.text = getString(R.string.text_no_worker_found)
                     } else {
@@ -86,9 +91,14 @@ class CashForWorkTaskDetailsFragment : Fragment(R.layout.fragment_cash_for_work_
 
     private fun toImageDetails(worker: AssignedWorker) {
         findNavController().navigate(CashForWorkTaskDetailsFragmentDirections.toCashForWorkImageFragment(
-            taskId = worker.TaskAssignment.TaskId.toString(),
+            taskId = worker.taskAssignment.taskId.toString(),
             taskName = args.job.name,
-            userId = worker.TaskAssignment.UserId.toString()
+            userId = worker.taskAssignment.userId.toString()
         ))
+    }
+
+    private fun addWorker(worker: AssignedWorker) {
+        // TODO: Add worker to task
+        showToast("TODO: Add worker - ${worker.firstName} to task")
     }
 }

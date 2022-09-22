@@ -10,7 +10,6 @@ import com.codose.chats.utils.handleThrowable
 import com.codose.chats.views.cashForWork.model.TaskDetailsResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class TaskDetailsViewModel(private val repository: NetworkRepository) : ViewModel() {
 
@@ -27,7 +26,6 @@ class TaskDetailsViewModel(private val repository: NetworkRepository) : ViewMode
             val response = repository.getTasksDetails(taskId)
             if (response.code in 200..202 && response.status == API_SUCCESS) {
                 response.data?.let {
-                    Timber.d("Response: ${response.data}")
                     _uiState.postValue(TaskDetailsUiState.Success(it))
                 }
             } else {

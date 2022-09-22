@@ -11,6 +11,7 @@ import com.codose.chats.network.response.campaign.CampaignByOrganizationModel
 import com.codose.chats.network.response.progress.SubmitProgressModel
 import com.codose.chats.network.response.tasks.GetTasksModel
 import com.codose.chats.utils.ApiResponse
+import com.codose.chats.utils.handleThrowable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,7 +29,7 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
     val cashForWorkCampaign: LiveData<List<ModelCampaign>> = _cashForWorkCampaign
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e(throwable)
+        taskOperation.value = ApiResponse.Failure(throwable.handleThrowable())
     }
 
     fun getCashForWorks() {
@@ -58,7 +59,7 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
         images: ArrayList<File>,
     ) {
         taskOperation.value = ApiResponse.Loading()
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             withContext(Dispatchers.IO) {
                 val data = networkRepository.postTaskEvidence(taskId, userId, description, images)
                 taskOperation.postValue(data)

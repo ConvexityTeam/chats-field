@@ -1,20 +1,30 @@
 package com.codose.chats.views.cashForWork.model
 
+import com.google.gson.annotations.SerializedName
+
 data class TaskDetailsResponse(
-    val AssignedWorkers: List<AssignedWorker>,
-    val CampaignId: Int,
+    @SerializedName("AssignedWorkers")
+    val assignedWorkers: List<AssignedWorker>,
+    @SerializedName("CampaignId")
+    val campaignId: Int,
     val amount: Int,
     val assigned: Int,
-    val assignment_count: Int,
-    val campleted_task: Int,
+    @SerializedName("assignment_count")
+    val assignmentCount: Int,
+    @SerializedName("campleted_task")
+    val completedTask: Int,
     val createdAt: String,
     val description: String,
     val id: Int,
     val isCompleted: Boolean,
     val name: String,
-    val require_agent_approval: Boolean,
-    val require_evidence: Boolean,
-    val require_vendor_approval: Boolean,
-    val total_task_allowed: Int,
+    @SerializedName("require_agent_approval")
+    val requireAgentApproval: Boolean,
+    @SerializedName("require_evidence")
+    val requireEvidence: Boolean,
+    @SerializedName("require_vendor_approval")
+    val requireVendorApproval: Boolean,
+    @SerializedName("total_task_allowed")
+    val totalTaskAllowed: Int,
     val updatedAt: String
 )

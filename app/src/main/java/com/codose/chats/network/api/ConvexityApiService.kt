@@ -140,7 +140,7 @@ interface ConvexityApiService {
         @Part("taskId") taskId: RequestBody,
         @Part("userId") userId: RequestBody,
         @Part("description") description: RequestBody,
-        @Part("images") images: ArrayList<MultipartBody.Part>,
+        @Part images: ArrayList<MultipartBody.Part>,
         @Header("Authorization") authorization: String
     ): Deferred<SubmitProgressModel>
 

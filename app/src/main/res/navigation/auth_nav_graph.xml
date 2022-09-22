@@ -276,7 +276,7 @@
         android:label="CashForWorkImageFragment"
         tools:layout="@layout/fragment_cash_for_work_image">
         <action
-            android:id="@+id/action_cashForWorkImageFragment_to_onboardingFragment"
+            android:id="@+id/to_onboardingFragment"
             app:destination="@id/onboardingFragment"
             app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
