@@ -29,7 +29,7 @@ class RegisterViewModel(
     private val repository: NetworkRepository,
     offlineRepository: OfflineRepository,
 ) : ViewModel() {
-    val getCampaigns = offlineRepository.getAllCampaigns()
+    val getCampaigns = offlineRepository.getAllCampaigns(type = "campaign")
     var allFinger: ArrayList<Bitmap>? = null
     var profileImage: String? = null
     var nfc: String? = null

@@ -5,7 +5,7 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.cashForWork.CashForWorkFragment">
+    tools:context=".views.cashForWork.CashForWorkTaskDetailsFragment">
 
     <ImageButton
         android:id="@+id/back_btn"
@@ -41,6 +41,7 @@
         android:textAppearance="@style/TextAppearance.TextMedium"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/task_details_title"
@@ -51,12 +52,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
+        android:scrollbars="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/task_status"
-        tools:listitem="@layout/item_existing_beneficiary" />
+        tools:listitem="@layout/item_cash_for_work_beneficiary" />
 
     <include
         android:id="@+id/progress_indicator"

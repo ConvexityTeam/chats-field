@@ -4,6 +4,10 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import com.codose.chats.model.ModelCampaign
 import com.codose.chats.network.response.organization.campaign.Campaign
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
 
@@ -37,7 +41,16 @@ class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
         return beneficiaryDao!!.getAllBeneficiary()
     }
 
-    fun getAllCampaigns() : LiveData<List<ModelCampaign>>{
-        return beneficiaryDao!!.geAllLiveCampaigns()
+    fun getAllCampaigns(type: String) : LiveData<List<ModelCampaign>>{
+        return beneficiaryDao!!.geAllLiveCampaigns(type)
+    }
+
+    suspend fun deleteAllTables() {
+        coroutineScope {
+            val del1Def = async { beneficiaryDao?.deleteCampaigns() }
+            val del2Def = async { beneficiaryDao?.deleteModelCampaigns() }
+            val del3Def = async { beneficiaryDao?.deleteBeneficiaries() }
+            listOf(del1Def, del2Def, del3Def).awaitAll()
+        }
     }
 }

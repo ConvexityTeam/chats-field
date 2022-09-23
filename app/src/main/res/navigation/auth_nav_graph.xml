@@ -234,17 +234,14 @@
         android:label="fragment_cash_for_work_task_details"
         tools:layout="@layout/fragment_cash_for_work_task_details">
         <action
-            android:id="@+id/action_cashForWorkTaskDetailsFragment_to_cashForWorkSubmitFragment"
+            android:id="@+id/to_cashForWorkSubmitFragment"
             app:destination="@id/cashForWorkSubmitFragment" />
         <action
-            android:id="@+id/action_cashForWorkTaskDetailsFragment_to_cashForWorkImageFragment"
+            android:id="@+id/to_cashForWorkImageFragment"
             app:destination="@id/cashForWorkImageFragment" />
         <argument
-            android:name="taskId"
-            app:argType="integer" />
-        <argument
-            android:name="taskName"
-            app:argType="string" />
+            android:name="job"
+            app:argType="com.codose.chats.views.cashForWork.model.Job" />
     </fragment>
     <fragment
         android:id="@+id/cashForWorkSubmitFragment"
@@ -253,7 +250,7 @@
         tools:layout="@layout/fragment_cash_for_work_submit">
 
         <action
-            android:id="@+id/action_cashForWorkSubmitFragment_to_onboardingFragment"
+            android:id="@+id/to_onboardingFragment"
             app:destination="@id/onboardingFragment"
             app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
@@ -270,7 +267,7 @@
             android:name="userId"
             app:argType="string" />
         <action
-            android:id="@+id/action_cashForWorkSubmitFragment_to_cashForWorkImageFragment"
+            android:id="@+id/to_cashForWorkImageFragment"
             app:destination="@id/cashForWorkImageFragment" />
     </fragment>
     <fragment
@@ -279,7 +276,7 @@
         android:label="CashForWorkImageFragment"
         tools:layout="@layout/fragment_cash_for_work_image">
         <action
-            android:id="@+id/action_cashForWorkImageFragment_to_onboardingFragment"
+            android:id="@+id/to_onboardingFragment"
             app:destination="@id/onboardingFragment"
             app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
@@ -292,6 +289,9 @@
         <argument
             android:name="userId"
             app:argType="string" />
+        <argument
+            android:name="beneficiaryId"
+            app:argType="integer" />
     </fragment>
     <dialog
         android:id="@+id/beneficiarySearchDialog"

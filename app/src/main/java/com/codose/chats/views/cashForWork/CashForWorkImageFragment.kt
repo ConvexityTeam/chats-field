@@ -1,88 +1,79 @@
-@file:Suppress("DEPRECATION")
-
 package com.codose.chats.views.cashForWork
 
-import android.app.Activity.RESULT_OK
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.codose.chats.R
+import com.codose.chats.databinding.FragmentCashForWorkImageBinding
 import com.codose.chats.utils.*
-import com.codose.chats.views.auth.adapter.PrintPager
 import com.codose.chats.views.auth.adapter.PrintPagerAdapter
-import com.codose.chats.views.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_cash_for_work_image.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.io.File
 
+class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image) {
 
-class CashForWorkImageFragment : BaseFragment() {
-
-    private lateinit var adapter: PrintPagerAdapter
+    private var _binding: FragmentCashForWorkImageBinding? = null
+    private val binding get() = _binding!!
     private val cashForWorkViewModel by viewModel<CashForWorkViewModel>()
-    private lateinit var taskId: String
-    private lateinit var userId: String
-    private lateinit var taskName : String
+    private val args by navArgs<CashForWorkImageFragmentArgs>()
+    private var launcherOne: ActivityResultLauncher<Intent>? = null
+    private var launcherTwo: ActivityResultLauncher<Intent>? = null
+    private var launcherThree: ActivityResultLauncher<Intent>? = null
+    private var launcherFour: ActivityResultLauncher<Intent>? = null
+    private var launcherFive: ActivityResultLauncher<Intent>? = null
+    private lateinit var adapter: PrintPagerAdapter
     private var images = arrayListOf<Bitmap>()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val args = CashForWorkImageFragmentArgs.fromBundle(requireArguments())
-        taskId = args.taskId
-        userId = args.userId
-        taskName = args.taskName
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cash_for_work_image, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentCashForWorkImageBinding.bind(view)
         adapter = PrintPagerAdapter(requireContext())
-        task_details.text = "Task: $taskName"
+        binding.taskDetails.text = String.format("Task: %s", args.taskName)
 
-        cfw_image_one.setOnClickListener {
-            dispatchTakePictureIntent(REQUEST_IMAGE_CAPTURE)
+        setupClickListeners()
+        setObservers()
+    }
+
+    private fun setupClickListeners() = with(binding) {
+        cfwImageOne.setOnClickListener {
+            dispatchTakePictureIntent(launcherOne)
         }
-        cfw_image_two.setOnClickListener {
-            dispatchTakePictureIntent(REQUEST_IMAGE_CAPTURE_TWO)
+        cfwImageTwo.setOnClickListener {
+            dispatchTakePictureIntent(launcherTwo)
         }
-        cfw_image_three.setOnClickListener {
-            dispatchTakePictureIntent(REQUEST_IMAGE_CAPTURE_THREE)
+        cfwImageThree.setOnClickListener {
+            dispatchTakePictureIntent(launcherThree)
         }
-        cfw_image_four.setOnClickListener {
-            dispatchTakePictureIntent(REQUEST_IMAGE_CAPTURE_FOUR)
+        cfwImageFour.setOnClickListener {
+            dispatchTakePictureIntent(launcherFour)
         }
-        cfw_image_five.setOnClickListener {
-            dispatchTakePictureIntent(REQUEST_IMAGE_CAPTURE_FIVE)
+        cfwImageFive.setOnClickListener {
+            dispatchTakePictureIntent(launcherFive)
         }
-        cfw_image_back_btn.setOnClickListener {
+        cfwImageBackBtn.setOnClickListener {
             findNavController().navigateUp()
         }
-        cfw_image_submit.setOnClickListener {
-            if(cashForWorkViewModel.imageList.value!!.size >= 5){
-                if(cfw_image_descEdit.text.isNullOrBlank().not()){
-                    cfw_image_descLayout.error = ""
-                    submitImages(cfw_image_descEdit.text.toString())
-                }else{
-                    cfw_image_descLayout.error = "This field is required."
+        cfwImageSubmit.setOnClickListener {
+            if (cashForWorkViewModel.imageList.value!!.size >= 5) {
+                if (cfwImageDescEdit.text.isNullOrBlank().not()) {
+                    cfwImageDescLayout.error = ""
+                    submitImages(cfwImageDescEdit.text.toString())
+                } else {
+                    cfwImageDescLayout.error = "This field is required."
                 }
-            }else{
-                requireContext().toast(getString(R.string.add_more_image))
+            } else {
+                showToast(getString(R.string.add_more_image))
             }
         }
-        setObservers()
     }
 
     private fun submitImages(desc: String) {
@@ -94,75 +85,100 @@ class CashForWorkImageFragment : BaseFragment() {
             imagesPart.add(f)
         }
 
-        cashForWorkViewModel.postTaskImages(taskId, userId, desc, imagesPart)
+        cashForWorkViewModel.postTaskImages(
+            beneficiaryId = args.beneficiaryId,
+            description = desc,
+            images = imagesPart
+        )
     }
 
-    private fun dispatchTakePictureIntent(requestCode: Int) {
-        if(cashForWorkViewModel.imageList.value!!.size < 5){
+    private fun dispatchTakePictureIntent(launcher: ActivityResultLauncher<Intent>?) {
+        if (cashForWorkViewModel.imageList.value!!.size < 5) {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             try {
-                startActivityForResult(takePictureIntent, requestCode)
+                launcher?.launch(takePictureIntent)
             } catch (e: ActivityNotFoundException) {
-                requireContext().toast(getString(R.string.camera_error))
+                showToast(getString(R.string.camera_error))
             }
-        }else{
-            requireContext().toast(getString(R.string.limit_reached))
+        } else {
+            showToast(getString(R.string.limit_reached))
         }
-
     }
 
     private fun setObservers() {
         cashForWorkViewModel.taskOperation.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Failure -> {
-                    cfw_image_submit_progress.hide()
-                    requireContext().toast(it.message)
+                    binding.cfwImageSubmitProgress.root.hide()
+                    showToast(it.message)
                 }
                 is ApiResponse.Loading -> {
-                    cfw_image_submit_progress.show()
+                    binding.cfwImageSubmitProgress.root.show()
                 }
                 is ApiResponse.Success -> {
-                    cfw_image_submit_progress.hide()
+                    binding.cfwImageSubmitProgress.root.hide()
                     val data = it.data
-                    requireContext().toast(data.message)
-                    findNavController().navigate(CashForWorkImageFragmentDirections.actionCashForWorkImageFragmentToOnboardingFragment())
+                    showToast(data.message)
+                    findNavController().navigate(CashForWorkImageFragmentDirections.toOnboardingFragment())
+                }
+            }
+        }
+
+        cashForWorkViewModel.imageUpload.observe(viewLifecycleOwner) {
+            when (it) {
+                is CashForWorkViewModel.ImageUploadState.Error -> {
+                    showToast(it.errorMessage)
+                }
+                CashForWorkViewModel.ImageUploadState.Loading -> {
+                    binding.cfwImageSubmitProgress.root.show()
+                }
+                is CashForWorkViewModel.ImageUploadState.Success -> {
+                    binding.cfwImageSubmitProgress.root.hide()
+                    val data = it.data
+                    showToast(data.message)
+                    findNavController().navigate(CashForWorkImageFragmentDirections.toOnboardingFragment())
                 }
             }
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            when (requestCode) {
-                REQUEST_IMAGE_CAPTURE -> {
-                    cfw_image_one.setImageBitmap(imageBitmap)
-                }
-                REQUEST_IMAGE_CAPTURE_TWO -> {
-                    cfw_image_two.setImageBitmap(imageBitmap)
-                }
-                REQUEST_IMAGE_CAPTURE_THREE -> {
-                    cfw_image_three.setImageBitmap(imageBitmap)
-                }
-                REQUEST_IMAGE_CAPTURE_FOUR -> {
-                    cfw_image_four.setImageBitmap(imageBitmap)
-                }
-                REQUEST_IMAGE_CAPTURE_FIVE -> {
-                    cfw_image_five.setImageBitmap(imageBitmap)
-                }
-            }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        launcherOne = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val imageBitmap = it.data?.extras?.get("data") as Bitmap
+            binding.cfwImageOne.setImageBitmap(imageBitmap)
+            images.add(imageBitmap)
+            cashForWorkViewModel.imageList.value = images
+        }
+        launcherTwo = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val imageBitmap = it.data?.extras?.get("data") as Bitmap
+            binding.cfwImageTwo.setImageBitmap(imageBitmap)
+            images.add(imageBitmap)
+            cashForWorkViewModel.imageList.value = images
+        }
+        launcherThree = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val imageBitmap = it.data?.extras?.get("data") as Bitmap
+            binding.cfwImageThree.setImageBitmap(imageBitmap)
+            images.add(imageBitmap)
+            cashForWorkViewModel.imageList.value = images
+        }
+        launcherFour = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val imageBitmap = it.data?.extras?.get("data") as Bitmap
+            binding.cfwImageFour.setImageBitmap(imageBitmap)
+            images.add(imageBitmap)
+            cashForWorkViewModel.imageList.value = images
+        }
+        launcherFive = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val imageBitmap = it.data?.extras?.get("data") as Bitmap
+            binding.cfwImageFive.setImageBitmap(imageBitmap)
             images.add(imageBitmap)
             cashForWorkViewModel.imageList.value = images
         }
     }
 
-    companion object {
-        const val REQUEST_IMAGE_CAPTURE = 748
-        const val REQUEST_IMAGE_CAPTURE_TWO = 749
-        const val REQUEST_IMAGE_CAPTURE_THREE = 750
-        const val REQUEST_IMAGE_CAPTURE_FOUR = 751
-        const val REQUEST_IMAGE_CAPTURE_FIVE = 752
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
-
 }

@@ -7,15 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codose.chats.model.ModelCampaign
 import com.codose.chats.network.NetworkRepository
+import com.codose.chats.network.response.BaseResponse
 import com.codose.chats.network.response.campaign.CampaignByOrganizationModel
 import com.codose.chats.network.response.progress.SubmitProgressModel
 import com.codose.chats.network.response.tasks.GetTasksModel
 import com.codose.chats.utils.ApiResponse
+import com.codose.chats.utils.handleThrowable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.io.File
 
 class CashForWorkViewModel(private val networkRepository: NetworkRepository) : ViewModel() {
@@ -27,8 +28,12 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
     private val _cashForWorkCampaign = MutableLiveData<List<ModelCampaign>>()
     val cashForWorkCampaign: LiveData<List<ModelCampaign>> = _cashForWorkCampaign
 
+    private val _imageUpload = MutableLiveData<ImageUploadState>()
+    val imageUpload: LiveData<ImageUploadState> = _imageUpload
+
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e(throwable)
+        taskOperation.value = ApiResponse.Failure(throwable.handleThrowable())
+        _imageUpload.value = ImageUploadState.Error(throwable.handleThrowable())
     }
 
     fun getCashForWorks() {
@@ -52,17 +57,18 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
     }
 
     fun postTaskImages(
-        taskId: String,
-        userId: String,
+        beneficiaryId: Int,
         description: String,
         images: ArrayList<File>,
     ) {
-        taskOperation.value = ApiResponse.Loading()
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val data = networkRepository.postTaskEvidence(taskId, userId, description, images)
-                taskOperation.postValue(data)
-            }
+        _imageUpload.value = ImageUploadState.Loading
+        viewModelScope.launch(exceptionHandler) {
+            val response = networkRepository.uploadTaskEvidence(
+                beneficiaryId = beneficiaryId,
+                comment = description,
+                uploads = images
+            )
+            _imageUpload.postValue(ImageUploadState.Success(response))
         }
     }
 
@@ -74,5 +80,11 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
                 taskOperation.postValue(data)
             }
         }
+    }
+
+    sealed class ImageUploadState {
+        object Loading : ImageUploadState()
+        data class Success(val data: BaseResponse<Any>) : ImageUploadState()
+        data class Error(val errorMessage: String?) : ImageUploadState()
     }
 }

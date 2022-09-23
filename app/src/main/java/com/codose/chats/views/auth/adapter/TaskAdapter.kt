@@ -20,7 +20,7 @@ Oshodin Osemwingie
 on 17/07/2020.
 */
 
-class JobAdapter(private val onReportClick:(Int, String) -> Unit) :
+class JobAdapter(private val onReportClick:(Job) -> Unit) :
     ListAdapter<Job, JobAdapter.MyViewHolder>(JobDiffCallback()) {
 
     inner class MyViewHolder(private val binding : ItemCashForWorkItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -31,7 +31,7 @@ class JobAdapter(private val onReportClick:(Int, String) -> Unit) :
             txtCashForWorkCreated.text = item.createdAt.toDateTime()
             completionValue.text = item.isCompleted.toStatusString()
             cashForWorkButtons.isGone = true
-            reportButton.setOnClickListener { onReportClick.invoke(item.id, item.name) }
+            reportButton.setOnClickListener { onReportClick.invoke(item) }
         }
     }
 

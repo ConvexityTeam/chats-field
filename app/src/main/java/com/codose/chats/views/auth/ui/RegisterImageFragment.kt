@@ -65,7 +65,8 @@ class RegisterImageFragment : Fragment() {
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 ImageCaptureFragment.REQUIRED_PERMISSIONS,
-                ImageCaptureFragment.REQUEST_CODE_PERMISSIONS)
+                ImageCaptureFragment.REQUEST_CODE_PERMISSIONS
+            )
         }
     }
 

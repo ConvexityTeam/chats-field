@@ -22,11 +22,11 @@ import com.codose.chats.network.response.organization.campaign.CampaignResponse
 import com.codose.chats.network.response.progress.PostCompletionBody
 import com.codose.chats.network.response.progress.SubmitProgressModel
 import com.codose.chats.network.response.tasks.GetTasksModel
-import com.codose.chats.network.response.tasks.details.TaskDetailsModel
 import com.codose.chats.offline.OfflineRepository
 import com.codose.chats.utils.ApiResponse
 import com.codose.chats.utils.PreferenceUtil
 import com.codose.chats.utils.Utils
+import com.codose.chats.views.cashForWork.model.TaskDetailsResponse
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -336,7 +336,7 @@ class NetworkRepository(
         }
     }
 
-    suspend fun getTasksDetails(taskId: String): BaseResponse<TaskDetailsModel> {
+    suspend fun getTasksDetails(taskId: String): BaseResponse<TaskDetailsResponse> {
         return withContext(Dispatchers.IO) { api.getTasksDetails(taskId, authorization = preferenceUtil.getNGOToken()) }
     }
 
@@ -346,6 +346,7 @@ class NetworkRepository(
         description : String,
         images :  ArrayList<File>,
     ): ApiResponse<SubmitProgressModel> {
+        ApiResponse.Loading<SubmitProgressModel>()
         return try {
             val taskIdBody = taskId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val userIdBody = userId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
@@ -371,6 +372,34 @@ class NetworkRepository(
         } catch (t : Throwable) {
             ApiResponse.Failure(t.message!!)
         }
+    }
+
+    suspend fun uploadTaskEvidence(
+        beneficiaryId: Int,
+        comment: String,
+        type: String = "image",
+        uploads: ArrayList<File>,
+    ): BaseResponse<Any> = withContext(Dispatchers.IO) {
+        val typeBody = type.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val commentBody = comment.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val imageParts = ArrayList<MultipartBody.Part>()
+        uploads.forEachIndexed { index, image ->
+            val compressed = Compressor.compress(context, image)
+            val mBody = compressed.asRequestBody("image/*".toMediaTypeOrNull())
+            val imagePart = MultipartBody.Part.createFormData(
+                "images_$index",
+                compressed.name,
+                mBody
+            )
+            imageParts.add(imagePart)
+        }
+        api.uploadTaskEvidence(
+            beneficiaryId = beneficiaryId,
+            description = commentBody,
+            type = typeBody,
+            uploads = imageParts,
+            authorization = preferenceUtil.getNGOToken()
+        )
     }
 
     suspend fun postTaskCompleted(
