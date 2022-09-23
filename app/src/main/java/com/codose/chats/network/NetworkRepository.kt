@@ -374,6 +374,34 @@ class NetworkRepository(
         }
     }
 
+    suspend fun uploadTaskEvidence(
+        beneficiaryId: Int,
+        comment: String,
+        type: String = "image",
+        uploads: ArrayList<File>,
+    ): BaseResponse<Any> = withContext(Dispatchers.IO) {
+        val typeBody = type.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val commentBody = comment.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val imageParts = ArrayList<MultipartBody.Part>()
+        uploads.forEachIndexed { index, image ->
+            val compressed = Compressor.compress(context, image)
+            val mBody = compressed.asRequestBody("image/*".toMediaTypeOrNull())
+            val imagePart = MultipartBody.Part.createFormData(
+                "images_$index",
+                compressed.name,
+                mBody
+            )
+            imageParts.add(imagePart)
+        }
+        api.uploadTaskEvidence(
+            beneficiaryId = beneficiaryId,
+            description = commentBody,
+            type = typeBody,
+            uploads = imageParts,
+            authorization = preferenceUtil.getNGOToken()
+        )
+    }
+
     suspend fun postTaskCompleted(
         taskId: String,
         userId: String,

@@ -289,6 +289,9 @@
         <argument
             android:name="userId"
             app:argType="string" />
+        <argument
+            android:name="beneficiaryId"
+            app:argType="integer" />
     </fragment>
     <dialog
         android:id="@+id/beneficiarySearchDialog"

@@ -93,7 +93,8 @@ class CashForWorkTaskDetailsFragment : Fragment(R.layout.fragment_cash_for_work_
         findNavController().navigate(CashForWorkTaskDetailsFragmentDirections.toCashForWorkImageFragment(
             taskId = worker.taskAssignment.taskId.toString(),
             taskName = args.job.name,
-            userId = worker.taskAssignment.userId.toString()
+            userId = worker.taskAssignment.userId.toString(),
+            beneficiaryId = worker.id
         ))
     }
 

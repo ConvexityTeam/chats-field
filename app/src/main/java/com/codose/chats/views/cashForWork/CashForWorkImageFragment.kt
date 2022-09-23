@@ -85,7 +85,11 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
             imagesPart.add(f)
         }
 
-        cashForWorkViewModel.postTaskImages(args.taskId, args.userId, desc, imagesPart)
+        cashForWorkViewModel.postTaskImages(
+            beneficiaryId = args.beneficiaryId,
+            description = desc,
+            images = imagesPart
+        )
     }
 
     private fun dispatchTakePictureIntent(launcher: ActivityResultLauncher<Intent>?) {
@@ -112,6 +116,23 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
                     binding.cfwImageSubmitProgress.root.show()
                 }
                 is ApiResponse.Success -> {
+                    binding.cfwImageSubmitProgress.root.hide()
+                    val data = it.data
+                    showToast(data.message)
+                    findNavController().navigate(CashForWorkImageFragmentDirections.toOnboardingFragment())
+                }
+            }
+        }
+
+        cashForWorkViewModel.imageUpload.observe(viewLifecycleOwner) {
+            when (it) {
+                is CashForWorkViewModel.ImageUploadState.Error -> {
+                    showToast(it.errorMessage)
+                }
+                CashForWorkViewModel.ImageUploadState.Loading -> {
+                    binding.cfwImageSubmitProgress.root.show()
+                }
+                is CashForWorkViewModel.ImageUploadState.Success -> {
                     binding.cfwImageSubmitProgress.root.hide()
                     val data = it.data
                     showToast(data.message)

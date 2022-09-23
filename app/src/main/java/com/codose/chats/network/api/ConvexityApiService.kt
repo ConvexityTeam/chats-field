@@ -144,6 +144,16 @@ interface ConvexityApiService {
         @Header("Authorization") authorization: String
     ): Deferred<SubmitProgressModel>
 
+    @POST("cash-for-work/task/agent-evidence/{beneficiaryId}")
+    @Multipart
+    suspend fun uploadTaskEvidence(
+        @Path("beneficiaryId") beneficiaryId: Int,
+        @Part("comment") description: RequestBody,
+        @Part("type") type: RequestBody,
+        @Part uploads: ArrayList<MultipartBody.Part>,
+        @Header("Authorization") authorization: String
+    ): BaseResponse<Any>
+
     @POST("cash-for-work/task/progress/confirm")
     fun postTaskCompleted(@Body postCompletionBody: PostCompletionBody): Deferred<SubmitProgressModel>
 

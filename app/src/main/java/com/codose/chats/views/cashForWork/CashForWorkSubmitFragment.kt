@@ -61,11 +61,12 @@ class CashForWorkSubmitFragment : Fragment(R.layout.fragment_cash_for_work_submi
         }
 
         cfwPictureCard.setOnClickListener {
-            findNavController().navigate(CashForWorkSubmitFragmentDirections.toCashForWorkImageFragment(
+            /*findNavController().navigate(CashForWorkSubmitFragmentDirections.toCashForWorkImageFragment(
                 taskId = args.taskId,
                 userId = args.userId,
-                taskName = args.taskName
-            ))
+                taskName = args.taskName,
+                beneficiaryId = 1
+            ))*/
         }
     }
 
