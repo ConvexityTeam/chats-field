@@ -4,6 +4,7 @@ import android.content.Context
 import com.codose.chats.model.ModelCampaign
 import com.codose.chats.model.NFCModel
 import com.codose.chats.network.api.ConvexityApiService
+import com.codose.chats.network.api.NinVerificationApi
 import com.codose.chats.network.api.RetrofitClient
 import com.codose.chats.network.api.SessionManager
 import com.codose.chats.network.body.VendorBody
@@ -42,6 +43,7 @@ import java.lang.Exception
 
 class NetworkRepository(
     private val api: ConvexityApiService,
+    private val ninApi: NinVerificationApi,
     private val offlineRepository: OfflineRepository,
     private val context: Context,
     private val preferenceUtil: PreferenceUtil
@@ -123,7 +125,7 @@ class NetworkRepository(
         location: RequestBody,
         campaign: RequestBody,
         pin: RequestBody,
-        nin: RequestBody?,
+        nin: String?
     ) : ApiResponse<RegisterResponse>{
         return try {
             val compressed = Compressor.compress(context, profile_pic)
@@ -135,27 +137,33 @@ class NetworkRepository(
                 compressed.absolutePath.substringAfterLast("/"),
                 mBody
             )
-            val data = api.onboardSpecialUser(
-                organizationId,
-                firstName,
-                lastName,
-                email,
-                phone,
-                password,
-                lat,
-                long,
-                location,
-                nfc,
-                status,
-                nin,
-                image,
-                mGender,
-                mDate,
-                campaign,
-                pin,
-                authorization = preferenceUtil.getNGOToken()
-            ).await()
-            ApiResponse.Success(data)
+
+            val ninResponse = ninApi.verifyNin(NinVerificationApi.NinBody(number = nin))
+            if (ninResponse.status) {
+                val data = api.onboardSpecialUser(
+                    organizationId,
+                    firstName,
+                    lastName,
+                    email,
+                    phone,
+                    password,
+                    lat,
+                    long,
+                    location,
+                    nfc,
+                    status,
+                    nin?.toRequestBody("multipart/form-data".toMediaTypeOrNull()),
+                    image,
+                    mGender,
+                    mDate,
+                    campaign,
+                    pin,
+                    authorization = preferenceUtil.getNGOToken()
+                ).await()
+                ApiResponse.Success(data)
+            } else {
+                ApiResponse.Failure("NIN: ${ninResponse.message}")
+            }
         }catch (e : HttpException){
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
@@ -388,7 +396,7 @@ class NetworkRepository(
             val mBody = compressed.asRequestBody("image/*".toMediaTypeOrNull())
             val imagePart = MultipartBody.Part.createFormData(
                 "images_$index",
-                compressed.name,
+                compressed.absolutePath.substringAfterLast("/"),
                 mBody
             )
             imageParts.add(imagePart)
