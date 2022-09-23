@@ -158,14 +158,27 @@ class RegisterViewModel(
         lastName: String,
         address: String,
         country: String,
-        state: String
+        state: String,
+        coordinates: List<Double>
     ) {
         onboardUser.value = ApiResponse.Loading()
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val data =
-                    repository.vendorOnboarding(businessName, email, phone, password, pin, bvn, firstName, lastName,
-                        address = address, country = country, state = state)
+                    repository.vendorOnboarding(
+                        businessName = businessName,
+                        email = email,
+                        phone = phone,
+                        password = password,
+                        pin = pin,
+                        bvn = bvn,
+                        firstName = firstName,
+                        lastName = lastName,
+                        address = address,
+                        country = country,
+                        state = state,
+                        coordinates = coordinates
+                    )
                 onboardUser.postValue(data)
             }
         }

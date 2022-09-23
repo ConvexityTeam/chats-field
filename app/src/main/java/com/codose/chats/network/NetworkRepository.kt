@@ -183,7 +183,8 @@ class NetworkRepository(
         lastName: String,
         address: String,
         country: String,
-        state: String
+        state: String,
+        coordinates: List<Double>
     ): ApiResponse<RegisterResponse> {
         return try {
             val data = api.vendorOnboarding(
@@ -196,6 +197,7 @@ class NetworkRepository(
                 phone = phone,
                 storeName = businessName,
                 state = state,
+                coordinates = coordinates,
                 authorization = preferenceUtil.getNGOToken()
             ).await()
 //            val requestBody = VendorBody(bvn,email,businessName,password,phone,pin,businessName, firstName, lastName,

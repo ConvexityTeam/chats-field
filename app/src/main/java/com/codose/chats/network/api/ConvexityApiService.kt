@@ -87,7 +87,7 @@ interface ConvexityApiService {
         @Field("address") address: String,
         @Field("phone") phone: String,
         @Field("state") state: String,
-        @Field("coordinates") coordinates: List<Float> = emptyList(),
+        @Field("location[]") coordinates: List<Double>,
         @Header("Authorization") authorization: String
     ): Deferred<RegisterResponse>
 

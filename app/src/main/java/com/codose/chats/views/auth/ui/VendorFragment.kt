@@ -1,5 +1,6 @@
 package com.codose.chats.views.auth.ui
 
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.codose.chats.utils.Utils.toCountryCode
 import com.codose.chats.views.auth.login.LoginDialog
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.codose.chats.views.base.BaseFragment
+import com.robin.locationgetter.EasyLocation
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import kotlinx.android.synthetic.main.fragment_vendor.*
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -26,6 +28,8 @@ class VendorFragment : BaseFragment() {
     private val registerViewModel by viewModel<RegisterViewModel>()
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
+    private var latitude: Double = 6.465422
+    private var longitude: Double = 3.406448
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -55,6 +59,7 @@ class VendorFragment : BaseFragment() {
         }
 
         setObservers()
+        initLocation()
     }
 
     private fun setObservers() {
@@ -78,6 +83,23 @@ class VendorFragment : BaseFragment() {
                 }
             }
         }
+    }
+
+    private fun initLocation() {
+        EasyLocation(requireActivity(), object : EasyLocation.EasyLocationCallBack {
+            override fun getLocation(location: Location) {
+                this@VendorFragment.longitude = location.longitude
+                this@VendorFragment.latitude = location.latitude
+            }
+
+            override fun locationSettingFailed() {
+
+            }
+
+            override fun permissionDenied() {
+
+            }
+        })
     }
 
     private fun checkInputs() {
@@ -181,7 +203,8 @@ class VendorFragment : BaseFragment() {
                 lastName,
                 address = address,
                 country = country,
-                state = state
+                state = state,
+                coordinates = listOf(latitude, longitude)
             )
         } else {
             offlineViewModel.insert(beneficiary)
