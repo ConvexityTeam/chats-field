@@ -63,23 +63,22 @@ class VendorFragment : BaseFragment() {
     }
 
     private fun setObservers() {
-        registerViewModel.onboardUser.observe(viewLifecycleOwner) {
+        registerViewModel.vendorOnboardingState.observe(viewLifecycleOwner) {
             when (it) {
-                is ApiResponse.Loading -> {
+                is RegisterViewModel.VendorOnboardingState.Error -> {
+                    vendorProgress.hide()
+                    showToast(it.errorMessage)
+                    vendorNextButton.isEnabled = true
+                }
+                RegisterViewModel.VendorOnboardingState.Loading -> {
                     vendorProgress.show()
                     vendorNextButton.isEnabled = false
                 }
-                is ApiResponse.Success -> {
+                RegisterViewModel.VendorOnboardingState.Success -> {
                     vendorProgress.hide()
-                    val data = it.data
-                    showToast(data.message)
+                    vendorNextButton.isEnabled = true
+                    showToast("Success")
                     findNavController().navigateUp()
-                    vendorNextButton.isEnabled = true
-                }
-                is ApiResponse.Failure -> {
-                    vendorProgress.hide()
-                    showToast(it.message)
-                    vendorNextButton.isEnabled = true
                 }
             }
         }
@@ -193,14 +192,11 @@ class VendorFragment : BaseFragment() {
 
         if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
             registerViewModel.vendorOnboarding(
-                businessName,
-                email,
-                phone.toCountryCode(),
-                password,
-                pin,
-                bvn,
-                firstName,
-                lastName,
+                businessName = businessName,
+                email = email,
+                phone = phone.toCountryCode(),
+                firstName = firstName,
+                lastName = lastName,
                 address = address,
                 country = country,
                 state = state,

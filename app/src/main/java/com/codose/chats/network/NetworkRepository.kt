@@ -7,7 +7,7 @@ import com.codose.chats.network.api.ConvexityApiService
 import com.codose.chats.network.api.NinVerificationApi
 import com.codose.chats.network.api.RetrofitClient
 import com.codose.chats.network.api.SessionManager
-import com.codose.chats.network.body.VendorBody
+import com.codose.chats.network.body.LocationBody
 import com.codose.chats.network.body.login.LoginBody
 import com.codose.chats.network.response.BaseResponse
 import com.codose.chats.network.response.NfcUpdateResponse
@@ -28,6 +28,7 @@ import com.codose.chats.utils.ApiResponse
 import com.codose.chats.utils.PreferenceUtil
 import com.codose.chats.utils.Utils
 import com.codose.chats.views.cashForWork.model.TaskDetailsResponse
+import com.google.gson.Gson
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -80,23 +81,23 @@ class NetworkRepository(
                 mBody
             )
             val data = api.onboardUser(
-                organizationId,
-                firstName,
-                lastName,
-                email,
-                phone,
-                password,
-                lat,
-                long,
-                location,
-                nfc,
-                status,
-                image,
-                prints,
-                mGender,
-                mDate,
-                campaign,
-                pin,
+                id = organizationId,
+                firstName = firstName,
+                lastName = lastName,
+                email = email,
+                phone = phone,
+                password = password,
+                lat = lat,
+                long = long,
+                location = location,
+                nfc = nfc,
+                status = status,
+                profile_pic = image,
+                prints = prints,
+                gender = mGender,
+                date = mDate,
+                campaign = campaign,
+                pin = pin,
                 authorization = preferenceUtil.getNGOToken()
             ).await()
             ApiResponse.Success(data)
@@ -176,18 +177,15 @@ class NetworkRepository(
         businessName: String,
         email: String,
         phone: String,
-        password: String,
-        pin: String,
-        bvn: String,
         firstName: String,
         lastName: String,
         address: String,
         country: String,
         state: String,
-        coordinates: List<Double>
-    ): ApiResponse<RegisterResponse> {
-        return try {
-            val data = api.vendorOnboarding(
+        coordinates: List<Double>,
+    ): BaseResponse<Any> {
+        return withContext(Dispatchers.IO) {
+            api.vendorOnboarding(
                 organisationId = preferenceUtil.getNGOId(),
                 email = email,
                 firstName = firstName,
@@ -197,18 +195,9 @@ class NetworkRepository(
                 phone = phone,
                 storeName = businessName,
                 state = state,
-                coordinates = coordinates,
+                location = Gson().toJson(LocationBody(coordinates, country)),
                 authorization = preferenceUtil.getNGOToken()
-            ).await()
-//            val requestBody = VendorBody(bvn,email,businessName,password,phone,pin,businessName, firstName, lastName,
-//                address = address, country = country, state = state)
-//            val data = api.vendorOnboarding(requestBody, authorization = preferenceUtil.getNGOToken()).await()
-            ApiResponse.Success(data)
-        } catch (e: HttpException) {
-            val message = Utils.getErrorMessage(e)
-            ApiResponse.Failure(message, e.code())
-        } catch (t: Throwable) {
-            ApiResponse.Failure(t.message!!)
+            )
         }
     }
 

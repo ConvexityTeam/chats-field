@@ -1,7 +1,6 @@
 package com.codose.chats.network.api
 
 import com.codose.chats.model.NFCModel
-import com.codose.chats.network.body.VendorBody
 import com.codose.chats.network.body.login.LoginBody
 import com.codose.chats.network.response.BaseResponse
 import com.codose.chats.network.response.NfcUpdateResponse
@@ -77,7 +76,7 @@ interface ConvexityApiService {
 
     @POST("organisations/{organisation_id}/vendors")
     @FormUrlEncoded
-    fun vendorOnboarding(
+    suspend fun vendorOnboarding(
         @Path("organisation_id") organisationId: Int,
         @Field("first_name") firstName: String,
         @Field("last_name") lastName: String,
@@ -87,9 +86,9 @@ interface ConvexityApiService {
         @Field("address") address: String,
         @Field("phone") phone: String,
         @Field("state") state: String,
-        @Field("location[]") coordinates: List<Double>,
+        @Field("location") location: String,
         @Header("Authorization") authorization: String
-    ): Deferred<RegisterResponse>
+    ): BaseResponse<Any>
 
     @POST("vendors/auth/{userId}")
     fun getUserDetails(
