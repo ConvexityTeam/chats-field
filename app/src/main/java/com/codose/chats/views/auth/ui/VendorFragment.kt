@@ -170,7 +170,8 @@ class VendorFragment : BaseFragment() {
         beneficiary.state = state
 
         if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-            registerViewModel.vendorOnboarding(businessName,
+            registerViewModel.vendorOnboarding(
+                businessName,
                 email,
                 phone.toCountryCode(),
                 password,
@@ -180,7 +181,8 @@ class VendorFragment : BaseFragment() {
                 lastName,
                 address = address,
                 country = country,
-                state = state)
+                state = state
+            )
         } else {
             offlineViewModel.insert(beneficiary)
             showToast(getString(R.string.no_internet))

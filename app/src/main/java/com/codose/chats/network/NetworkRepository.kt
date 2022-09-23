@@ -184,16 +184,28 @@ class NetworkRepository(
         address: String,
         country: String,
         state: String
-    ) : ApiResponse<RegisterResponse>{
+    ): ApiResponse<RegisterResponse> {
         return try {
-            val requestBody = VendorBody(bvn,email,businessName,password,phone,pin,businessName, firstName, lastName,
-                address = address, country = country, state = state)
-            val data = api.vendorOnboarding(requestBody, authorization = preferenceUtil.getNGOToken()).await()
+            val data = api.vendorOnboarding(
+                organisationId = preferenceUtil.getNGOId(),
+                email = email,
+                firstName = firstName,
+                lastName = lastName,
+                address = address,
+                country = country,
+                phone = phone,
+                storeName = businessName,
+                state = state,
+                authorization = preferenceUtil.getNGOToken()
+            ).await()
+//            val requestBody = VendorBody(bvn,email,businessName,password,phone,pin,businessName, firstName, lastName,
+//                address = address, country = country, state = state)
+//            val data = api.vendorOnboarding(requestBody, authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
-        }catch (e : HttpException){
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        }catch (t : Throwable){
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }

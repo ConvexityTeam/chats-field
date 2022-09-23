@@ -75,9 +75,19 @@ interface ConvexityApiService {
         @Header("Authorization") authorization: String
     ): Deferred<RegisterResponse>
 
-    @POST("vendors/auth/register")
+    @POST("organisations/{organisation_id}/vendors")
+    @FormUrlEncoded
     fun vendorOnboarding(
-        @Body requestBody: VendorBody,
+        @Path("organisation_id") organisationId: Int,
+        @Field("first_name") firstName: String,
+        @Field("last_name") lastName: String,
+        @Field("email") email: String,
+        @Field("store_name") storeName: String,
+        @Field("country") country: String,
+        @Field("address") address: String,
+        @Field("phone") phone: String,
+        @Field("state") state: String,
+        @Field("coordinates") coordinates: List<Float> = emptyList(),
         @Header("Authorization") authorization: String
     ): Deferred<RegisterResponse>
 
