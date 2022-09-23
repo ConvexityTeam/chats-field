@@ -114,7 +114,7 @@ class RegisterViewModel(
         location: RequestBody,
         campaign: RequestBody,
         pin: RequestBody,
-        nin: RequestBody,
+        nin: String,
     ) {
         onboardUser.value = ApiResponse.Loading()
         viewModelScope.launch {

@@ -238,7 +238,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         val location = Gson().toJson(locationBody)
         val mLocation = location.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mCampaign = mViewModel.campaign.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mNin = mViewModel.nin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val mNin = mViewModel.nin
         val mPin = mViewModel.pin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
         val mFingers = ArrayList<File>()

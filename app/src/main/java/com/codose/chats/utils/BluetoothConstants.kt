@@ -6,6 +6,7 @@ import com.codose.chats.BuildConfig
 object BluetoothConstants {
     const val sDirectory = ""
     const val BASE_URL = "https://staging-api.chats.cash/v1/"
+    const val NIN_BASE_URL = "https://api.myidentitypay.com/api/v1/"
     const val TAG = "BluetoothReader"
     const val CONNECTION_CODE = 908
     val permissions = arrayOf(
@@ -101,4 +102,6 @@ object BluetoothConstants {
     const val INCOMPLETE: String = "Incomplete"
 
     const val SHARED_PREFERENCE_NAME: String = BuildConfig.APPLICATION_ID.plus("_preference")
+
+    const val NIN_KEY: String = "F4Unc5MZ.e7BjG09xd9YJXMnvuXmayuICfMVNW6OE"
 }

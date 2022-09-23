@@ -13,6 +13,7 @@ val repositoryModule = module {
     single {
         NetworkRepository(
             api = get(),
+            ninApi = get(),
             offlineRepository = get(),
             context = get(),
             preferenceUtil = get()

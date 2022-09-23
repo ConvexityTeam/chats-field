@@ -168,8 +168,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         val mLocation = location.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mCampaign =
             beneficiary.campaignId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mNin =
-            beneficiary.nin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val mNin = beneficiary.nin
         val mPin =
             beneficiary.pin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mFingers = ArrayList<File>()
@@ -212,7 +211,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                 location = mLocation,
                 campaign = mCampaign,
                 pin = mPin,
-                nin = mNin)
+                nin = mNin
+            )
         }else{
             mainViewModel.onboardUser(
                 beneficiary.id.toString(),
