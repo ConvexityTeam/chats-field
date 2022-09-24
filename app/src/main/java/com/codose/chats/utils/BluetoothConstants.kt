@@ -5,7 +5,9 @@ import com.codose.chats.BuildConfig
 
 object BluetoothConstants {
     const val sDirectory = ""
-    const val BASE_URL = "https://staging-api.chats.cash/v1/"
+    private const val DEBUG_BASE_URL: String = "https://staging-api.chats.cash/v1/"
+    private const val RELEASE_BASE_URL: String = "https://api.chats.cash/v1/"
+    val BASE_URL = if (BuildConfig.DEBUG) DEBUG_BASE_URL else RELEASE_BASE_URL
     const val NIN_BASE_URL = "https://api.myidentitypay.com/api/v1/"
     const val TAG = "BluetoothReader"
     const val CONNECTION_CODE = 908
