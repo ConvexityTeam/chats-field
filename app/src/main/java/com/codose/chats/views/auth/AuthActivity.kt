@@ -1,7 +1,7 @@
 package com.codose.chats.views.auth
 
+import android.location.Location
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.codose.chats.R
@@ -13,31 +13,32 @@ import com.codose.chats.utils.BluetoothConstants.VENDOR_TYPE
 import com.codose.chats.utils.Utils.checkAppPermission
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.google.gson.Gson
+import com.robin.locationgetter.EasyLocation
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import com.treebo.internetavailabilitychecker.InternetConnectivityListener
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.io.File
 
-
 @InternalCoroutinesApi
-class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback {
+class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback, EasyLocation.EasyLocationCallBack {
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private val mainViewModel by viewModel<RegisterViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
     private var currentBeneficiary = Beneficiary()
-
+    private var latitude: Double = 6.465422
+    private var longitude: Double = 3.406448
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
         this.checkAppPermission()
+        EasyLocation(this, this)
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
         if(internetAvailabilityChecker.currentInternetAvailabilityStatus){
             startUpload()
@@ -238,18 +239,19 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
 
 
     private fun registerVendor(currentBeneficiary: Beneficiary) {
-        mainViewModel.vendorOnboarding (
-            currentBeneficiary.storeName,
-            currentBeneficiary.email,
-            currentBeneficiary.phone,
-            currentBeneficiary.password,
-            currentBeneficiary.pin.toString(),
-            currentBeneficiary.bvn,
-            currentBeneficiary.firstName,
-            currentBeneficiary.lastName,
-            currentBeneficiary.address,
-            currentBeneficiary.country,
-            currentBeneficiary.state
+        mainViewModel.vendorOnboarding(
+            businessName = currentBeneficiary.storeName,
+            email = currentBeneficiary.email,
+            phone = currentBeneficiary.phone,
+//            password = currentBeneficiary.password,
+//            pin = currentBeneficiary.pin.toString(),
+//            bvn = currentBeneficiary.bvn,
+            firstName = currentBeneficiary.firstName,
+            lastName = currentBeneficiary.lastName,
+            address = currentBeneficiary.address,
+            country = currentBeneficiary.country,
+            state = currentBeneficiary.state,
+            coordinates = listOf(latitude, longitude)
         )
     }
 
@@ -257,4 +259,14 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         Timber.v(percentage.toString())
     }
 
+    override fun getLocation(location: Location) {
+        this.longitude = location.longitude
+        this.latitude = location.latitude
+    }
+
+    override fun locationSettingFailed() {
+    }
+
+    override fun permissionDenied() {
+    }
 }

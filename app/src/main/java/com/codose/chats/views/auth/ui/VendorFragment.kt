@@ -1,5 +1,6 @@
 package com.codose.chats.views.auth.ui
 
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.codose.chats.utils.Utils.toCountryCode
 import com.codose.chats.views.auth.login.LoginDialog
 import com.codose.chats.views.auth.viewmodel.RegisterViewModel
 import com.codose.chats.views.base.BaseFragment
+import com.robin.locationgetter.EasyLocation
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import kotlinx.android.synthetic.main.fragment_vendor.*
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -26,6 +28,8 @@ class VendorFragment : BaseFragment() {
     private val registerViewModel by viewModel<RegisterViewModel>()
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
+    private var latitude: Double = 6.465422
+    private var longitude: Double = 3.406448
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -55,29 +59,46 @@ class VendorFragment : BaseFragment() {
         }
 
         setObservers()
+        initLocation()
     }
 
     private fun setObservers() {
-        registerViewModel.onboardUser.observe(viewLifecycleOwner) {
+        registerViewModel.vendorOnboardingState.observe(viewLifecycleOwner) {
             when (it) {
-                is ApiResponse.Loading -> {
+                is RegisterViewModel.VendorOnboardingState.Error -> {
+                    vendorProgress.hide()
+                    showToast(it.errorMessage)
+                    vendorNextButton.isEnabled = true
+                }
+                RegisterViewModel.VendorOnboardingState.Loading -> {
                     vendorProgress.show()
                     vendorNextButton.isEnabled = false
                 }
-                is ApiResponse.Success -> {
+                RegisterViewModel.VendorOnboardingState.Success -> {
                     vendorProgress.hide()
-                    val data = it.data
-                    showToast(data.message)
+                    vendorNextButton.isEnabled = true
+                    showToast("Success")
                     findNavController().navigateUp()
-                    vendorNextButton.isEnabled = true
-                }
-                is ApiResponse.Failure -> {
-                    vendorProgress.hide()
-                    showToast(it.message)
-                    vendorNextButton.isEnabled = true
                 }
             }
         }
+    }
+
+    private fun initLocation() {
+        EasyLocation(requireActivity(), object : EasyLocation.EasyLocationCallBack {
+            override fun getLocation(location: Location) {
+                this@VendorFragment.longitude = location.longitude
+                this@VendorFragment.latitude = location.latitude
+            }
+
+            override fun locationSettingFailed() {
+
+            }
+
+            override fun permissionDenied() {
+
+            }
+        })
     }
 
     private fun checkInputs() {
@@ -170,17 +191,17 @@ class VendorFragment : BaseFragment() {
         beneficiary.state = state
 
         if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-            registerViewModel.vendorOnboarding(businessName,
-                email,
-                phone.toCountryCode(),
-                password,
-                pin,
-                bvn,
-                firstName,
-                lastName,
+            registerViewModel.vendorOnboarding(
+                businessName = businessName,
+                email = email,
+                phone = phone.toCountryCode(),
+                firstName = firstName,
+                lastName = lastName,
                 address = address,
                 country = country,
-                state = state)
+                state = state,
+                coordinates = listOf(latitude, longitude)
+            )
         } else {
             offlineViewModel.insert(beneficiary)
             showToast(getString(R.string.no_internet))

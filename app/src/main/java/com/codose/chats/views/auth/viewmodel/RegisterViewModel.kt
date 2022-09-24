@@ -1,6 +1,7 @@
 package com.codose.chats.views.auth.viewmodel
 
 import android.graphics.Bitmap
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,8 @@ import com.codose.chats.network.response.organization.OrganizationResponse
 import com.codose.chats.offline.Beneficiary
 import com.codose.chats.offline.OfflineRepository
 import com.codose.chats.utils.ApiResponse
+import com.codose.chats.utils.handleThrowable
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,6 +45,12 @@ class RegisterViewModel(
     val nfcDetails = MutableLiveData<ApiResponse<NfcUpdateResponse>>()
     val forgot = MutableLiveData<ApiResponse<ForgotPasswordResponse>>()
 
+    private val _vendorOnboardingUiState = MutableLiveData<VendorOnboardingState>()
+    val vendorOnboardingState: LiveData<VendorOnboardingState> = _vendorOnboardingUiState
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        _vendorOnboardingUiState.value = VendorOnboardingState.Error(throwable.handleThrowable())
+    }
 
     var specialCase = false
     var nin = "";
@@ -151,22 +160,32 @@ class RegisterViewModel(
         businessName: String,
         email: String,
         phone: String,
-        password: String,
-        pin: String,
-        bvn: String,
         firstName: String,
         lastName: String,
         address: String,
         country: String,
-        state: String
+        state: String,
+        coordinates: List<Double>
     ) {
-        onboardUser.value = ApiResponse.Loading()
-        viewModelScope.launch {
+        _vendorOnboardingUiState.value = VendorOnboardingState.Loading
+        viewModelScope.launch(exceptionHandler) {
             withContext(Dispatchers.IO) {
-                val data =
-                    repository.vendorOnboarding(businessName, email, phone, password, pin, bvn, firstName, lastName,
-                        address = address, country = country, state = state)
-                onboardUser.postValue(data)
+                val data = repository.vendorOnboarding(
+                        businessName = businessName,
+                        email = email,
+                        phone = phone,
+                        firstName = firstName,
+                        lastName = lastName,
+                        address = address,
+                        country = country,
+                        state = state,
+                        coordinates = coordinates
+                    )
+                if (data.code == 201) {
+                    _vendorOnboardingUiState.postValue(VendorOnboardingState.Success)
+                } else {
+                    _vendorOnboardingUiState.postValue(VendorOnboardingState.Error(data.message))
+                }
             }
         }
     }
@@ -232,5 +251,11 @@ class RegisterViewModel(
                 forgot.postValue(data)
             }
         }
+    }
+
+    sealed class VendorOnboardingState {
+        object Loading : VendorOnboardingState()
+        object Success : VendorOnboardingState()
+        data class Error(val errorMessage: String?) : VendorOnboardingState()
     }
 }
