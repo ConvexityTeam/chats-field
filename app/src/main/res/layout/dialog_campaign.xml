@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_bottom_sheet"
-    tools:context="com.codose.chats.views.beneficiary_onboarding.campaigns.CampaignDialog">
+    tools:context="chats.cash.chats_field.views.beneficiary_onboarding.campaigns.CampaignDialog">
 
     <TextView
         android:id="@+id/textView18"
