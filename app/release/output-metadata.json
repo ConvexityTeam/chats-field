@@ -4,14 +4,14 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.codose.bluetoothsensor",
+  "applicationId": "chats.cash.chats_field",
   "variantName": "processReleaseResources",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 7,
-      "versionName": "1.0.0-beta07",
+      "versionCode": 8,
+      "versionName": "1.0.1-beta08",
       "outputFile": "app-release.apk"
     }
   ]

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:fillViewport="true"
     android:scrollbars="vertical"
-    tools:context="com.codose.chats.views.beneficiary_search.BeneficiarySearchDialog">
+    tools:context="chats.cash.chats_field.views.beneficiary_search.BeneficiarySearchDialog">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

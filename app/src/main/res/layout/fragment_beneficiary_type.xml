@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.codose.chats.views.beneficiary_onboarding.BeneficiaryTypeFragment">
+    tools:context="chats.cash.chats_field.views.beneficiary_onboarding.BeneficiaryTypeFragment">
 
     <ImageView
         android:id="@+id/imageView2"

@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.codose.chats.views.auth.ui.SplashFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.SplashFragment"
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash">
         <action
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
-        android:name="com.codose.chats.views.auth.onboarding.OnboardingFragment"
+        android:name="chats.cash.chats_field.views.auth.onboarding.OnboardingFragment"
         android:label="fragment_onboarding"
         tools:layout="@layout/fragment_onboarding">
         <!-- TODO comeback and change back to register fragment !-->
@@ -45,7 +45,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.codose.chats.views.auth.ui.RegisterFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register">
         <action
@@ -73,7 +73,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerOtpFragment"
-        android:name="com.codose.chats.views.auth.ui.RegisterOtpFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterOtpFragment"
         android:label="fragment_register_otp"
         tools:layout="@layout/fragment_register_otp">
         <action
@@ -116,7 +116,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerVerifyFragment"
-        android:name="com.codose.chats.views.auth.ui.RegisterVerifyFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterVerifyFragment"
         android:label="fragment_register_verify"
         tools:layout="@layout/fragment_register_verify">
         <action
@@ -171,7 +171,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerPrintFragment"
-        android:name="com.codose.chats.views.auth.ui.RegisterPrintFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterPrintFragment"
         android:label="fragment_register_print"
         tools:layout="@layout/fragment_register_print" >
         <action
@@ -180,12 +180,12 @@
     </fragment>
     <fragment
         android:id="@+id/fingerPrintScannerFragment"
-        android:name="com.codose.chats.views.auth.ui.FingerPrintScannerFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.FingerPrintScannerFragment"
         android:label="fragment_finger_print_scanner"
         tools:layout="@layout/fragment_finger_print_scanner" />
     <fragment
         android:id="@+id/registerImageFragment"
-        android:name="com.codose.chats.views.auth.ui.RegisterImageFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterImageFragment"
         android:label="fragment_register_image"
         tools:layout="@layout/fragment_register_image">
         <action
@@ -197,16 +197,16 @@
     </fragment>
     <fragment
         android:id="@+id/vendorFragment"
-        android:name="com.codose.chats.views.auth.ui.VendorFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.VendorFragment"
         android:label="fragment_vendor"
         tools:layout="@layout/fragment_vendor" />
     <fragment
         android:id="@+id/imageCaptureFragment"
-        android:name="com.codose.chats.views.auth.ui.ImageCaptureFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.ImageCaptureFragment"
         android:label="ImageCaptureFragment" />
     <fragment
         android:id="@+id/cashForWorkFragment"
-        android:name="com.codose.chats.views.cashForWork.CashForWorkFragment"
+        android:name="chats.cash.chats_field.views.cashForWork.CashForWorkFragment"
         android:label="fragment_cash_for_work"
         tools:layout="@layout/fragment_cash_for_work">
         <action
@@ -218,7 +218,7 @@
     </fragment>
     <fragment
         android:id="@+id/cashForWorkTaskFragment"
-        android:name="com.codose.chats.views.cashForWork.CashForWorkTaskFragment"
+        android:name="chats.cash.chats_field.views.cashForWork.CashForWorkTaskFragment"
         android:label="fragment_cash_for_work_task"
         tools:layout="@layout/fragment_cash_for_work_task">
         <action
@@ -226,11 +226,11 @@
             app:destination="@id/cashForWorkTaskDetailsFragment" />
         <argument
             android:name="jobs"
-            app:argType="com.codose.chats.views.cashForWork.model.Job[]" />
+            app:argType="chats.cash.chats_field.views.cashForWork.model.Job[]" />
     </fragment>
     <fragment
         android:id="@+id/cashForWorkTaskDetailsFragment"
-        android:name="com.codose.chats.views.cashForWork.CashForWorkTaskDetailsFragment"
+        android:name="chats.cash.chats_field.views.cashForWork.CashForWorkTaskDetailsFragment"
         android:label="fragment_cash_for_work_task_details"
         tools:layout="@layout/fragment_cash_for_work_task_details">
         <action
@@ -241,11 +241,11 @@
             app:destination="@id/cashForWorkImageFragment" />
         <argument
             android:name="job"
-            app:argType="com.codose.chats.views.cashForWork.model.Job" />
+            app:argType="chats.cash.chats_field.views.cashForWork.model.Job" />
     </fragment>
     <fragment
         android:id="@+id/cashForWorkSubmitFragment"
-        android:name="com.codose.chats.views.cashForWork.CashForWorkSubmitFragment"
+        android:name="chats.cash.chats_field.views.cashForWork.CashForWorkSubmitFragment"
         android:label="fragment_cash_for_work_submit"
         tools:layout="@layout/fragment_cash_for_work_submit">
 
@@ -272,7 +272,7 @@
     </fragment>
     <fragment
         android:id="@+id/cashForWorkImageFragment"
-        android:name="com.codose.chats.views.cashForWork.CashForWorkImageFragment"
+        android:name="chats.cash.chats_field.views.cashForWork.CashForWorkImageFragment"
         android:label="CashForWorkImageFragment"
         tools:layout="@layout/fragment_cash_for_work_image">
         <action
@@ -295,12 +295,12 @@
     </fragment>
     <dialog
         android:id="@+id/beneficiarySearchDialog"
-        android:name="com.codose.chats.views.beneficiary_search.BeneficiarySearchDialog"
+        android:name="chats.cash.chats_field.views.beneficiary_search.BeneficiarySearchDialog"
         android:label="BeneficiarySearchDialog"
         tools:layout="@layout/dialog_beneficiary_search"/>
     <fragment
         android:id="@+id/beneficiaryTypeFragment"
-        android:name="com.codose.chats.views.beneficiary_onboarding.BeneficiaryTypeFragment"
+        android:name="chats.cash.chats_field.views.beneficiary_onboarding.BeneficiaryTypeFragment"
         android:label="fragment_beneficiary_type"
         tools:layout="@layout/fragment_beneficiary_type" >
         <action
@@ -320,7 +320,7 @@
     </fragment>
     <fragment
         android:id="@+id/existingBeneficiaryFragment"
-        android:name="com.codose.chats.views.beneficiary_onboarding.ExistingBeneficiaryFragment"
+        android:name="chats.cash.chats_field.views.beneficiary_onboarding.ExistingBeneficiaryFragment"
         android:label="fragment_existing_beneficiary"
         tools:layout="@layout/fragment_existing_beneficiary">
         <action
@@ -336,12 +336,12 @@
     </fragment>
     <dialog
         android:id="@+id/campaignDialog"
-        android:name="com.codose.chats.views.beneficiary_onboarding.campaigns.CampaignDialog"
+        android:name="chats.cash.chats_field.views.beneficiary_onboarding.campaigns.CampaignDialog"
         android:label="dialog_campaign"
         tools:layout="@layout/dialog_campaign" />
     <fragment
         android:id="@+id/beneficiaryListFragment"
-        android:name="com.codose.chats.views.beneficiary_list.BeneficiaryListFragment"
+        android:name="chats.cash.chats_field.views.beneficiary_list.BeneficiaryListFragment"
         android:label="fragment_beneficiary_list"
         tools:layout="@layout/fragment_beneficiary_list">
         <argument
