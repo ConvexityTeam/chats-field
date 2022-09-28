@@ -128,4 +128,9 @@
 
     <dimen name="sm_radius">12dp</dimen>
     <dimen name="lg_radius">24dp</dimen>
+
+    <style name="RoundImageStyle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

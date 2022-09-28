@@ -13,7 +13,6 @@
         android:paddingBottom="16dp"
         tools:context=".views.auth.ui.NfcScanFragment">
 
-        <!-- TODO: Update blank fragment layout -->
         <TextView
             android:id="@+id/textView25"
             android:layout_width="match_parent"
@@ -28,6 +27,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/closeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16sp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            app:contentPadding="6dp"
+            app:layout_constraintBottom_toBottomOf="@id/textView25"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textView25"
+            app:shapeAppearance="@style/RoundImageStyle"
+            app:srcCompat="@drawable/ic_cancel" />
 
         <ImageView
             android:id="@+id/cardImage"
