@@ -116,6 +116,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         scanNfcBtn.setOnClickListener {
             openDeviceSelector()
         }
+        closeButton.setOnClickListener { dismiss() }
     }
 
     private fun setupChat() {
