@@ -196,7 +196,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             return
         }
         if (registerEmailEdit.text.isNullOrBlank()) {
-            email = UUID.randomUUID().toString()
+            email = "${System.currentTimeMillis()}@gmail.com"
             registerEmailLayout.error = ""
         } else {
             if (registerEmailEdit.text.toString().isEmailValid()) {

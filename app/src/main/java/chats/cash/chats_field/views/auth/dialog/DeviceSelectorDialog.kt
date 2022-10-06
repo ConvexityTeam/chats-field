@@ -1,5 +1,6 @@
 package chats.cash.chats_field.views.auth.dialog
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -7,10 +8,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import chats.cash.chats_field.R
 import chats.cash.chats_field.model.ConnectedDevice
 import chats.cash.chats_field.utils.BluetoothConstants.EXTRA_DEVICE_ADDRESS
@@ -28,44 +33,48 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
     private val foundDevices = arrayListOf<ConnectedDevice>()
     private val mReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val action = intent.action
-            Timber.v("Receiver Started")
-            // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND == action) {
-                Timber.v("Receiver Found")
+            if (ActivityCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+            ) {
+                val action = intent.action
+                Timber.v("Receiver Started")
+                // When discovery finds a device
+                if (BluetoothDevice.ACTION_FOUND == action) {
+                    Timber.v("Receiver Found")
 
-                // Get the BluetoothDevice object from the Intent
-                val device = intent
-                    .getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-                // If it's already paired, skip it, because it's been listed
-                // already
-                if (device?.bondState != BluetoothDevice.BOND_BONDED) {
-                    Timber.v(device?.name)
-                    if(device !=null){
-                        try{
-                            val newDevice = ConnectedDevice(device.name,device.address)
+                    // Get the BluetoothDevice object from the Intent
+                    val device = intent
+                        .getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+                    // If it's already paired, skip it, because it's been listed
+                    // already
+                    if (device?.bondState != BluetoothDevice.BOND_BONDED) {
+                        Timber.v(device?.name)
+                        if (device != null) {
+                            try {
+                                val newDevice = ConnectedDevice(device.name, device.address)
 
-                            if(!foundDevices.contains(newDevice)){
-                                foundDevices.add(newDevice)
+                                if (!foundDevices.contains(newDevice)) {
+                                    foundDevices.add(newDevice)
+                                }
+                            } catch (t: Throwable) {
+
                             }
-                        }catch (t : Throwable){
 
+                            availableAdapter.submitList(foundDevices)
                         }
 
-                        availableAdapter.submitList(foundDevices)
                     }
-
+                    // When discovery is finished, change the Activity title
+                } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED == action) {
+                    try {
+                        scanProgress.hide()
+                        scanDeviceBtn.isEnabled = true
+                        scanDeviceBtn.text = "Scan for devices"
+                    } catch (e: Exception) {
+                        Timber.v(e)
+                    }
+                    Timber.v("Receiver Finished")
                 }
-                // When discovery is finished, change the Activity title
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED == action) {
-                try {
-                    scanProgress.hide()
-                    scanDeviceBtn.isEnabled = true
-                    scanDeviceBtn.text = "Scan for devices"
-                }catch (e : Exception){
-                    Timber.v(e)
-                }
-                Timber.v("Receiver Finished")
             }
         }
     }
@@ -98,7 +107,6 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
         })
         pairedDeviceRV.adapter = pairedAdapter
         availableDeviceRV.adapter = availableAdapter
-
         // Register for broadcasts when a device is discovered
         val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
@@ -111,8 +119,34 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
         // Get the local Bluetooth adapter
         mBtAdapter = BluetoothAdapter.getDefaultAdapter()
 
+        val requestMultiplePermissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            it.entries.forEach {
+
+            }
+        }
+
+        val requestBluetooth = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                //granted
+            }else{
+                //deny
+            }
+        }
+
         // Get a set of currently paired devices
-        val pairedDevices: Set<BluetoothDevice> = mBtAdapter.bondedDevices
+        val pairedDevices: Set<BluetoothDevice> = if (ActivityCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                requestMultiplePermissions.launch(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
+            } else {
+                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                requestBluetooth.launch(enableBtIntent)
+            }
+            return
+        } else {
+            mBtAdapter.bondedDevices
+        }
 
         // If there are paired devices, add each one to the BluetoothAdapter
         if (pairedDevices.isNotEmpty()) {
@@ -142,7 +176,10 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
         super.onDestroy()
         // Make sure we're not doing discovery anymore
         if (mBtAdapter != null) {
-            mBtAdapter.cancelDiscovery()
+            if (ActivityCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+            )
+                mBtAdapter.cancelDiscovery()
         }
 
         // Unregister broadcast listeners
@@ -153,25 +190,33 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
 
     private fun doDiscovery() {
         // If we're already discovering, stop it
-        if (mBtAdapter.isDiscovering) {
-            mBtAdapter.cancelDiscovery()
-            Timber.v("Search Stop")
+        if (ActivityCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        ) {
+            if (mBtAdapter.isDiscovering) {
+                mBtAdapter.cancelDiscovery()
+                Timber.v("Search Stop")
+            }
+            // Request discover from BluetoothAdapter
+            mBtAdapter.startDiscovery()
+            scanProgress.show()
+            scanDeviceBtn.isEnabled = false
+            scanDeviceBtn.text = "Scanning"
+            Timber.v("Search Starting : ${mBtAdapter.name} ${mBtAdapter.address}")
         }
-        // Request discover from BluetoothAdapter
-        mBtAdapter.startDiscovery()
-        scanProgress.show()
-        scanDeviceBtn.isEnabled = false
-        scanDeviceBtn.text = "Scanning"
-        Timber.v("Search Starting : ${mBtAdapter.name} ${mBtAdapter.address}")
     }
 
 
     private fun setDevice(device: ConnectedDevice) {
-        mBtAdapter.cancelDiscovery()
-        val intent = Intent()
-        intent.putExtra(EXTRA_DEVICE_ADDRESS, device.deviceAddress)
-        targetFragment?.onActivityResult(targetRequestCode, RESULT_OK, intent)
-        dismiss()
+        if (ActivityCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        ) {
+            mBtAdapter.cancelDiscovery()
+            val intent = Intent()
+            intent.putExtra(EXTRA_DEVICE_ADDRESS, device.deviceAddress)
+            targetFragment?.onActivityResult(targetRequestCode, RESULT_OK, intent)
+            dismiss()
+        }
     }
 
     companion object {
