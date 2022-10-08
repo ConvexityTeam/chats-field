@@ -23,7 +23,7 @@
         <entry key="app/src/main/res/layout/dialog_campaign.xml" value="0.12083333333333333" />
         <entry key="app/src/main/res/layout/dialog_login.xml" value="0.3182291666666667" />
         <entry key="app/src/main/res/layout/dialog_selector.xml" value="0.25833333333333336" />
-        <entry key="app/src/main/res/layout/fragment_beneficiary_list.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_beneficiary_list.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_beneficiary_type.xml" value="0.12083333333333333" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work.xml" value="0.20907420656412676" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work_beneficiaries_task_list.xml" value="0.30416666666666664" />

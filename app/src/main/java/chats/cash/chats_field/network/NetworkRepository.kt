@@ -441,4 +441,12 @@ class NetworkRepository(
                 authorization = preferenceUtil.getNGOToken()
             )
         }
+
+    suspend fun getBeneficiariesByCampaign(campaignId: Int) = withContext(Dispatchers.IO) {
+        api.getBeneficiariesByCampaign(
+            campaignId = campaignId,
+            organisationId = preferenceUtil.getNGOId(),
+            authorization = preferenceUtil.getNGOToken()
+        )
+    }
 }

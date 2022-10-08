@@ -6,9 +6,9 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentBeneficiaryListBinding
-import chats.cash.chats_field.network.response.beneficiary_onboarding.Beneficiary
 import chats.cash.chats_field.utils.showToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -17,6 +17,7 @@ class BeneficiaryListFragment : Fragment(R.layout.fragment_beneficiary_list) {
     private var _binding: FragmentBeneficiaryListBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModel<BeneficiaryListViewModel>()
+    private val args by navArgs<BeneficiaryListFragmentArgs>()
     private val beneficiaryListAdapter: BeneficiaryListAdapter by lazy {
         BeneficiaryListAdapter(onSelectClick = ::addBeneficiaryToCampaign)
     }
@@ -27,6 +28,8 @@ class BeneficiaryListFragment : Fragment(R.layout.fragment_beneficiary_list) {
         _binding = FragmentBeneficiaryListBinding.bind(view)
         setupObservers()
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
+
+        viewModel.getBeneficiariesByCampaign(campaignId = args.campaignId)
     }
 
     private fun setupObservers() {
@@ -35,7 +38,7 @@ class BeneficiaryListFragment : Fragment(R.layout.fragment_beneficiary_list) {
 
     private fun handleState(state: BeneficiaryListViewModel.BeneficiaryListUiState) =
         with(binding) {
-            fun handleSuccess(beneficiaries: List<Beneficiary>) {
+            fun handleSuccess(beneficiaries: List<BeneficiaryUi>) {
                 loadingLayout.root.isGone = true
                 beneficiariesList.adapter = beneficiaryListAdapter
                 beneficiaryListAdapter.submitList(beneficiaries)
@@ -53,10 +56,16 @@ class BeneficiaryListFragment : Fragment(R.layout.fragment_beneficiary_list) {
                 is BeneficiaryListViewModel.BeneficiaryListUiState.Error -> handleError(state.errorMessage)
                 BeneficiaryListViewModel.BeneficiaryListUiState.Loading -> handleLoading()
                 is BeneficiaryListViewModel.BeneficiaryListUiState.Success -> handleSuccess(state.beneficiaries)
+                is BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiaryError -> showToast(state.errorMessage)
+                BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiaryLoading -> {}
+                is BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiarySuccess -> {
+                    viewModel.getBeneficiariesByOrganisation()
+                    showToast(state.message)
+                }
             }
         }
 
-    private fun addBeneficiaryToCampaign(beneficiary: Beneficiary) {
-        showToast("Todo: Add beneficiary: '${beneficiary.firstName}' to campaign")
+    private fun addBeneficiaryToCampaign(beneficiary: BeneficiaryUi) {
+        viewModel.addBeneficiaryToCampaign(beneficiaryId = beneficiary.id, campaignId = args.campaignId)
     }
 }
