@@ -11,13 +11,14 @@ import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentBeneficiaryListBinding
 import chats.cash.chats_field.utils.showToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class BeneficiaryListFragment : Fragment(R.layout.fragment_beneficiary_list) {
 
     private var _binding: FragmentBeneficiaryListBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModel<BeneficiaryListViewModel>()
     private val args by navArgs<BeneficiaryListFragmentArgs>()
+    private val viewModel by viewModel<BeneficiaryListViewModel> { parametersOf(args.campaignId) }
     private val beneficiaryListAdapter: BeneficiaryListAdapter by lazy {
         BeneficiaryListAdapter(onSelectClick = ::addBeneficiaryToCampaign)
     }
@@ -28,8 +29,6 @@ class BeneficiaryListFragment : Fragment(R.layout.fragment_beneficiary_list) {
         _binding = FragmentBeneficiaryListBinding.bind(view)
         setupObservers()
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
-
-        viewModel.getBeneficiariesByCampaign(campaignId = args.campaignId)
     }
 
     private fun setupObservers() {
@@ -58,10 +57,7 @@ class BeneficiaryListFragment : Fragment(R.layout.fragment_beneficiary_list) {
                 is BeneficiaryListViewModel.BeneficiaryListUiState.Success -> handleSuccess(state.beneficiaries)
                 is BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiaryError -> showToast(state.errorMessage)
                 BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiaryLoading -> {}
-                is BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiarySuccess -> {
-                    viewModel.getBeneficiariesByOrganisation()
-                    showToast(state.message)
-                }
+                is BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiarySuccess -> { showToast(state.message) }
             }
         }
 

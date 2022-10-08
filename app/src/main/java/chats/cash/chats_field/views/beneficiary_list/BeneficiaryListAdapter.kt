@@ -32,7 +32,7 @@ class BeneficiaryListAdapter(private val onSelectClick: (BeneficiaryUi) -> Unit)
             emailValue.text = beneficiary.email
             phoneValue.text = beneficiary.phone
             selectButton.apply {
-                isVisible = true
+                isVisible = beneficiary.isAdded.not()
                 setOnClickListener { onSelectClick.invoke(beneficiary) }
             }
         }

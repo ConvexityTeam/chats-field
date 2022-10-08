@@ -11,7 +11,10 @@ import chats.cash.chats_field.utils.handleThrowable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 
-class BeneficiaryListViewModel(private val repository: NetworkRepository) : ViewModel() {
+class BeneficiaryListViewModel(
+    private val repository: NetworkRepository,
+    campaignId: Int,
+) : ViewModel() {
 
     private val _uiState = MutableLiveData<BeneficiaryListUiState>()
     val uiState: LiveData<BeneficiaryListUiState> get() = _uiState
@@ -21,28 +24,18 @@ class BeneficiaryListViewModel(private val repository: NetworkRepository) : View
     }
 
     init {
-        getBeneficiariesByOrganisation()
+        getBeneficiariesByCampaign(campaignId)
     }
 
-    fun getBeneficiariesByOrganisation() {
+    private fun getBeneficiariesByCampaign(campaignId: Int) {
         _uiState.value = BeneficiaryListUiState.Loading
         viewModelScope.launch(exceptionHandler) {
-            val response = repository.getBeneficiaryByOrganisation()
-            if (response.code in 200..201 && response.status == API_SUCCESS) {
-                _uiState.postValue(response.data?.let {
-                    BeneficiaryListUiState.Success(
-                        it.map { beneficiary -> beneficiary.mapToBeneficiaryUi() }
-                    )
-                })
+            val beneficiaries = repository.getBeneficiariesForUi(campaignId)
+            if (beneficiaries.isNotEmpty()) {
+                _uiState.postValue(BeneficiaryListUiState.Success(beneficiaries))
             } else {
-                _uiState.postValue(BeneficiaryListUiState.Error(response.message))
+                _uiState.postValue(BeneficiaryListUiState.Error("No beneficiaries"))
             }
-        }
-    }
-
-    fun getBeneficiariesByCampaign(campaignId: Int) {
-        viewModelScope.launch(exceptionHandler) {
-            repository.getBeneficiariesByCampaign(campaignId)
         }
     }
 

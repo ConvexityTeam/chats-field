@@ -27,11 +27,11 @@ import chats.cash.chats_field.offline.OfflineRepository
 import chats.cash.chats_field.utils.ApiResponse
 import chats.cash.chats_field.utils.PreferenceUtil
 import chats.cash.chats_field.utils.Utils
+import chats.cash.chats_field.views.beneficiary_list.BeneficiaryUi
 import chats.cash.chats_field.views.cashForWork.model.TaskDetailsResponse
 import com.google.gson.Gson
 import id.zelory.compressor.Compressor
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -47,7 +47,7 @@ class NetworkRepository(
     private val ninApi: NinVerificationApi,
     private val offlineRepository: OfflineRepository,
     private val context: Context,
-    private val preferenceUtil: PreferenceUtil
+    private val preferenceUtil: PreferenceUtil,
 ) {
 
     private val sessionManager: SessionManager = SessionManager(context)
@@ -69,7 +69,7 @@ class NetworkRepository(
         location: RequestBody,
         campaign: RequestBody,
         pin: RequestBody,
-    ) : ApiResponse<RegisterResponse>{
+    ): ApiResponse<RegisterResponse> {
         return try {
             val compressed = Compressor.compress(context, profile_pic)
 
@@ -101,10 +101,10 @@ class NetworkRepository(
                 authorization = preferenceUtil.getNGOToken()
             ).await()
             ApiResponse.Success(data)
-        }catch (e : HttpException){
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        }catch (t : Throwable){
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
@@ -126,8 +126,8 @@ class NetworkRepository(
         location: RequestBody,
         campaign: RequestBody,
         pin: RequestBody,
-        nin: String?
-    ) : ApiResponse<RegisterResponse>{
+        nin: String?,
+    ): ApiResponse<RegisterResponse> {
         return try {
             val compressed = Compressor.compress(context, profile_pic)
 
@@ -165,10 +165,10 @@ class NetworkRepository(
             } else {
                 ApiResponse.Failure("NIN: ${ninResponse.message}")
             }
-        }catch (e : HttpException){
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        }catch (t : Throwable){
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
@@ -201,25 +201,26 @@ class NetworkRepository(
         }
     }
 
-    suspend fun getNGOs() : ApiResponse<OrganizationResponse>{
+    suspend fun getNGOs(): ApiResponse<OrganizationResponse> {
         return try {
             val data = api.getNGOs().await()
             ApiResponse.Success(data)
-        }catch (t : Throwable){
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
 
-    suspend fun getUserDetails(id : String) : ApiResponse<UserDetailsResponse>{
+    suspend fun getUserDetails(id: String): ApiResponse<UserDetailsResponse> {
         return try {
             val data = api.getUserDetails(id, authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
-        }catch (t : Throwable){
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
 
-    @Deprecated(message = "Replaced with Coroutine-supported methods", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Replaced with Coroutine-supported methods",
+        level = DeprecationLevel.WARNING)
     suspend fun loginNGO(loginBody: LoginBody): ApiResponse<LoginResponse> {
         ApiResponse.Loading<LoginResponse>()
         return try {
@@ -235,27 +236,28 @@ class NetworkRepository(
         }
     }
 
-    suspend fun sendForgotEmail(email: String) : ApiResponse<ForgotPasswordResponse>{
+    suspend fun sendForgotEmail(email: String): ApiResponse<ForgotPasswordResponse> {
         return try {
             val forgotBody = ForgotBody(email)
             val data = api.sendForgotMail(forgotBody).await()
             ApiResponse.Success(data)
-        }catch (e : HttpException){
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        }catch (t : Throwable){
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
 
     suspend fun postNFCDetails(nfcModel: NFCModel): ApiResponse<NfcUpdateResponse> {
         return try {
-            val data = api.postNfcDetails(nfcModel, authorization = preferenceUtil.getNGOToken()).await()
+            val data =
+                api.postNfcDetails(nfcModel, authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
-        }catch (e : HttpException){
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        }catch (t : Throwable){
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
@@ -266,23 +268,24 @@ class NetworkRepository(
             Timber.v("Campaign: $data")
             offlineRepository.insertCampaign(data.data)
             ApiResponse.Success(data)
-        } catch (e : HttpException) {
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
 
-    suspend fun getAllCampaigns(): List<ModelCampaign>{
-        return try{
-            val apiService =  RetrofitClient.apiService().create(ConvexityApiService::class.java)
-            val data = apiService.getAllCampaigns(preferenceUtil.getNGOId(), "campaign", authorization = preferenceUtil.getNGOToken()).data
+    suspend fun getAllCampaigns(): List<ModelCampaign> {
+        return try {
+            val apiService = RetrofitClient.apiService().create(ConvexityApiService::class.java)
+            val data = apiService.getAllCampaigns(preferenceUtil.getNGOId(),
+                "campaign",
+                authorization = preferenceUtil.getNGOToken()).data
             Timber.v("XXXgetAllCampaigns: called$data")
             offlineRepository.insertAllCampaign(data)
             data
-        }
-        catch (e: Exception){
+        } catch (e: Exception) {
             Timber.v("XXXgetAllCampaigns %s", e.message)
             val data: List<ModelCampaign> = ArrayList()
             data
@@ -294,7 +297,7 @@ class NetworkRepository(
         lastName: String? = null,
         email: String? = null,
         phone: String? = null,
-        nin: String? = null
+        nin: String? = null,
     ): BaseResponse<List<Beneficiary>> {
         return withContext(Dispatchers.IO) {
             api.getExistingBeneficiary(
@@ -311,7 +314,9 @@ class NetworkRepository(
     suspend fun getAllCashForWorkCampaigns(): List<ModelCampaign> {
         return try {
             withContext(Dispatchers.IO) {
-                val data = api.getAllCampaigns(preferenceUtil.getNGOId(), "cash-for-work", authorization = preferenceUtil.getNGOToken()).data
+                val data = api.getAllCampaigns(preferenceUtil.getNGOId(),
+                    "cash-for-work",
+                    authorization = preferenceUtil.getNGOToken()).data
                 Timber.v("XXXgetAllCampaigns: called$data")
                 offlineRepository.insertAllCashForWork(data)
                 data
@@ -323,39 +328,44 @@ class NetworkRepository(
         }
     }
 
-    suspend fun getCampaignByOrganization(organizationId : String): ApiResponse<CampaignByOrganizationModel> {
+    suspend fun getCampaignByOrganization(organizationId: String): ApiResponse<CampaignByOrganizationModel> {
         return try {
-            val data = api.getCampaignsByOrganization(organizationId, authorization = preferenceUtil.getNGOToken()).await()
+            val data = api.getCampaignsByOrganization(organizationId,
+                authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
-        } catch (e : HttpException) {
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
 
-    suspend fun getTasks(campaignId : String): ApiResponse<GetTasksModel> {
+    suspend fun getTasks(campaignId: String): ApiResponse<GetTasksModel> {
         return try {
-            val data = api.getTasks(campaignId, authorization = preferenceUtil.getNGOToken()).await()
+            val data =
+                api.getTasks(campaignId, authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
-        } catch (e : HttpException) {
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
 
     suspend fun getTasksDetails(taskId: String): BaseResponse<TaskDetailsResponse> {
-        return withContext(Dispatchers.IO) { api.getTasksDetails(taskId, authorization = preferenceUtil.getNGOToken()) }
+        return withContext(Dispatchers.IO) {
+            api.getTasksDetails(taskId,
+                authorization = preferenceUtil.getNGOToken())
+        }
     }
 
     suspend fun postTaskEvidence(
-        taskId : String,
-        userId : String,
-        description : String,
-        images :  ArrayList<File>,
+        taskId: String,
+        userId: String,
+        description: String,
+        images: ArrayList<File>,
     ): ApiResponse<SubmitProgressModel> {
         ApiResponse.Loading<SubmitProgressModel>()
         return try {
@@ -375,12 +385,16 @@ class NetworkRepository(
                 imageParts.add(imagePart)
             }
             val data =
-                api.postTaskEvidence(taskIdBody, userIdBody, descriptionBody, imageParts, authorization = preferenceUtil.getNGOToken()).await()
+                api.postTaskEvidence(taskIdBody,
+                    userIdBody,
+                    descriptionBody,
+                    imageParts,
+                    authorization = preferenceUtil.getNGOToken()).await()
             ApiResponse.Success(data)
-        } catch (e : HttpException) {
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
@@ -418,23 +432,26 @@ class NetworkRepository(
         userId: String,
     ): ApiResponse<SubmitProgressModel> {
         return try {
-            val postCompletionBody = PostCompletionBody(taskId = taskId.toInt(), userId = userId.toInt())
+            val postCompletionBody =
+                PostCompletionBody(taskId = taskId.toInt(), userId = userId.toInt())
             val data = api.postTaskCompleted(postCompletionBody).await()
             ApiResponse.Success(data)
-        } catch (e : HttpException) {
+        } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             ApiResponse.Failure(t.message!!)
         }
     }
 
     suspend fun addBeneficiaryToCampaign(beneficiaryId: Int, campaignId: Int) =
         withContext(Dispatchers.IO) {
-            api.addBeneficiaryToCampaign(beneficiaryId, campaignId, authorization = preferenceUtil.getNGOToken())
+            api.addBeneficiaryToCampaign(beneficiaryId,
+                campaignId,
+                authorization = preferenceUtil.getNGOToken())
         }
 
-    suspend fun getBeneficiaryByOrganisation() =
+    private suspend fun getBeneficiaryByOrganisation() =
         withContext(Dispatchers.IO) {
             api.getBeneficiariesByOrganisation(
                 organisationId = preferenceUtil.getNGOId(),
@@ -442,11 +459,43 @@ class NetworkRepository(
             )
         }
 
-    suspend fun getBeneficiariesByCampaign(campaignId: Int) = withContext(Dispatchers.IO) {
+    private suspend fun getBeneficiariesByCampaign(campaignId: Int) = withContext(Dispatchers.IO) {
         api.getBeneficiariesByCampaign(
             campaignId = campaignId,
             organisationId = preferenceUtil.getNGOId(),
             authorization = preferenceUtil.getNGOToken()
         )
+    }
+
+    suspend fun getBeneficiariesForUi(campaignId: Int) = supervisorScope {
+        val allBeneficiariesDef = async {
+            try {
+                getBeneficiaryByOrganisation().data!!
+            } catch (t: Throwable) {
+                Timber.e(t)
+                emptyList()
+            }
+        }
+        val campaignBeneficiariesDef = async {
+            try {
+                getBeneficiariesByCampaign(campaignId = campaignId).data!!
+            } catch (t: Throwable) {
+                Timber.e(t)
+                emptyList()
+            }
+        }
+        val allBeneficiaries = allBeneficiariesDef.await()
+        val campaignBeneficiaries = campaignBeneficiariesDef.await()
+        allBeneficiaries.map {
+            BeneficiaryUi(
+                id = it.id,
+                email = it.email,
+                phone = it.phone,
+                firstName = it.firstName,
+                lastName = it.lastName,
+                profilePic = it.profilePic,
+                isAdded = campaignBeneficiaries.contains(it)
+            )
+        }
     }
 }

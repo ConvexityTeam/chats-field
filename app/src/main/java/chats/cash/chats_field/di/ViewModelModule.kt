@@ -25,7 +25,10 @@ val viewModelModule = module {
     viewModel { BeneficiarySearchViewModel(repository = get()) }
     viewModel { ExistingBeneficiaryViewModel(repository = get()) }
     viewModel { CampaignViewModel(offlineRepository = get()) }
-    viewModel { BeneficiaryListViewModel(repository = get()) }
+    viewModel { (campaignId: Int) ->
+        BeneficiaryListViewModel(repository = get(),
+            campaignId = campaignId)
+    }
     viewModel { TaskDetailsViewModel(repository = get()) }
     viewModel { LoginViewModel(repository = get()) }
     viewModel { OnboardingViewModel(repository = get()) }

@@ -201,5 +201,5 @@ interface ConvexityApiService {
         @Path("organisation_id") organisationId: Int,
         @Path("campaign_id") campaignId: Int,
         @Header("Authorization") authorization: String
-    ): BaseResponse<Any>
+    ): BaseResponse<List<Beneficiary>>
 }
