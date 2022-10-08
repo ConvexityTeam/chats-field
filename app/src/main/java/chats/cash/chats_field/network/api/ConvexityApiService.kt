@@ -195,4 +195,11 @@ interface ConvexityApiService {
         @Path("campaign_id") campaignId: Int,
         @Header("Authorization") authorization: String
     ): BaseResponse<AddBeneficiaryResponse>
+
+    @GET("organisations/{organisation_id}/campaigns/{campaign_id}/beneficiaries")
+    suspend fun getBeneficiariesByCampaign(
+        @Path("organisation_id") organisationId: Int,
+        @Path("campaign_id") campaignId: Int,
+        @Header("Authorization") authorization: String
+    ): BaseResponse<List<Beneficiary>>
 }

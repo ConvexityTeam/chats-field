@@ -113,7 +113,7 @@ fun String.isEmailValid(): Boolean {
 }
 
 fun Bitmap.toFile(context: Context, name: String): File {
-    val f = File(context.cacheDir, name);
+    val f = File(context.cacheDir, name)
     f.createNewFile()
     val bos = ByteArrayOutputStream()
     this.compress(Bitmap.CompressFormat.PNG, 50, bos)
