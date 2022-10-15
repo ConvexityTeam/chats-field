@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import chats.cash.chats_field.utils.BluetoothConstants.COMPLETE
 import chats.cash.chats_field.utils.BluetoothConstants.INCOMPLETE
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.*
@@ -178,7 +179,10 @@ fun Throwable.handleThrowable(): String {
         is SocketTimeoutException -> "Pleas check your network connection. Make sure you're connected to a good network"
         is UnknownHostException -> "Please check your internet connection and try again"
         is HttpException -> Utils.getErrorMessage(this)
-        else -> "Something went wrong"
+        else -> {
+            FirebaseCrashlytics.getInstance().recordException(this)
+            "Something went wrong"
+        }
     }
 }
 

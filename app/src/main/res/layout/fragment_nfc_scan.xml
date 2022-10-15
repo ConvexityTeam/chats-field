@@ -5,13 +5,13 @@
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="24dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:context=".views.auth.ui.NfcScanFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        tools:context=".views.auth.ui.NfcScanFragment">
+        android:paddingBottom="16dp">
 
         <TextView
             android:id="@+id/textView25"

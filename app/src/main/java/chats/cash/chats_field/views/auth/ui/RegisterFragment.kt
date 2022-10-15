@@ -136,6 +136,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                     Timber.v("XXXlogin vn reached ")
                     findNavController().navigate(R.id.action_registerFragment_to_onboardingFragment)
                 }
+                else -> {}
             }
         }
     }

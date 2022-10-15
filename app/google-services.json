@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "531811616006",
+    "project_id": "stately-shelter-340916",
+    "storage_bucket": "stately-shelter-340916.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531811616006:android:3b0412f59a21e3f1c48a87",
+        "android_client_info": {
+          "package_name": "chats.cash.chats_field"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "531811616006-9jlm16ko6ntnooiu7jlalch9sl9rtjs2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "chats.cash.chats_field",
+            "certificate_hash": "5983849bb285f07f8b00d9338eac7d05f7f0ce37"
+          }
+        },
+        {
+          "client_id": "531811616006-qc84lpk5e3ifiqcp4n8qcs6rrf678pal.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEXLuBxk38eVIXNOkTPyOsPIPPJbbFwX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "531811616006-qc84lpk5e3ifiqcp4n8qcs6rrf678pal.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
