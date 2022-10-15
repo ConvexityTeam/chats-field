@@ -13,8 +13,8 @@ import chats.cash.chats_field.databinding.DialogLoginBinding
 import chats.cash.chats_field.network.api.SessionManager
 import chats.cash.chats_field.network.body.login.LoginBody
 import chats.cash.chats_field.utils.*
-import chats.cash.chats_field.utils.BluetoothConstants.FRAGMENT_LOGIN_RESULT_KEY
-import chats.cash.chats_field.utils.BluetoothConstants.LOGIN_BUNDLE_KEY
+import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_LOGIN_RESULT_KEY
+import chats.cash.chats_field.utils.ChatsFieldConstants.LOGIN_BUNDLE_KEY
 import chats.cash.chats_field.views.auth.dialog.ForgotDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.android.ext.android.inject

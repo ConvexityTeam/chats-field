@@ -3,11 +3,12 @@ package chats.cash.chats_field.utils
 import android.Manifest
 import chats.cash.chats_field.BuildConfig
 
-object BluetoothConstants {
+object ChatsFieldConstants {
     const val sDirectory = ""
     private const val DEBUG_BASE_URL: String = "https://staging-api.chats.cash/v1/"
     private const val RELEASE_BASE_URL: String = "https://api.chats.cash/v1/"
-    val BASE_URL = if (BuildConfig.DEBUG) DEBUG_BASE_URL else RELEASE_BASE_URL
+    val BASE_URL =
+        if (BuildConfig.BUILD_TYPE.equals("debug", true)) DEBUG_BASE_URL else RELEASE_BASE_URL
     const val NIN_BASE_URL = "https://api.myidentitypay.com/api/v1/"
     const val TAG = "BluetoothReader"
     const val CONNECTION_CODE = 908

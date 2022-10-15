@@ -4,14 +4,17 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import chats.cash.chats_field.BuildConfig
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentCashForWorkImageBinding
 import chats.cash.chats_field.utils.*
@@ -32,6 +35,7 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
     private var launcherFive: ActivityResultLauncher<Intent>? = null
     private lateinit var adapter: PrintPagerAdapter
     private var images = arrayListOf<Bitmap>()
+    private var tempImages = arrayListOf<Uri>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -87,6 +91,7 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
 
         cashForWorkViewModel.postTaskImages(
             beneficiaryId = args.beneficiaryId,
+            taskAssignmentId = args.taskId.toInt(),
             description = desc,
             images = imagesPart
         )
@@ -152,29 +157,51 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
             cashForWorkViewModel.imageList.value = images
         }
         launcherTwo = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val imageBitmap = it.data?.extras?.get("data") as Bitmap
-            binding.cfwImageTwo.setImageBitmap(imageBitmap)
-            images.add(imageBitmap)
-            cashForWorkViewModel.imageList.value = images
+            val imageBitmap = it.data?.extras?.get("data") as Bitmap?
+            imageBitmap?.let { bitmap ->
+                binding.cfwImageTwo.setImageBitmap(bitmap)
+                images.add(bitmap)
+                cashForWorkViewModel.imageList.value = images
+            }
         }
-        launcherThree = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val imageBitmap = it.data?.extras?.get("data") as Bitmap
-            binding.cfwImageThree.setImageBitmap(imageBitmap)
-            images.add(imageBitmap)
-            cashForWorkViewModel.imageList.value = images
-        }
+        launcherThree =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                val imageBitmap = it.data?.extras?.get("data") as Bitmap?
+                imageBitmap?.let { bitmap ->
+                    binding.cfwImageThree.setImageBitmap(bitmap)
+                    images.add(bitmap)
+                    cashForWorkViewModel.imageList.value = images
+                }
+            }
         launcherFour = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val imageBitmap = it.data?.extras?.get("data") as Bitmap
-            binding.cfwImageFour.setImageBitmap(imageBitmap)
-            images.add(imageBitmap)
-            cashForWorkViewModel.imageList.value = images
+            val imageBitmap = it.data?.extras?.get("data") as Bitmap?
+            imageBitmap?.let { bitmap ->
+                binding.cfwImageFour.setImageBitmap(bitmap)
+                images.add(bitmap)
+                cashForWorkViewModel.imageList.value = images
+            }
         }
         launcherFive = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val imageBitmap = it.data?.extras?.get("data") as Bitmap
-            binding.cfwImageFive.setImageBitmap(imageBitmap)
-            images.add(imageBitmap)
-            cashForWorkViewModel.imageList.value = images
+            val imageBitmap = it.data?.extras?.get("data") as Bitmap?
+            imageBitmap?.let { bitmap ->
+                binding.cfwImageFive.setImageBitmap(bitmap)
+                images.add(bitmap)
+                cashForWorkViewModel.imageList.value = images
+            }
         }
+    }
+
+    private fun getTempFileUri(): Uri {
+        val tempFile =
+            File.createTempFile("cam_image", ".png", requireActivity().cacheDir).apply {
+                createNewFile()
+                deleteOnExit()
+            }
+        return FileProvider.getUriForFile(
+            requireContext(),
+            "${BuildConfig.APPLICATION_ID}.provider",
+            tempFile
+        )
     }
 
     override fun onDestroyView() {

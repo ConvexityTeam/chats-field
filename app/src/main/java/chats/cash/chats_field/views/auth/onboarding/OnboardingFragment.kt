@@ -13,8 +13,8 @@ import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentOnboardingBinding
 import chats.cash.chats_field.utils.*
-import chats.cash.chats_field.utils.BluetoothConstants.FRAGMENT_LOGIN_RESULT_KEY
-import chats.cash.chats_field.utils.BluetoothConstants.LOGIN_BUNDLE_KEY
+import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_LOGIN_RESULT_KEY
+import chats.cash.chats_field.utils.ChatsFieldConstants.LOGIN_BUNDLE_KEY
 import chats.cash.chats_field.views.auth.adapter.OnBoarding
 import chats.cash.chats_field.views.auth.adapter.OnboardingAdapter
 import chats.cash.chats_field.views.auth.login.LoginDialog

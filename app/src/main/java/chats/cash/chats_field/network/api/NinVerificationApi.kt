@@ -1,6 +1,6 @@
 package chats.cash.chats_field.network.api
 
-import chats.cash.chats_field.utils.BluetoothConstants.NIN_KEY
+import chats.cash.chats_field.utils.ChatsFieldConstants.NIN_KEY
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST

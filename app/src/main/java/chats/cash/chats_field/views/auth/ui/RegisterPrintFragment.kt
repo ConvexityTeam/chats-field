@@ -21,9 +21,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import chats.cash.chats_field.R
 import chats.cash.chats_field.utils.*
-import chats.cash.chats_field.utils.BluetoothConstants.CMD_CARDSN
-import chats.cash.chats_field.utils.BluetoothConstants.EXTRA_DEVICE_ADDRESS
-import chats.cash.chats_field.utils.BluetoothConstants.mBat
+import chats.cash.chats_field.utils.ChatsFieldConstants.CMD_CARDSN
+import chats.cash.chats_field.utils.ChatsFieldConstants.EXTRA_DEVICE_ADDRESS
+import chats.cash.chats_field.utils.ChatsFieldConstants.mBat
 import chats.cash.chats_field.utils.FingerPrintUtils.getFingerprintImage
 import chats.cash.chats_field.utils.FingerPrintUtils.memcpy
 import chats.cash.chats_field.views.auth.adapter.PrintPager
@@ -107,8 +107,8 @@ class RegisterPrintFragment : BaseFragment() {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(requireActivity(),
-                BluetoothConstants.PERMISSIONS_STORAGE,
-                BluetoothConstants.REQUEST_PERMISSION_CODE)
+                ChatsFieldConstants.PERMISSIONS_STORAGE,
+                ChatsFieldConstants.REQUEST_PERMISSION_CODE)
         }
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     }
@@ -151,7 +151,7 @@ class RegisterPrintFragment : BaseFragment() {
         // setupChat() will then be called during onActivityResult
         if (!mBluetoothAdapter!!.isEnabled) {
             val enableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableIntent, BluetoothConstants.REQUEST_ENABLE_BT)
+            startActivityForResult(enableIntent, ChatsFieldConstants.REQUEST_ENABLE_BT)
             // Otherwise, setup the chat session
         } else {
             if (mChatService == null) setupChat()
@@ -164,7 +164,7 @@ class RegisterPrintFragment : BaseFragment() {
     private fun openDeviceSelector() {
         val bottomSheetDialogFragment = DeviceSelectorDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = true
-        bottomSheetDialogFragment.setTargetFragment(this, BluetoothConstants.CONNECTION_CODE)
+        bottomSheetDialogFragment.setTargetFragment(this, ChatsFieldConstants.CONNECTION_CODE)
         bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),
             "BottomSheetDialog")
     }
@@ -172,7 +172,7 @@ class RegisterPrintFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            BluetoothConstants.CONNECTION_CODE ->                 // When DeviceListActivity returns with a device to connect
+            ChatsFieldConstants.CONNECTION_CODE ->                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     // Get the device MAC address
                     val address = data!!.extras!!.getString(EXTRA_DEVICE_ADDRESS)
@@ -183,7 +183,7 @@ class RegisterPrintFragment : BaseFragment() {
                     // Attempt to connect to the device
                     mChatService!!.connect(device)
                 }
-            BluetoothConstants.REQUEST_ENABLE_BT ->                 // When the request to enable Bluetooth returns
+            ChatsFieldConstants.REQUEST_ENABLE_BT ->                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
                     setupChat()
@@ -202,7 +202,7 @@ class RegisterPrintFragment : BaseFragment() {
         @SuppressLint("HandlerLeak") val mHandler: Handler = object : Handler() {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
-                    BluetoothConstants.MESSAGE_STATE_CHANGE -> when (msg.arg1) {
+                    ChatsFieldConstants.MESSAGE_STATE_CHANGE -> when (msg.arg1) {
                         chats.cash.chats_field.utils.BluetoothReaderService.STATE_CONNECTED -> {
 
                         }
@@ -213,10 +213,10 @@ class RegisterPrintFragment : BaseFragment() {
 
                         }
                     }
-                    BluetoothConstants.MESSAGE_WRITE -> {
+                    ChatsFieldConstants.MESSAGE_WRITE -> {
 
                     }
-                    BluetoothConstants.MESSAGE_READ -> {
+                    ChatsFieldConstants.MESSAGE_READ -> {
                         val readBuf = msg.obj as ByteArray
                         if (readBuf.isNotEmpty()) {
                             if (readBuf[0] == 0x1b.toByte()) {
@@ -231,13 +231,13 @@ class RegisterPrintFragment : BaseFragment() {
                             }
                         }
                     }
-                    BluetoothConstants.MESSAGE_DEVICE_NAME -> {
+                    ChatsFieldConstants.MESSAGE_DEVICE_NAME -> {
                         // save the connected device's name
-                        mConnectedDeviceName = msg.data.getString(BluetoothConstants.DEVICE_NAME)
+                        mConnectedDeviceName = msg.data.getString(ChatsFieldConstants.DEVICE_NAME)
                         Toast.makeText(requireContext(),
                             "Connected to $mConnectedDeviceName",
                             Toast.LENGTH_SHORT).show()
-                        SendCommand(BluetoothConstants.CMD_GETBAT, null, 0)
+                        SendCommand(ChatsFieldConstants.CMD_GETBAT, null, 0)
 
                         isConnected = true
                         registerPrintNextBtn.text = "Capture ${captureFingers[0]} finger"
@@ -248,14 +248,14 @@ class RegisterPrintFragment : BaseFragment() {
                             printProgress.show()
                             imgSize = IMG288
                             mUpImageSize = 0
-                            SendCommand(BluetoothConstants.CMD_GETIMAGE, null, 0)
+                            SendCommand(ChatsFieldConstants.CMD_GETIMAGE, null, 0)
                         }
                     }
-                    BluetoothConstants.MESSAGE_TOAST -> {
+                    ChatsFieldConstants.MESSAGE_TOAST -> {
                         try {
                             Toast.makeText(requireContext(),
                                 msg.data.getString(
-                                    BluetoothConstants.TOAST),
+                                    ChatsFieldConstants.TOAST),
                                 Toast.LENGTH_SHORT).show()
                         } catch (e: Throwable) {
                             Timber.v(e)
@@ -273,8 +273,8 @@ class RegisterPrintFragment : BaseFragment() {
     }
 
     private fun ReceiveCommand(databuf: ByteArray, datasize: Int) {
-        if (mDeviceCmd == BluetoothConstants.CMD_GETIMAGE) { //receiving the image data from the device
-            if (imgSize == BluetoothConstants.IMG288) {
+        if (mDeviceCmd == ChatsFieldConstants.CMD_GETIMAGE) { //receiving the image data from the device
+            if (imgSize == ChatsFieldConstants.IMG288) {
 //                printProgress.show() //image size with 256*360
                 memcpy(mUpImage, mUpImageSize, databuf, 0, datasize)
                 mUpImageSize = mUpImageSize + datasize
@@ -439,7 +439,7 @@ class RegisterPrintFragment : BaseFragment() {
             CMD_CARDSN -> {
 
             }
-            BluetoothConstants.CMD_GETIMAGE -> {
+            ChatsFieldConstants.CMD_GETIMAGE -> {
                 mUpImageSize = 0
             }
         }

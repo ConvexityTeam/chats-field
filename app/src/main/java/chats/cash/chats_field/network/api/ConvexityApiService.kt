@@ -157,6 +157,7 @@ interface ConvexityApiService {
     @Multipart
     suspend fun uploadTaskEvidence(
         @Path("beneficiaryId") beneficiaryId: Int,
+        @Part("TaskAssignmentId") taskAssignmentId: Int,
         @Part("comment") description: RequestBody,
         @Part("type") type: RequestBody,
         @Part uploads: ArrayList<MultipartBody.Part>,
@@ -169,7 +170,7 @@ interface ConvexityApiService {
     @GET("organisations/{id}/campaigns/all")
     suspend fun getAllCampaigns(
         @Path("id") id: Int,
-        @Query("type") type: String,
+        @Query("type") type: String?,
         @Header("Authorization") authorization: String
     ): GetAllCampaignsResponse
 

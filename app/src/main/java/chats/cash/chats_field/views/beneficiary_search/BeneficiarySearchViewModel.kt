@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chats.cash.chats_field.network.NetworkRepository
 import chats.cash.chats_field.network.response.beneficiary_onboarding.Beneficiary
-import chats.cash.chats_field.utils.BluetoothConstants.API_SUCCESS
+import chats.cash.chats_field.utils.ChatsFieldConstants.API_SUCCESS
 import chats.cash.chats_field.utils.handleThrowable
 import chats.cash.chats_field.utils.toDateString
 import chats.cash.chats_field.utils.toTitleCase

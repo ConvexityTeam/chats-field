@@ -1,6 +1,6 @@
 package chats.cash.chats_field.di
 
-import chats.cash.chats_field.utils.BluetoothConstants
+import chats.cash.chats_field.utils.ChatsFieldConstants
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -34,7 +34,7 @@ val retrofitModule = module {
 
     fun provideRetrofit(factory: Gson, client: OkHttpClient, callAdapterFactory: CoroutineCallAdapterFactory): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BluetoothConstants.BASE_URL)
+            .baseUrl(ChatsFieldConstants.BASE_URL)
             .addCallAdapterFactory(callAdapterFactory)
             .addConverterFactory(GsonConverterFactory.create(factory))
             .client(client)

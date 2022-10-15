@@ -7,18 +7,6 @@
     android:background="@drawable/bg_bottom_sheet"
     tools:context="chats.cash.chats_field.views.beneficiary_onboarding.campaigns.CampaignDialog">
 
-    <TextView
-        android:id="@+id/textView18"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="32dp"
-        android:text="Select a Campaign"
-        android:textAppearance="@style/TextAppearance.TextBold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/campaign_list"
         android:layout_width="0dp"
@@ -29,6 +17,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView18"
+        app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/item_campaign" />
 </androidx.constraintlayout.widget.ConstraintLayout>

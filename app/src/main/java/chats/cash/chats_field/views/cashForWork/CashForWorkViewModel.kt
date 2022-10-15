@@ -1,6 +1,7 @@
 package chats.cash.chats_field.views.cashForWork
 
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,7 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
     val tasks = MutableLiveData<ApiResponse<GetTasksModel>>()
     val taskOperation = MutableLiveData<ApiResponse<SubmitProgressModel>>()
     val imageList = MutableLiveData<ArrayList<Bitmap>>(arrayListOf())
+    val tempImageList = MutableLiveData<ArrayList<Uri>>(arrayListOf())
 
     private val _cashForWorkCampaign = MutableLiveData<List<ModelCampaign>>()
     val cashForWorkCampaign: LiveData<List<ModelCampaign>> = _cashForWorkCampaign
@@ -58,6 +60,7 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
 
     fun postTaskImages(
         beneficiaryId: Int,
+        taskAssignmentId: Int,
         description: String,
         images: ArrayList<File>,
     ) {
@@ -65,6 +68,7 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
         viewModelScope.launch(exceptionHandler) {
             val response = networkRepository.uploadTaskEvidence(
                 beneficiaryId = beneficiaryId,
+                taskAssignmentId = taskAssignmentId,
                 comment = description,
                 uploads = images
             )

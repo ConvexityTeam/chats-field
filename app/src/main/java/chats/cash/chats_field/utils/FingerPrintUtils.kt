@@ -1,7 +1,7 @@
 package chats.cash.chats_field.utils
 
 import android.graphics.Bitmap
-import chats.cash.chats_field.utils.BluetoothConstants.sDirectory
+import chats.cash.chats_field.utils.ChatsFieldConstants.sDirectory
 import okhttp3.internal.and
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream

@@ -11,10 +11,10 @@ import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentExistingBeneficiaryBinding
 import chats.cash.chats_field.model.ModelCampaign
-import chats.cash.chats_field.utils.BluetoothConstants
-import chats.cash.chats_field.utils.BluetoothConstants.CAMPAIGN_BUNDLE_KEY
-import chats.cash.chats_field.utils.BluetoothConstants.FRAGMENT_BENEFICIARY_RESULT_LISTENER
-import chats.cash.chats_field.utils.BluetoothConstants.FRAGMENT_CAMPAIGN_RESULT_LISTENER
+import chats.cash.chats_field.utils.ChatsFieldConstants
+import chats.cash.chats_field.utils.ChatsFieldConstants.CAMPAIGN_BUNDLE_KEY
+import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_BENEFICIARY_RESULT_LISTENER
+import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_CAMPAIGN_RESULT_LISTENER
 import chats.cash.chats_field.views.beneficiary_onboarding.ExistingBeneficiaryViewModel.ExistingBeneficiaryUiState
 import chats.cash.chats_field.views.beneficiary_search.BeneficiaryUi
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -33,7 +33,7 @@ class ExistingBeneficiaryFragment : Fragment(R.layout.fragment_existing_benefici
 
         setFragmentResultListener(FRAGMENT_BENEFICIARY_RESULT_LISTENER) { _, bundle ->
             val result =
-                bundle.getParcelable<BeneficiaryUi>(BluetoothConstants.BENEFICIARY_BUNDLE_KEY)
+                bundle.getParcelable<BeneficiaryUi>(ChatsFieldConstants.BENEFICIARY_BUNDLE_KEY)
             result?.let { populateFieldsWithExistingBeneficiary(beneficiary = it) }
             beneficiaryId = result?.id
         }

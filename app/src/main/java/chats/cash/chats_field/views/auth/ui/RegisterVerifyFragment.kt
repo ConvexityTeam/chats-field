@@ -14,7 +14,7 @@ import chats.cash.chats_field.network.body.LocationBody
 import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
-import chats.cash.chats_field.utils.BluetoothConstants.BENEFICIARY_TYPE
+import chats.cash.chats_field.utils.ChatsFieldConstants.BENEFICIARY_TYPE
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import chats.cash.chats_field.views.base.BaseFragment
 import com.google.gson.Gson

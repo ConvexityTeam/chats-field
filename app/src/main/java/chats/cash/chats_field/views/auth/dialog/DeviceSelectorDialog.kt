@@ -18,7 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import chats.cash.chats_field.R
 import chats.cash.chats_field.model.ConnectedDevice
-import chats.cash.chats_field.utils.BluetoothConstants.EXTRA_DEVICE_ADDRESS
+import chats.cash.chats_field.utils.ChatsFieldConstants.EXTRA_DEVICE_ADDRESS
 import chats.cash.chats_field.utils.hide
 import chats.cash.chats_field.utils.show
 import chats.cash.chats_field.views.auth.adapter.BluetoothClickListener

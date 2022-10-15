@@ -3,7 +3,7 @@ package chats.cash.chats_field.utils
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import chats.cash.chats_field.utils.BluetoothConstants.SHARED_PREFERENCE_NAME
+import chats.cash.chats_field.utils.ChatsFieldConstants.SHARED_PREFERENCE_NAME
 
 class PreferenceUtil(private val context: Context) {
 
