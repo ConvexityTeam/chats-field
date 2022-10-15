@@ -60,7 +60,7 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
 
     fun postTaskImages(
         beneficiaryId: Int,
-        taskAssignmentId: Int,
+        taskAssignmentId: String,
         description: String,
         images: ArrayList<File>,
     ) {

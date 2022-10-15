@@ -157,7 +157,7 @@ interface ConvexityApiService {
     @Multipart
     suspend fun uploadTaskEvidence(
         @Path("beneficiaryId") beneficiaryId: Int,
-        @Part("TaskAssignmentId") taskAssignmentId: Int,
+        @Part("TaskAssignmentId") taskAssignmentId: RequestBody,
         @Part("comment") description: RequestBody,
         @Part("type") type: RequestBody,
         @Part uploads: ArrayList<MultipartBody.Part>,

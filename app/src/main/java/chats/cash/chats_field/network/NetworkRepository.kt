@@ -401,13 +401,14 @@ class NetworkRepository(
 
     suspend fun uploadTaskEvidence(
         beneficiaryId: Int,
-        taskAssignmentId: Int,
+        taskAssignmentId: String,
         comment: String,
         type: String = "image",
         uploads: ArrayList<File>
     ): BaseResponse<Any> = withContext(Dispatchers.IO) {
         val typeBody = type.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val commentBody = comment.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val taskAssignmentBody = taskAssignmentId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val imageParts = ArrayList<MultipartBody.Part>()
         uploads.forEachIndexed { index, imageFile ->
             //val compressed = Compressor.compress(context, imageFile)
@@ -423,7 +424,7 @@ class NetworkRepository(
         }
         api.uploadTaskEvidence(
             beneficiaryId = beneficiaryId,
-            taskAssignmentId = taskAssignmentId,
+            taskAssignmentId = taskAssignmentBody,
             description = commentBody,
             type = typeBody,
             uploads = imageParts,

@@ -91,7 +91,7 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
 
         cashForWorkViewModel.postTaskImages(
             beneficiaryId = args.beneficiaryId,
-            taskAssignmentId = args.taskId.toInt(),
+            taskAssignmentId = args.taskId,
             description = desc,
             images = imagesPart
         )
