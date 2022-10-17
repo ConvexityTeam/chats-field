@@ -411,15 +411,12 @@ class NetworkRepository(
         val taskAssignmentBody = taskAssignmentId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val imageParts = ArrayList<MultipartBody.Part>()
         uploads.forEachIndexed { index, imageFile ->
-            //val compressed = Compressor.compress(context, imageFile)
-            val mBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+            val mBody = imageFile.asRequestBody("image/png".toMediaTypeOrNull())
             val imagePart = MultipartBody.Part.createFormData(
                 "images_$index",
                 imageFile.name,
                 mBody
             )
-            //Timber.d("CompressedPath: ${compressed.path}")
-            Timber.d("FileName: ${imageFile.name}")
             imageParts.add(imagePart)
         }
         api.uploadTaskEvidence(
