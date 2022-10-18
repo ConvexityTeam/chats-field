@@ -19,20 +19,19 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import chats.cash.chats_field.R
 import chats.cash.chats_field.utils.BluetoothCommands
-import chats.cash.chats_field.utils.BluetoothConstants
-import chats.cash.chats_field.utils.BluetoothConstants.CMD_GETIMAGE
-import chats.cash.chats_field.utils.BluetoothConstants.CONNECTION_CODE
-import chats.cash.chats_field.utils.BluetoothConstants.DEVICE_NAME
-import chats.cash.chats_field.utils.BluetoothConstants.EXTRA_DEVICE_ADDRESS
-import chats.cash.chats_field.utils.BluetoothConstants.MESSAGE_DEVICE_NAME
-import chats.cash.chats_field.utils.BluetoothConstants.MESSAGE_READ
-import chats.cash.chats_field.utils.BluetoothConstants.MESSAGE_STATE_CHANGE
-import chats.cash.chats_field.utils.BluetoothConstants.MESSAGE_TOAST
-import chats.cash.chats_field.utils.BluetoothConstants.MESSAGE_WRITE
-import chats.cash.chats_field.utils.BluetoothConstants.PERMISSIONS_STORAGE
-import chats.cash.chats_field.utils.BluetoothConstants.REQUEST_ENABLE_BT
-import chats.cash.chats_field.utils.BluetoothConstants.REQUEST_PERMISSION_CODE
-import chats.cash.chats_field.utils.BluetoothReaderService
+import chats.cash.chats_field.utils.ChatsFieldConstants
+import chats.cash.chats_field.utils.ChatsFieldConstants.CMD_GETIMAGE
+import chats.cash.chats_field.utils.ChatsFieldConstants.CONNECTION_CODE
+import chats.cash.chats_field.utils.ChatsFieldConstants.DEVICE_NAME
+import chats.cash.chats_field.utils.ChatsFieldConstants.EXTRA_DEVICE_ADDRESS
+import chats.cash.chats_field.utils.ChatsFieldConstants.MESSAGE_DEVICE_NAME
+import chats.cash.chats_field.utils.ChatsFieldConstants.MESSAGE_READ
+import chats.cash.chats_field.utils.ChatsFieldConstants.MESSAGE_STATE_CHANGE
+import chats.cash.chats_field.utils.ChatsFieldConstants.MESSAGE_TOAST
+import chats.cash.chats_field.utils.ChatsFieldConstants.MESSAGE_WRITE
+import chats.cash.chats_field.utils.ChatsFieldConstants.PERMISSIONS_STORAGE
+import chats.cash.chats_field.utils.ChatsFieldConstants.REQUEST_ENABLE_BT
+import chats.cash.chats_field.utils.ChatsFieldConstants.REQUEST_PERMISSION_CODE
 import chats.cash.chats_field.views.auth.dialog.DeviceSelectorDialog
 import kotlinx.android.synthetic.main.fragment_finger_print_scanner.*
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -188,7 +187,7 @@ class FingerPrintScannerFragment : Fragment() {
 
                     }
                     MESSAGE_TOAST -> Toast.makeText(requireContext(), msg.data.getString(
-                        BluetoothConstants.TOAST), Toast.LENGTH_SHORT).show()
+                        ChatsFieldConstants.TOAST), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -233,58 +232,58 @@ class FingerPrintScannerFragment : Fragment() {
         mCmdSize = 0
         mChatService?.write(sendbuf)
         when (sendbuf[4]) {
-            BluetoothConstants.CMD_PASSWORD -> {
+            ChatsFieldConstants.CMD_PASSWORD -> {
 
             }
-            BluetoothConstants.CMD_ENROLID -> {
+            ChatsFieldConstants.CMD_ENROLID -> {
 
             }
-            BluetoothConstants.CMD_VERIFY -> {
+            ChatsFieldConstants.CMD_VERIFY -> {
 
             }
-            BluetoothConstants.CMD_IDENTIFY -> {
+            ChatsFieldConstants.CMD_IDENTIFY -> {
 
             }
-            BluetoothConstants.CMD_DELETEID -> {
+            ChatsFieldConstants.CMD_DELETEID -> {
 
             }
-            BluetoothConstants.CMD_CLEARID -> {
+            ChatsFieldConstants.CMD_CLEARID -> {
 
             }
-            BluetoothConstants.CMD_ENROLHOST -> {
+            ChatsFieldConstants.CMD_ENROLHOST -> {
 
             }
-            BluetoothConstants.CMD_CAPTUREHOST -> {
+            ChatsFieldConstants.CMD_CAPTUREHOST -> {
 
             }
-            BluetoothConstants.CMD_MATCH -> {
+            ChatsFieldConstants.CMD_MATCH -> {
 
             }
-            BluetoothConstants.CMD_WRITEFPCARD, BluetoothConstants.CMD_WRITEDATACARD -> {
+            ChatsFieldConstants.CMD_WRITEFPCARD, ChatsFieldConstants.CMD_WRITEDATACARD -> {
 
             }
-            BluetoothConstants.CMD_READFPCARD, BluetoothConstants.CMD_READDATACARD -> {
+            ChatsFieldConstants.CMD_READFPCARD, ChatsFieldConstants.CMD_READDATACARD -> {
 
             }
-            BluetoothConstants.CMD_FPCARDMATCH -> {
+            ChatsFieldConstants.CMD_FPCARDMATCH -> {
 
             }
-            BluetoothConstants.CMD_CARDSN -> {
+            ChatsFieldConstants.CMD_CARDSN -> {
 
             }
-            BluetoothConstants.CMD_GETSN -> {
+            ChatsFieldConstants.CMD_GETSN -> {
 
             }
-            BluetoothConstants.CMD_GETBAT -> {
+            ChatsFieldConstants.CMD_GETBAT -> {
 
             }
-            BluetoothConstants.CMD_GETIMAGE -> {
+            ChatsFieldConstants.CMD_GETIMAGE -> {
                 mUpImageSize = 0
             }
-            BluetoothConstants.CMD_GETCHAR -> {
+            ChatsFieldConstants.CMD_GETCHAR -> {
 
             }
-            BluetoothConstants.CMD_GET_VERSION -> {
+            ChatsFieldConstants.CMD_GET_VERSION -> {
 
             }
         }
@@ -340,8 +339,8 @@ class FingerPrintScannerFragment : Fragment() {
     }
 
     private fun ReceiveCommand(databuf: ByteArray, datasize: Int) {
-        if (mDeviceCmd == BluetoothConstants.CMD_GETIMAGE) { //receiving the image data from the device
-            if (imgSize == BluetoothConstants.IMG200) {   //image size with 152*200
+        if (mDeviceCmd == ChatsFieldConstants.CMD_GETIMAGE) { //receiving the image data from the device
+            if (imgSize == ChatsFieldConstants.IMG200) {   //image size with 152*200
                 memcpy(mUpImage, mUpImageSize, databuf, 0, datasize)
                 mUpImageSize = mUpImageSize + datasize
                 if (mUpImageSize >= 15200) {
@@ -358,7 +357,7 @@ class FingerPrintScannerFragment : Fragment() {
                     if(bmpdata != null){
                         val image = BitmapFactory.decodeByteArray(bmpdata, 0, bmpdata.size)
                         saveJPGimage(image)
-                        Log.d(BluetoothConstants.TAG, "bmpdata.length:" + bmpdata.size)
+                        Log.d(ChatsFieldConstants.TAG, "bmpdata.length:" + bmpdata.size)
                         fingerprintImage.setImageBitmap(image)
                     }
                     mUpImageSize = 0
@@ -366,7 +365,7 @@ class FingerPrintScannerFragment : Fragment() {
                     mIsWork = false
                     Timber.v("Display Image")
                 }
-            } else if (imgSize == BluetoothConstants.IMG288) {   //image size with 256*288
+            } else if (imgSize == ChatsFieldConstants.IMG288) {   //image size with 256*288
                 memcpy(mUpImage, mUpImageSize, databuf, 0, datasize)
                 mUpImageSize = mUpImageSize + datasize
                 if (mUpImageSize >= 36864) {
@@ -396,7 +395,7 @@ class FingerPrintScannerFragment : Fragment() {
                     mIsWork = false
                     Timber.v("Display Image")
                 }
-            } else if (imgSize == BluetoothConstants.IMG360) {   //image size with 256*360
+            } else if (imgSize == ChatsFieldConstants.IMG360) {   //image size with 256*360
                 memcpy(mUpImage, mUpImageSize, databuf, 0, datasize)
                 mUpImageSize = mUpImageSize + datasize
                 //Timber.v("Image Len="+Integer.toString(mUpImageSize)+"--"+Integer.toString(mUpImageCount));
@@ -461,17 +460,17 @@ class FingerPrintScannerFragment : Fragment() {
                 //parsing the mCmdData
                 if (mCmdData[0] == 'F'.toByte() && mCmdData[1] == 'T'.toByte()) {
                     when (mCmdData[4]) {
-                        BluetoothConstants.CMD_PASSWORD -> {
+                        ChatsFieldConstants.CMD_PASSWORD -> {
                         }
-                        BluetoothConstants.CMD_ENROLID -> {
+                        ChatsFieldConstants.CMD_ENROLID -> {
                             if (mCmdData[7] == 1.toByte()) {
                                 //int id=mCmdData[8]+(mCmdData[9]<<8);
                                 val id = mCmdData[8] + (mCmdData[9].toInt() shl 8 and 0xFF00)
                                 Timber.v("Enrol Succeed:$id")
-                                Log.d(BluetoothConstants.TAG, id.toString())
+                                Log.d(ChatsFieldConstants.TAG, id.toString())
                             } else Timber.v("Search Fail")
                         }
-                        BluetoothConstants.CMD_ENROLHOST -> {
+                        ChatsFieldConstants.CMD_ENROLHOST -> {
                             val size: Int = mCmdData[5] + (mCmdData[6].toInt() shl 8 and 0xFF00) - 1
                             if (mCmdData[7] == 1.toByte()) {
                                 memcpy(mRefData, 0, mCmdData, 8, size)
@@ -480,7 +479,7 @@ class FingerPrintScannerFragment : Fragment() {
                                 userId += 1
                             } else Timber.v("Search Fail")
                         }
-                        BluetoothConstants.CMD_CAPTUREHOST -> {
+                        ChatsFieldConstants.CMD_CAPTUREHOST -> {
                             val size: Int = mCmdData[5] + (mCmdData[6].toInt() shl 8 and 0xFF00) - 1
                             if (mCmdData[7] == 1.toByte()) {
                                 memcpy(mMatData, 0, mCmdData, 8, size)
@@ -507,16 +506,16 @@ class FingerPrintScannerFragment : Fragment() {
 //                                }
                             } else Timber.v("Search Fail")
                         }
-                        BluetoothConstants.CMD_MATCH -> {
+                        ChatsFieldConstants.CMD_MATCH -> {
                             val score: Int = mCmdData[8] + (mCmdData[9].toInt() shl 8 and 0xFF00)
                             if (mCmdData[7] == 1.toByte()) Timber.v("Match Succeed:$score") else Timber.v(
                                 "Search Fail")
                         }
-                        BluetoothConstants.CMD_WRITEFPCARD -> {
+                        ChatsFieldConstants.CMD_WRITEFPCARD -> {
                             if (mCmdData[7] == 1.toByte()) Timber.v("Write Fingerprint Card Succeed") else Timber.v(
                                 "Search Fail")
                         }
-                        BluetoothConstants.CMD_READFPCARD -> {
+                        ChatsFieldConstants.CMD_READFPCARD -> {
                             val size: Int = mCmdData[5] + (mCmdData[6].toInt() shl 8 and 0xFF00)
                             if (size > 0) {
                                 memcpy(mCardData, 0, mCmdData, 8, size)
@@ -524,7 +523,7 @@ class FingerPrintScannerFragment : Fragment() {
                                 Timber.v("Read Fingerprint Card Succeed")
                             } else Timber.v("Search Fail")
                         }
-                        BluetoothConstants.CMD_FPCARDMATCH -> {
+                        ChatsFieldConstants.CMD_FPCARDMATCH -> {
                             if (mCmdData[7] == 1.toByte()) {
                                 Timber.v("Fingerprint Match Succeed")
                                 val size: Int =
@@ -536,7 +535,7 @@ class FingerPrintScannerFragment : Fragment() {
                                 Timber.v(txt)
                             } else Timber.v("Search Fail")
                         }
-                        BluetoothConstants.CMD_UPCARDSN, BluetoothConstants.CMD_CARDSN -> {
+                        ChatsFieldConstants.CMD_UPCARDSN, ChatsFieldConstants.CMD_CARDSN -> {
                             val size: Int = mCmdData[5] + (mCmdData[6].toInt() shl 8 and 0xF0) - 1
                             if (size > 0) {
                                 memcpy(mCardSn, 0, mCmdData, 8, size)
@@ -546,14 +545,14 @@ class FingerPrintScannerFragment : Fragment() {
                                     mCardSn[5] and 0xFF) + Integer.toHexString(mCardSn[6] and 0xFF))
                             } else Timber.v("Search Fail")
                         }
-                        BluetoothConstants.CMD_WRITEDATACARD -> {
+                        ChatsFieldConstants.CMD_WRITEDATACARD -> {
                             if (mCmdData[7] == 1.toByte()) {
                                 Timber.v("Write Card Data Succeed")
                             } else {
                                 Timber.v("Search Fail")
                             }
                         }
-                        BluetoothConstants.CMD_READDATACARD -> {
+                        ChatsFieldConstants.CMD_READDATACARD -> {
                             val size: Int = mCmdData[5] + (mCmdData[6].toInt() shl 8 and 0xFF00)
                             if (size > 0) {
                                 memcpy(mCardData, 0, mCmdData, 8, size)
@@ -743,7 +742,7 @@ class FingerPrintScannerFragment : Fragment() {
     private fun openDeviceSelector() {
         val bottomSheetDialogFragment = DeviceSelectorDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = true
-        bottomSheetDialogFragment.setTargetFragment(this, BluetoothConstants.CONNECTION_CODE)
+        bottomSheetDialogFragment.setTargetFragment(this, ChatsFieldConstants.CONNECTION_CODE)
         bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),"BottomSheetDialog")
     }
 

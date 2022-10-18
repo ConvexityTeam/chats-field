@@ -42,6 +42,16 @@
             android:name="io.sentry.dsn"
             android:value="https://253d2c749a5b4cc3a787759880719ba2@o449946.ingest.sentry.io/5521610" />
         <activity android:name="chats.cash.chats_field.views.MainActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 
 </manifest>

@@ -1,6 +1,6 @@
 package chats.cash.chats_field.network.api
 
-import chats.cash.chats_field.utils.BluetoothConstants.BASE_URL
+import chats.cash.chats_field.utils.ChatsFieldConstants.BASE_URL
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

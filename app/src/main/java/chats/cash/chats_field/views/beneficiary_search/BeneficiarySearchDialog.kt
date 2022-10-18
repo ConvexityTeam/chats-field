@@ -16,8 +16,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.DialogBeneficiarySearchBinding
-import chats.cash.chats_field.utils.BluetoothConstants.BENEFICIARY_BUNDLE_KEY
-import chats.cash.chats_field.utils.BluetoothConstants.FRAGMENT_BENEFICIARY_RESULT_LISTENER
+import chats.cash.chats_field.utils.ChatsFieldConstants.BENEFICIARY_BUNDLE_KEY
+import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_BENEFICIARY_RESULT_LISTENER
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

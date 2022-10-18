@@ -20,7 +20,7 @@
         <entry key="app/src/main/res/drawable/transparent_rectangle_green.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/drawable/transparent_rectangle_yellow.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.335" />
-        <entry key="app/src/main/res/layout/dialog_campaign.xml" value="0.12083333333333333" />
+        <entry key="app/src/main/res/layout/dialog_campaign.xml" value="0.25" />
         <entry key="app/src/main/res/layout/dialog_login.xml" value="0.3182291666666667" />
         <entry key="app/src/main/res/layout/dialog_selector.xml" value="0.25833333333333336" />
         <entry key="app/src/main/res/layout/fragment_beneficiary_list.xml" value="0.165" />
@@ -31,7 +31,7 @@
         <entry key="app/src/main/res/layout/fragment_cash_for_work_submit.xml" value="0.5554773083515638" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work_task.xml" value="0.2875" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work_task_details.xml" value="0.3685092127303183" />
-        <entry key="app/src/main/res/layout/fragment_existing_beneficiary.xml" value="0.12083333333333333" />
+        <entry key="app/src/main/res/layout/fragment_existing_beneficiary.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_image_capture.xml" value="0.125" />
         <entry key="app/src/main/res/layout/fragment_nfc_scan.xml" value="0.25833333333333336" />
         <entry key="app/src/main/res/layout/fragment_onboarding.xml" value="0.2672631068739748" />
@@ -43,6 +43,7 @@
         <entry key="app/src/main/res/layout/fragment_select_beneficiaries.xml" value="0.30416666666666664" />
         <entry key="app/src/main/res/layout/fragment_splash.xml" value="0.16111111111111112" />
         <entry key="app/src/main/res/layout/fragment_vendor.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/item_campaign_header.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_cash_for_work_beneficiaries.xml" value="0.30416666666666664" />
         <entry key="app/src/main/res/layout/item_cash_for_work_beneficiary.xml" value="0.25833333333333336" />
         <entry key="app/src/main/res/layout/item_cash_for_work_item.xml" value="0.34913793103448276" />

@@ -280,7 +280,7 @@ class NetworkRepository(
         return try {
             val apiService = RetrofitClient.apiService().create(ConvexityApiService::class.java)
             val data = apiService.getAllCampaigns(preferenceUtil.getNGOId(),
-                "campaign",
+                null,
                 authorization = preferenceUtil.getNGOToken()).data
             Timber.v("XXXgetAllCampaigns: called$data")
             offlineRepository.insertAllCampaign(data)
@@ -401,25 +401,27 @@ class NetworkRepository(
 
     suspend fun uploadTaskEvidence(
         beneficiaryId: Int,
+        taskAssignmentId: String,
         comment: String,
         type: String = "image",
-        uploads: ArrayList<File>,
+        uploads: ArrayList<File>
     ): BaseResponse<Any> = withContext(Dispatchers.IO) {
         val typeBody = type.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val commentBody = comment.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val taskAssignmentBody = taskAssignmentId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val imageParts = ArrayList<MultipartBody.Part>()
-        uploads.forEachIndexed { index, image ->
-            val compressed = Compressor.compress(context, image)
-            val mBody = compressed.asRequestBody("image/*".toMediaTypeOrNull())
+        uploads.forEachIndexed { index, imageFile ->
+            val mBody = imageFile.asRequestBody("image/png".toMediaTypeOrNull())
             val imagePart = MultipartBody.Part.createFormData(
                 "images_$index",
-                compressed.absolutePath.substringAfterLast("/"),
+                imageFile.name,
                 mBody
             )
             imageParts.add(imagePart)
         }
         api.uploadTaskEvidence(
             beneficiaryId = beneficiaryId,
+            taskAssignmentId = taskAssignmentBody,
             description = commentBody,
             type = typeBody,
             uploads = imageParts,

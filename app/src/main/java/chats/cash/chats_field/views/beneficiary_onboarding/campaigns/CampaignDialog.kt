@@ -10,14 +10,15 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.DialogCampaignBinding
 import chats.cash.chats_field.model.ModelCampaign
-import chats.cash.chats_field.utils.BluetoothConstants.CAMPAIGN_BUNDLE_KEY
-import chats.cash.chats_field.utils.BluetoothConstants.FRAGMENT_CAMPAIGN_RESULT_LISTENER
+import chats.cash.chats_field.utils.ChatsFieldConstants.CAMPAIGN_BUNDLE_KEY
+import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_CAMPAIGN_RESULT_LISTENER
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -32,6 +33,13 @@ class CampaignDialog : BottomSheetDialogFragment() {
             dismiss()
         })
     }
+    private val cashForWorkAdapter by lazy {
+        CampaignAdapter(onCampaignClick = {
+            setFragmentResult(FRAGMENT_CAMPAIGN_RESULT_LISTENER, bundleOf(CAMPAIGN_BUNDLE_KEY to it))
+            dismiss()
+        })
+    }
+    private val concatAdapter: ConcatAdapter by lazy { ConcatAdapter() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,16 +73,29 @@ class CampaignDialog : BottomSheetDialogFragment() {
     }
 
     private fun setupCampaignData() {
-        viewModel.campaigns.observe(viewLifecycleOwner, ::handleCampaignList)
-    }
-
-    private fun handleCampaignList(campaigns: List<ModelCampaign>?) = with(binding) {
-        campaignList.apply {
-            adapter = campaignAdapter
+        binding.campaignList.apply {
+            adapter = concatAdapter
             layoutManager = LinearLayoutManager(requireContext())
             addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
         }
+        viewModel.campaigns.observe(viewLifecycleOwner, ::handleCampaignList)
+        viewModel.cashForWorkCampaigns.observe(viewLifecycleOwner, ::handleCashForWorkList)
+    }
+
+    private fun handleCampaignList(campaigns: List<ModelCampaign>?) = with(binding) {
         campaignAdapter.submitList(campaigns)
+        if (campaigns.isNullOrEmpty().not()) {
+            concatAdapter.addAdapter(CampaignHeaderAdapter("Select a Campaign"))
+            concatAdapter.addAdapter(campaignAdapter)
+        }
+    }
+
+    private fun handleCashForWorkList(campaigns: List<ModelCampaign>?) = with(binding) {
+        cashForWorkAdapter.submitList(campaigns)
+        if (campaigns.isNullOrEmpty().not()) {
+            concatAdapter.addAdapter(CampaignHeaderAdapter("Select Cash-for-Work"))
+            concatAdapter.addAdapter(cashForWorkAdapter)
+        }
     }
 
     override fun onDestroyView() {

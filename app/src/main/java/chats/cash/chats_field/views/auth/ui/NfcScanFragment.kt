@@ -16,7 +16,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import chats.cash.chats_field.R
 import chats.cash.chats_field.utils.*
-import chats.cash.chats_field.utils.BluetoothConstants.EXTRA_DEVICE_ADDRESS
+import chats.cash.chats_field.utils.ChatsFieldConstants.EXTRA_DEVICE_ADDRESS
 import chats.cash.chats_field.views.auth.dialog.DeviceSelectorDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -67,8 +67,8 @@ class NfcScanFragment : BottomSheetDialogFragment() {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(requireActivity(),
-                BluetoothConstants.PERMISSIONS_STORAGE,
-                BluetoothConstants.REQUEST_PERMISSION_CODE)
+                ChatsFieldConstants.PERMISSIONS_STORAGE,
+                ChatsFieldConstants.REQUEST_PERMISSION_CODE)
         }
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         setStyle(STYLE_NORMAL, R.style.CustomBottomSheet)
@@ -77,7 +77,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
     private fun openDeviceSelector() {
         val bottomSheetDialogFragment = DeviceSelectorDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = true
-        bottomSheetDialogFragment.setTargetFragment(this, BluetoothConstants.CONNECTION_CODE)
+        bottomSheetDialogFragment.setTargetFragment(this, ChatsFieldConstants.CONNECTION_CODE)
         bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),
             "BottomSheetDialog")
     }
@@ -107,7 +107,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         // setupChat() will then be called during onActivityResult
         if (!mBluetoothAdapter!!.isEnabled) {
             val enableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableIntent, BluetoothConstants.REQUEST_ENABLE_BT)
+            startActivityForResult(enableIntent, ChatsFieldConstants.REQUEST_ENABLE_BT)
             // Otherwise, setup the chat session
         } else {
             if (mChatService == null) setupChat()
@@ -123,7 +123,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         @SuppressLint("HandlerLeak") val mHandler: Handler = object : Handler() {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
-                    BluetoothConstants.MESSAGE_STATE_CHANGE -> when (msg.arg1) {
+                    ChatsFieldConstants.MESSAGE_STATE_CHANGE -> when (msg.arg1) {
                         chats.cash.chats_field.utils.BluetoothReaderService.STATE_CONNECTED -> {
 
                         }
@@ -134,10 +134,10 @@ class NfcScanFragment : BottomSheetDialogFragment() {
 
                         }
                     }
-                    BluetoothConstants.MESSAGE_WRITE -> {
+                    ChatsFieldConstants.MESSAGE_WRITE -> {
 
                     }
-                    BluetoothConstants.MESSAGE_READ -> {
+                    ChatsFieldConstants.MESSAGE_READ -> {
                         val readBuf = msg.obj as ByteArray
                         if (readBuf.isNotEmpty()) {
                             if (readBuf[0] == 0x1b.toByte()) {
@@ -147,23 +147,23 @@ class NfcScanFragment : BottomSheetDialogFragment() {
                             }
                         }
                     }
-                    BluetoothConstants.MESSAGE_DEVICE_NAME -> {
+                    ChatsFieldConstants.MESSAGE_DEVICE_NAME -> {
                         // save the connected device's name
-                        mConnectedDeviceName = msg.data.getString(BluetoothConstants.DEVICE_NAME)
+                        mConnectedDeviceName = msg.data.getString(ChatsFieldConstants.DEVICE_NAME)
                         Toast.makeText(requireContext(),
                             "Connected to $mConnectedDeviceName",
                             Toast.LENGTH_SHORT).show()
                         scanNfcBtn.text = "Scan NFC Card"
                         scanNfcBtn.setOnClickListener {
-                            SendCommand(BluetoothConstants.CMD_CARDSN, null, 0)
+                            SendCommand(ChatsFieldConstants.CMD_CARDSN, null, 0)
                         }
 
                     }
-                    BluetoothConstants.MESSAGE_TOAST -> {
+                    ChatsFieldConstants.MESSAGE_TOAST -> {
                         try {
                             Toast.makeText(requireContext(),
                                 msg.data.getString(
-                                    BluetoothConstants.TOAST),
+                                    ChatsFieldConstants.TOAST),
                                 Toast.LENGTH_SHORT).show()
                         } catch (e: Throwable) {
                             Timber.v(e)
@@ -249,10 +249,10 @@ class NfcScanFragment : BottomSheetDialogFragment() {
             mCmdSize = 0
             mChatService?.write(sendbuf)
             when (sendbuf[4]) {
-                BluetoothConstants.CMD_CARDSN -> {
+                ChatsFieldConstants.CMD_CARDSN -> {
 
                 }
-                BluetoothConstants.CMD_GETIMAGE -> {
+                ChatsFieldConstants.CMD_GETIMAGE -> {
                     mUpImageSize = 0
                 }
             }
@@ -304,7 +304,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            BluetoothConstants.CONNECTION_CODE ->                 // When DeviceListActivity returns with a device to connect
+            ChatsFieldConstants.CONNECTION_CODE ->                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     // Get the device MAC address
                     val address = data!!.extras!!.getString(EXTRA_DEVICE_ADDRESS)
@@ -315,7 +315,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
                     // Attempt to connect to the device
                     mChatService!!.connect(device)
                 }
-            BluetoothConstants.REQUEST_ENABLE_BT ->                 // When the request to enable Bluetooth returns
+            ChatsFieldConstants.REQUEST_ENABLE_BT ->                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
                     setupChat()

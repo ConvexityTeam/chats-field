@@ -15,7 +15,7 @@ object Utils {
     fun Context.checkAppPermission() {
         Permissions.check(
             this /*context*/,
-            BluetoothConstants.permissions,
+            ChatsFieldConstants.permissions,
             null /*rationale*/,
             null /*options*/,
             object : PermissionHandler() {

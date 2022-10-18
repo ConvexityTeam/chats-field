@@ -6,8 +6,8 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import chats.cash.chats_field.utils.BluetoothConstants.COMPLETE
-import chats.cash.chats_field.utils.BluetoothConstants.INCOMPLETE
+import chats.cash.chats_field.utils.ChatsFieldConstants.COMPLETE
+import chats.cash.chats_field.utils.ChatsFieldConstants.INCOMPLETE
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import retrofit2.HttpException

@@ -13,6 +13,7 @@ import chats.cash.chats_field.utils.show
 import chats.cash.chats_field.utils.showToast
 import chats.cash.chats_field.utils.toStatusString
 import chats.cash.chats_field.views.auth.adapter.WorkerAdapter
+import chats.cash.chats_field.views.auth.adapter.WorkerAdapter.*
 import chats.cash.chats_field.views.cashForWork.model.AssignedWorker
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -24,7 +25,7 @@ class CashForWorkTaskDetailsFragment : Fragment(R.layout.fragment_cash_for_work_
     private val args by navArgs<CashForWorkTaskDetailsFragmentArgs>()
     private val workAdapter: WorkerAdapter by lazy {
         WorkerAdapter(
-            onItemClick = ::toImageDetails,
+            onItemClick = ::handleItemClick,
             onAddWorkerClick = ::addWorker
         )
     }
@@ -89,13 +90,20 @@ class CashForWorkTaskDetailsFragment : Fragment(R.layout.fragment_cash_for_work_
         }
     }
 
-    private fun toImageDetails(worker: AssignedWorker) {
-        findNavController().navigate(CashForWorkTaskDetailsFragmentDirections.toCashForWorkImageFragment(
-            taskId = worker.taskAssignment.taskId.toString(),
-            taskName = args.job.name,
-            userId = worker.taskAssignment.userId.toString(),
-            beneficiaryId = worker.id
-        ))
+    private fun handleItemClick(taskState: TaskState) {
+        when (taskState) {
+            TaskState.Completed -> showToast("Your task Evidence is approved")
+            TaskState.Disbursed -> showToast("This task has been completed and payment disbursed to beneficiary")
+            is TaskState.ProgressOrRejected -> {
+                findNavController().navigate(CashForWorkTaskDetailsFragmentDirections.toCashForWorkSubmitFragment(
+                    taskId = taskState.worker.taskAssignment.taskId.toString(),
+                    taskName = args.job.name,
+                    userId = taskState.worker.taskAssignment.userId.toString(),
+                    beneficiaryId = taskState.worker.id,
+                    userName = taskState.worker.firstName.plus(" ").plus(taskState.worker.lastName)
+                ))
+            }
+        }
     }
 
     private fun addWorker(worker: AssignedWorker) {

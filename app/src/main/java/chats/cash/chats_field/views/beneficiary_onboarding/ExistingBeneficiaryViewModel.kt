@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chats.cash.chats_field.network.NetworkRepository
-import chats.cash.chats_field.utils.BluetoothConstants.API_SUCCESS
+import chats.cash.chats_field.utils.ChatsFieldConstants.API_SUCCESS
 import chats.cash.chats_field.utils.handleThrowable
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch

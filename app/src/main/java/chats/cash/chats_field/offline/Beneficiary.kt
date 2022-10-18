@@ -2,7 +2,7 @@ package chats.cash.chats_field.offline
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import chats.cash.chats_field.utils.BluetoothConstants.VENDOR_TYPE
+import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
 
 @Entity(tableName = "beneficiary")
 data class Beneficiary(

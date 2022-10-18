@@ -2,7 +2,7 @@ package chats.cash.chats_field.di
 
 import chats.cash.chats_field.network.api.ConvexityApiService
 import chats.cash.chats_field.network.api.NinVerificationApi
-import chats.cash.chats_field.utils.BluetoothConstants
+import chats.cash.chats_field.utils.ChatsFieldConstants
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -24,7 +24,7 @@ val apiModule = module {
 
     single<NinVerificationApi> {
         Retrofit.Builder()
-            .baseUrl(BluetoothConstants.NIN_BASE_URL)
+            .baseUrl(ChatsFieldConstants.NIN_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
             .client(provideClient())
             .build()

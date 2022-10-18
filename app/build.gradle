@@ -24,8 +24,8 @@ android {
         applicationId "chats.cash.chats_field"
         minSdkVersion 23
         targetSdkVersion 32
-        versionCode 9
-        versionName "1.0.1-beta09"
+        versionCode 10
+        versionName "1.0.1-beta10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
@@ -35,6 +35,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable true
         }
     }
     compileOptions {
