@@ -1,5 +1,7 @@
 package chats.cash.chats_field.views.auth.login
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,8 @@ import chats.cash.chats_field.network.body.login.LoginBody
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_LOGIN_RESULT_KEY
 import chats.cash.chats_field.utils.ChatsFieldConstants.LOGIN_BUNDLE_KEY
+import chats.cash.chats_field.utils.ChatsFieldConstants.PRIVACY_POLICY
+import chats.cash.chats_field.utils.ChatsFieldConstants.TERMS_OF_USE
 import chats.cash.chats_field.views.auth.dialog.ForgotDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.android.ext.android.inject
@@ -57,6 +61,20 @@ class LoginDialog : BottomSheetDialogFragment() {
         }
 
         setupObservers()
+
+        binding.terms.makeLinks(
+            "Terms and Conditions" to View.OnClickListener {
+                openLink(TERMS_OF_USE)
+            },
+            "Privacy Policy" to View.OnClickListener {
+                openLink(PRIVACY_POLICY)
+            }
+        )
+    }
+
+    private fun openLink(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 
     private fun setupObservers() = with(binding) {

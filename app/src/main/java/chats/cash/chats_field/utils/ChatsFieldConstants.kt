@@ -107,4 +107,7 @@ object ChatsFieldConstants {
     const val SHARED_PREFERENCE_NAME: String = BuildConfig.APPLICATION_ID.plus("_preference")
 
     const val NIN_KEY: String = "F4Unc5MZ.e7BjG09xd9YJXMnvuXmayuICfMVNW6OE"
+
+    const val TERMS_OF_USE: String = "https://chats.cash/terms-of-use"
+    const val PRIVACY_POLICY: String = "https://chats.cash/privacy-policy"
 }
