@@ -52,7 +52,7 @@ class RegisterViewModel(
     }
 
     var specialCase = false
-    var nin = "";
+    var nin = ""
     var campaign: String = "1"
     var pin = "0000"
     fun onboardUser(
@@ -72,7 +72,7 @@ class RegisterViewModel(
         mDate: RequestBody,
         location: RequestBody,
         campaign: RequestBody,
-        pin: RequestBody
+        pin: RequestBody,
     ) {
         onboardUser.value = ApiResponse.Loading()
         viewModelScope.launch {
@@ -164,22 +164,22 @@ class RegisterViewModel(
         address: String,
         country: String,
         state: String,
-        coordinates: List<Double>
+        coordinates: List<Double>,
     ) {
         _vendorOnboardingUiState.value = VendorOnboardingState.Loading
         viewModelScope.launch(exceptionHandler) {
             withContext(Dispatchers.IO) {
                 val data = repository.vendorOnboarding(
-                        businessName = businessName,
-                        email = email,
-                        phone = phone,
-                        firstName = firstName,
-                        lastName = lastName,
-                        address = address,
-                        country = country,
-                        state = state,
-                        coordinates = coordinates
-                    )
+                    businessName = businessName,
+                    email = email,
+                    phone = phone,
+                    firstName = firstName,
+                    lastName = lastName,
+                    address = address,
+                    country = country,
+                    state = state,
+                    coordinates = coordinates
+                )
                 if (data.code == 201) {
                     _vendorOnboardingUiState.postValue(VendorOnboardingState.Success)
                 } else {
@@ -209,8 +209,8 @@ class RegisterViewModel(
             val data = repository.getAllCampaigns()
             organizations.postValue(organizations.value)
             Timber.v("All data: $data")
-            }
         }
+    }
 
     fun getUserDetails(id: String) {
         userDetails.value = ApiResponse.Loading()

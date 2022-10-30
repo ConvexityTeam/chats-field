@@ -13,21 +13,21 @@ import android.view.View
 import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentRegisterBinding
+import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.Utils.toCountryCode
 import chats.cash.chats_field.views.auth.login.LoginDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.robin.locationgetter.EasyLocation
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 import java.util.*
-import kotlin.collections.ArrayList
 
 @InternalCoroutinesApi
 class RegisterFragment : Fragment(R.layout.fragment_register) {
@@ -42,9 +42,16 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     private val organizationId: Int by lazy { preferenceUtil.getNGOId() }
     private val viewModel by sharedViewModel<RegisterViewModel>()
     private val myCalendar: Calendar = Calendar.getInstance()
-    private var campaignId: String? = null
-    private lateinit var arrayAdapter: ArrayAdapter<String>
-    private lateinit var campaignSpinner: MaterialAutoCompleteTextView
+    private var campaign: ModelCampaign? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setFragmentResultListener(ChatsFieldConstants.FRAGMENT_CAMPAIGN_RESULT_LISTENER) { _, bundle ->
+            campaign = bundle.getParcelable(ChatsFieldConstants.CAMPAIGN_BUNDLE_KEY)
+            binding.registerCampaignEdit.setText(campaign?.title)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,21 +68,12 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             backBtn.setOnClickListener {
                 findNavController().navigateUp()
             }
+            registerCampaignEdit.setOnClickListener {
+                findNavController().navigate(RegisterFragmentDirections.toCampaignDialog())
+            }
             val adapter =
                 ArrayAdapter(requireContext(), R.layout.spinner_drop_down, listOf("Male", "Female"))
             registerGenderEdit.setAdapter(adapter)
-            campaignSpinner = requireActivity().findViewById(R.id.registerCampaignEdit)
-            viewModel.getCampaigns.observe(viewLifecycleOwner) {
-                val array: ArrayList<String> = ArrayList()
-                for (campaign in it) {
-                    array.add(campaign.title!!)
-                }
-                arrayAdapter = ArrayAdapter(requireContext(), R.layout.spinner_drop_down, array)
-                campaignSpinner.setAdapter(arrayAdapter)
-                campaignSpinner.setOnItemClickListener { _, _, position, _ ->
-                    campaignId = it[position].id.toString()
-                }
-            }
 
             observeLoginDone()
 
@@ -170,13 +168,11 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     }
 
     private fun checkInputs() = with(binding) {
-        var firstName = ""
-        var lastName = ""
-        var email = ""
-        var password = ""
-        var phone = ""
-        var date = ""
-        var gender = ""
+        val firstName: String
+        val lastName: String
+        val email: String
+        val phone: String
+        val date: String
         if (organizationId == 0) {
             showToast("Please Log In")
             openLogin()
@@ -223,16 +219,17 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             return
         }
 
-        if (campaignId == null) {
+        if (campaign?.id == null) {
             registerCampaignLayout.error = "Select a campaign"
             return
         } else {
             registerCampaignLayout.error = ""
         }
-        gender = registerGenderEdit.text.toString()
-        password = Utils.generatePassword()
+        val gender: String = registerGenderEdit.text.toString()
+        val password: String = Utils.generatePassword()
         Timber.v(password)
-        viewModel.campaign = campaignId!!
+        campaign?.let { viewModel.campaign = it.id.toString() }
+
         val isSpecialCase = registerSpecialCaseEdit.text.toString() == "Yes"
         viewModel.specialCase = isSpecialCase
 
