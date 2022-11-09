@@ -100,10 +100,10 @@ interface ConvexityApiService {
     fun getNGOs(): Deferred<OrganizationResponse>
 
     @Deprecated(level = DeprecationLevel.WARNING, message = "Replaced with Coroutine-supported methods")
-    @POST("auth/login")
+    @POST("auth/field-login")
     fun loginNGO(@Body loginBody: LoginBody): Deferred<LoginResponse>
 
-    @POST("auth/login")
+    @POST("auth/field-login")
     suspend fun loginNgo(@Body loginBody: LoginBody): BaseResponse<Data>
 
     @POST("users/reset-password")
