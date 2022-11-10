@@ -20,8 +20,8 @@ class CashForWorkTaskFragment : Fragment(R.layout.fragment_cash_for_work_task) {
 
     private val adapter: JobAdapter by lazy {
         JobAdapter(onReportClick = {
-            findNavController().navigate(CashForWorkTaskFragmentDirections.toCashForWorkTaskDetailsFragment(
-                it)
+            findNavController().navigate(
+                CashForWorkTaskFragmentDirections.toCashForWorkTaskDetailsFragment(it)
             )
         })
     }
