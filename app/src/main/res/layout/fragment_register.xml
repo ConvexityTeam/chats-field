@@ -472,8 +472,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="XXXXXXXXX"
-                android:inputType="number"
-                android:maxLength="11"
+                android:inputType="text|textNoSuggestions"
+                android:maxLength="18"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 

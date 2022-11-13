@@ -239,7 +239,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                     showToast("NIN is required.")
                     return
                 }
-                registerNINEdit.text.toString().length in 10..11 -> {
+                registerNINEdit.text.toString().length in 10..18 -> {
                     viewModel.nin = registerNINEdit.text.toString()
                 }
                 else -> {
