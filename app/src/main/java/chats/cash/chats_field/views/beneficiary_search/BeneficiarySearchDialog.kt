@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -18,6 +17,7 @@ import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.DialogBeneficiarySearchBinding
 import chats.cash.chats_field.utils.ChatsFieldConstants.BENEFICIARY_BUNDLE_KEY
 import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_BENEFICIARY_RESULT_LISTENER
+import chats.cash.chats_field.utils.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -43,7 +43,8 @@ class BeneficiarySearchDialog : BottomSheetDialogFragment() {
         _binding =
             DialogBeneficiarySearchBinding.bind(inflater.inflate(R.layout.dialog_beneficiary_search,
                 container,
-                false))
+                false)
+            )
 
         setupClickListeners()
         return binding.root
@@ -117,7 +118,7 @@ class BeneficiarySearchDialog : BottomSheetDialogFragment() {
         loader.progressIndicator.isInvisible = true
         searchButton.isVisible = true
         emptyState.isGone = true
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+        showToast(errorMessage)
     }
 
     override fun onDestroyView() {

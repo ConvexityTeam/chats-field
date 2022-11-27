@@ -139,32 +139,32 @@ class NetworkRepository(
                 mBody
             )
 
-            val ninResponse = ninApi.verifyNin(NinVerificationApi.NinBody(number = nin))
-            if (ninResponse.status) {
-                val data = api.onboardSpecialUser(
-                    organizationId,
-                    firstName,
-                    lastName,
-                    email,
-                    phone,
-                    password,
-                    lat,
-                    long,
-                    location,
-                    nfc,
-                    status,
-                    nin?.toRequestBody("multipart/form-data".toMediaTypeOrNull()),
-                    image,
-                    mGender,
-                    mDate,
-                    campaign,
-                    pin,
-                    authorization = preferenceUtil.getNGOToken()
-                ).await()
-                ApiResponse.Success(data)
-            } else {
-                ApiResponse.Failure("NIN: ${ninResponse.message}")
-            }
+//            val ninResponse = ninApi.verifyNin(NinVerificationApi.NinBody(number = nin))
+//            if (ninResponse.status) {
+            val data = api.onboardSpecialUser(
+                organizationId,
+                firstName,
+                lastName,
+                email,
+                phone,
+                password,
+                lat,
+                long,
+                location,
+                nfc,
+                status,
+                nin?.toRequestBody("multipart/form-data".toMediaTypeOrNull()),
+                image,
+                mGender,
+                mDate,
+                campaign,
+                pin,
+                authorization = preferenceUtil.getNGOToken()
+            ).await()
+            ApiResponse.Success(data)
+//            } else {
+//                ApiResponse.Failure("NIN: ${ninResponse.message}")
+//            }
         } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
             ApiResponse.Failure(message, e.code())
@@ -404,11 +404,12 @@ class NetworkRepository(
         taskAssignmentId: String,
         comment: String,
         type: String = "image",
-        uploads: ArrayList<File>
+        uploads: ArrayList<File>,
     ): BaseResponse<Any> = withContext(Dispatchers.IO) {
         val typeBody = type.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val commentBody = comment.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val taskAssignmentBody = taskAssignmentId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val taskAssignmentBody =
+            taskAssignmentId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val imageParts = ArrayList<MultipartBody.Part>()
         uploads.forEachIndexed { index, imageFile ->
             val mBody = imageFile.asRequestBody("image/png".toMediaTypeOrNull())

@@ -4,7 +4,7 @@ import android.location.Location
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import chats.cash.chats_field.R
+import chats.cash.chats_field.databinding.ActivityAuthBinding
 import chats.cash.chats_field.network.body.LocationBody
 import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineViewModel
@@ -16,7 +16,6 @@ import com.google.gson.Gson
 import com.robin.locationgetter.EasyLocation
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import com.treebo.internetavailabilitychecker.InternetConnectivityListener
-import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -27,6 +26,8 @@ import java.io.File
 
 @InternalCoroutinesApi
 class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback, EasyLocation.EasyLocationCallBack {
+
+    private lateinit var binding: ActivityAuthBinding
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private val mainViewModel by viewModel<RegisterViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
@@ -36,7 +37,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_auth)
+        binding = ActivityAuthBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         this.checkAppPermission()
         EasyLocation(this, this)
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
@@ -47,12 +49,12 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         mainViewModel.onboardUser.observe(this) {
             when (it) {
                 is ApiResponse.Loading -> {
-                    if (pendingUploadTextView.isVisible) {
-                        pendingProgress.show()
+                    if (binding.pendingUploadTextView.isVisible) {
+                        binding.pendingProgress.show()
                     }
                 }
                 is ApiResponse.Success -> {
-                    pendingProgress.hide()
+                    binding.pendingProgress.hide()
                     try {
                         File(currentBeneficiary.leftLittle).delete()
                         File(currentBeneficiary.leftIndex).delete()
@@ -67,7 +69,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                     offlineViewModel.delete(beneficiary = currentBeneficiary)
                 }
                 is ApiResponse.Failure -> {
-                    pendingProgress.hide()
+                    binding.pendingProgress.hide()
                     if (it.code == 400) {
                         try {
                             File(currentBeneficiary.leftLittle).delete()
@@ -88,9 +90,9 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
 
         offlineViewModel.getBeneficiaries.observe(this) {
             val count = it.count()
-            pendingUploadTextView.text = "$count Pending uploads"
+            binding.pendingUploadTextView.text = "$count Pending uploads"
             if (count > 0) {
-                pendingUploadTextView.setOnClickListener {
+                binding.pendingUploadTextView.setOnClickListener {
                     if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
                         startUpload()
                     } else {
@@ -98,7 +100,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                     }
                 }
             } else {
-                pendingUploadTextView.setOnClickListener {
+                binding.pendingUploadTextView.setOnClickListener {
                     this.toast("No pending uploads")
                 }
             }

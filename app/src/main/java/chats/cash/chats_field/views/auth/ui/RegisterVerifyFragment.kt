@@ -154,10 +154,10 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         }
 
         verifyPrintCard.setOnClickListener {
-            findNavController().navigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToRegisterPrintFragment())
+            findNavController().safeNavigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToRegisterPrintFragment())
         }
         pictureCard.setOnClickListener {
-            findNavController().navigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToRegisterImageFragment())
+            findNavController().safeNavigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToRegisterImageFragment())
         }
 
         setObservers()
@@ -201,7 +201,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     } catch (t: Throwable) {
                         Timber.e(t)
                     }
-                    findNavController().navigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToOnboardingFragment())
+                    findNavController().safeNavigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToOnboardingFragment())
                 }
                 is ApiResponse.Failure -> {
                     showToast(it.message)
@@ -227,7 +227,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         val mNfc = nfc!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mStatus = 5.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mGender =
-            gender.toLowerCase(Locale.ROOT).toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            gender.lowercase(Locale.ROOT).toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mDate = date.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mOrganizationId = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),organizationId.toString())
         val mProfilePic = File(profileImage!!)
@@ -263,7 +263,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         beneficiary!!.email = email
         beneficiary!!.phone = phone
         beneficiary!!.password = password
-        beneficiary!!.gender = gender.toLowerCase()
+        beneficiary!!.gender = gender.lowercase()
         beneficiary!!.date = date
         beneficiary!!.latitude = lat.toDouble()
         beneficiary!!.longitude = long.toDouble()
@@ -326,12 +326,12 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         }else{
             offlineViewModel.insert(beneficiary!!)
             showToast(getString(R.string.no_internet))
-            findNavController().navigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToOnboardingFragment())
+            findNavController().safeNavigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToOnboardingFragment())
         }
     }
 
     override fun onProgressUpdate(percentage: Int) {
-        Timber.v("Percentage for upload: "+percentage.toString())
+        Timber.v("Percentage for upload: $percentage")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

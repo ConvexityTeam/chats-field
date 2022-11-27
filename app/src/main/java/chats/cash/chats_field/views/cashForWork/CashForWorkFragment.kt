@@ -58,10 +58,10 @@ class CashForWorkFragment : Fragment(R.layout.fragment_cash_for_work) {
     }
 
     private fun toCashForWorkTask(jobs: List<Job>) {
-        findNavController().navigate(CashForWorkFragmentDirections.toCashForWorkTaskFragment(jobs.toTypedArray()))
+        findNavController().safeNavigate(CashForWorkFragmentDirections.toCashForWorkTaskFragment(jobs.toTypedArray()))
     }
 
     private fun toBeneficiary(campaignId: Int) {
-        findNavController().navigate(CashForWorkFragmentDirections.toBeneficiaryListFragment(campaignId))
+        findNavController().safeNavigate(CashForWorkFragmentDirections.toBeneficiaryListFragment(campaignId))
     }
 }

@@ -13,30 +13,33 @@ import java.lang.Exception
 
 object Utils {
     fun Context.checkAppPermission() {
-        Permissions.check(
-            this /*context*/,
+        Permissions.check(this,
             ChatsFieldConstants.permissions,
-            null /*rationale*/,
-            null /*options*/,
+            null,
+            null,
             object : PermissionHandler() {
                 override fun onGranted() {
 
                 }
+
                 override fun onBlocked(
                     context: Context?,
-                    blockedList: java.util.ArrayList<String>?
+                    blockedList: java.util.ArrayList<String>?,
                 ): Boolean {
                     return super.onBlocked(context, blockedList)
                 }
 
-                override fun onDenied(context: Context?, deniedPermissions: java.util.ArrayList<String>?) {
+                override fun onDenied(
+                    context: Context?,
+                    deniedPermissions: java.util.ArrayList<String>?,
+                ) {
                     super.onDenied(context, deniedPermissions)
                 }
 
                 override fun onJustBlocked(
                     context: Context?,
                     justBlockedList: java.util.ArrayList<String>?,
-                    deniedPermissions: java.util.ArrayList<String>?
+                    deniedPermissions: java.util.ArrayList<String>?,
                 ) {
                     super.onJustBlocked(context, justBlockedList, deniedPermissions)
                 }
@@ -44,16 +47,16 @@ object Utils {
 
     }
 
-    fun generatePassword() : String{
+    fun generatePassword(): String {
         val chars = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-        return List(10){
+        return List(10) {
             chars.random()
         }.joinToString("")
     }
 
-    fun generatePIN() : String{
+    fun generatePIN(): String {
         val chars = ('0'..'9')
-        return List(6){
+        return List(6) {
             chars.random()
         }.joinToString("")
     }
@@ -70,12 +73,12 @@ object Utils {
         }
     }
 
-    fun  String?.toDateTime() : String {
+    fun String?.toDateTime(): String {
         val dtf: DateTimeFormatter = DateTimeFormat.forPattern("dd-MMM-yyyy HH:mm:ss")
         return DateTime.parse(this).toString(dtf)
     }
 
-    fun String.toCountryCode() : String {
+    fun String.toCountryCode(): String {
         return "+234${this.drop(1)}"
     }
 }

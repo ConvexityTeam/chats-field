@@ -105,7 +105,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     ) {
         if (requestCode == ImageCaptureFragment.REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                findNavController().navigate(RegisterImageFragmentDirections.toImageCaptureFragment())
+                findNavController().safeNavigate(RegisterImageFragmentDirections.toImageCaptureFragment())
             } else {
                 requireContext().toast("Permissions not granted by the user.")
                 findNavController().navigateUp()
@@ -126,7 +126,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         if (preferenceUtil.getNGOId() == 0) {
             openLogin()
         } else {
-            findNavController().navigate(OnboardingFragmentDirections.toCashForWorkFragment())
+            findNavController().safeNavigate(OnboardingFragmentDirections.toCashForWorkFragment())
         }
     }
 
@@ -134,7 +134,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         if (preferenceUtil.getNGOId() == 0) {
             openLogin()
         } else {
-            findNavController().navigate(OnboardingFragmentDirections.toBeneficiaryTypeFragment())
+            findNavController().safeNavigate(OnboardingFragmentDirections.toBeneficiaryTypeFragment())
         }
     }
 
@@ -142,7 +142,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         if (preferenceUtil.getNGOId() == 0) {
             openLogin()
         } else {
-            findNavController().navigate(OnboardingFragmentDirections.toVendorFragment())
+            findNavController().safeNavigate(OnboardingFragmentDirections.toVendorFragment())
         }
     }
 

@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import chats.cash.chats_field.R
+import chats.cash.chats_field.utils.safeNavigate
 import chats.cash.chats_field.utils.toast
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import kotlinx.android.synthetic.main.fragment_register_image.*
@@ -60,7 +61,7 @@ class RegisterImageFragment : Fragment() {
 
     private fun requestCameraPermission() {
         if (allPermissionsGranted()) {
-            findNavController().navigate(RegisterImageFragmentDirections.toImageCaptureFragment())
+            findNavController().safeNavigate(RegisterImageFragmentDirections.toImageCaptureFragment())
         } else {
             ActivityCompat.requestPermissions(
                 requireActivity(),
@@ -77,7 +78,7 @@ class RegisterImageFragment : Fragment() {
     ) {
         if (requestCode == ImageCaptureFragment.REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                findNavController().navigate(RegisterImageFragmentDirections.toImageCaptureFragment())
+                findNavController().safeNavigate(RegisterImageFragmentDirections.toImageCaptureFragment())
             } else {
                 requireContext().toast("Permissions not granted by the user.")
                 findNavController().navigateUp()

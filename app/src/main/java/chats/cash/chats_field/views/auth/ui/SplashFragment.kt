@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.utils.AES
+import chats.cash.chats_field.utils.safeNavigate
 import timber.log.Timber
 
 class SplashFragment : Fragment() {
@@ -25,7 +26,7 @@ class SplashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Handler().postDelayed({
             isAnim = true
-            findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToOnboardingFragment())
+            findNavController().safeNavigate(SplashFragmentDirections.actionSplashFragmentToOnboardingFragment())
         }, 5739)
 
         val aes = AES()
@@ -37,7 +38,7 @@ class SplashFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if(isAnim){
-            findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToOnboardingFragment())
+            findNavController().safeNavigate(SplashFragmentDirections.actionSplashFragmentToOnboardingFragment())
         }
     }
 
