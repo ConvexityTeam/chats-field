@@ -8,6 +8,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentCashForWorkTaskBinding
+import chats.cash.chats_field.utils.safeNavigate
 import chats.cash.chats_field.views.auth.adapter.JobAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -20,7 +21,7 @@ class CashForWorkTaskFragment : Fragment(R.layout.fragment_cash_for_work_task) {
 
     private val adapter: JobAdapter by lazy {
         JobAdapter(onReportClick = {
-            findNavController().navigate(
+            findNavController().safeNavigate(
                 CashForWorkTaskFragmentDirections.toCashForWorkTaskDetailsFragment(it)
             )
         })

@@ -2,7 +2,6 @@ package chats.cash.chats_field.views.beneficiary_onboarding
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -15,6 +14,8 @@ import chats.cash.chats_field.utils.ChatsFieldConstants
 import chats.cash.chats_field.utils.ChatsFieldConstants.CAMPAIGN_BUNDLE_KEY
 import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_BENEFICIARY_RESULT_LISTENER
 import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_CAMPAIGN_RESULT_LISTENER
+import chats.cash.chats_field.utils.safeNavigate
+import chats.cash.chats_field.utils.showToast
 import chats.cash.chats_field.views.beneficiary_onboarding.ExistingBeneficiaryViewModel.ExistingBeneficiaryUiState
 import chats.cash.chats_field.views.beneficiary_search.BeneficiaryUi
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -66,24 +67,21 @@ class ExistingBeneficiaryFragment : Fragment(R.layout.fragment_existing_benefici
     private fun setupClickListeners() = with(binding) {
         backBtn.setOnClickListener { findNavController().navigateUp() }
         searchBeneficiaryEditText.setOnClickListener {
-            findNavController().navigate(ExistingBeneficiaryFragmentDirections.toBeneficiarySearchDialog())
+            findNavController().safeNavigate(ExistingBeneficiaryFragmentDirections.toBeneficiarySearchDialog())
         }
         registerCampaignEdit.setOnClickListener {
-            findNavController().navigate(ExistingBeneficiaryFragmentDirections.toCampaignDialog())
+            findNavController().safeNavigate(ExistingBeneficiaryFragmentDirections.toCampaignDialog())
+        }
+        registerCampaignLayout.setEndIconOnClickListener {
+            findNavController().safeNavigate(ExistingBeneficiaryFragmentDirections.toCampaignDialog())
         }
         addBeneficiaryButton.setOnClickListener {
             if (campaign == null && beneficiaryId == null) {
-                Toast.makeText(requireContext(),
-                    "Kindly fill all required fields",
-                    Toast.LENGTH_SHORT).show()
+                showToast("Kindly fill all required fields")
             } else if (campaign == null && beneficiaryId != null) {
-                Toast.makeText(requireContext(),
-                    "Select a campaign",
-                    Toast.LENGTH_SHORT).show()
+                showToast("Select a campaign")
             } else if (campaign != null && beneficiaryId == null) {
-                Toast.makeText(requireContext(),
-                    "Search and select a beneficiary",
-                    Toast.LENGTH_SHORT).show()
+                showToast("Search and select a beneficiary")
             } else {
                 campaign?.let { c ->
                     beneficiaryId?.let { bId ->
@@ -112,13 +110,13 @@ class ExistingBeneficiaryFragment : Fragment(R.layout.fragment_existing_benefici
     private fun handleError(errorMessage: String?) = with(binding) {
         loader.progressIndicator.isInvisible = true
         addBeneficiaryButton.isVisible = true
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+        showToast(errorMessage)
     }
 
     private fun handleSuccess(message: String) = with(binding) {
         loader.progressIndicator.isInvisible = true
         addBeneficiaryButton.isVisible = true
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        showToast(message)
         findNavController().navigate(ExistingBeneficiaryFragmentDirections.toOnboardingFragment())
     }
 

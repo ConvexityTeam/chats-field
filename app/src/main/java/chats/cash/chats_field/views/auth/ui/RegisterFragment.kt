@@ -69,7 +69,10 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 findNavController().navigateUp()
             }
             registerCampaignEdit.setOnClickListener {
-                findNavController().navigate(RegisterFragmentDirections.toCampaignDialog())
+                findNavController().safeNavigate(RegisterFragmentDirections.toCampaignDialog())
+            }
+            registerCampaignLayout.setEndIconOnClickListener {
+                findNavController().safeNavigate(RegisterFragmentDirections.toCampaignDialog())
             }
             val adapter =
                 ArrayAdapter(requireContext(), R.layout.spinner_drop_down, listOf("Male", "Female"))
@@ -111,13 +114,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
             ) {
                 findNavController().navigateUp()
-                requireContext().toast("Location permission is required.")
+                showToast("Location permission is required.")
                 return
             }
             try {
                 initLocation()
             } catch (t: Throwable) {
-                requireContext().toast("Please Ensure that the Device GPS is turned on")
+                showToast("Please Ensure that the Device GPS is turned on")
                 findNavController().navigateUp()
             }
             registerNextButton.setOnClickListener {
@@ -132,7 +135,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             when (it) {
                 is ApiResponse.Success -> {
                     Timber.v("XXXlogin vn reached ")
-                    findNavController().navigate(R.id.action_registerFragment_to_onboardingFragment)
+                    findNavController().safeNavigate(R.id.action_registerFragment_to_onboardingFragment)
                 }
                 else -> {}
             }
@@ -248,7 +251,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 }
             }
         }
-        findNavController().navigate(RegisterFragmentDirections.toRegisterVerifyFragment(
+        findNavController().safeNavigate(RegisterFragmentDirections.toRegisterVerifyFragment(
             firstName,
             lastName,
             email,
@@ -260,7 +263,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             gender,
             date
         ))
-
     }
 
 

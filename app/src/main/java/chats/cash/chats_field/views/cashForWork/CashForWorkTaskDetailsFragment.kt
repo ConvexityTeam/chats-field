@@ -8,10 +8,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentCashForWorkTaskDetailsBinding
-import chats.cash.chats_field.utils.hide
-import chats.cash.chats_field.utils.show
-import chats.cash.chats_field.utils.showToast
-import chats.cash.chats_field.utils.toStatusString
+import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.views.auth.adapter.WorkerAdapter
 import chats.cash.chats_field.views.auth.adapter.WorkerAdapter.*
 import chats.cash.chats_field.views.cashForWork.model.AssignedWorker
@@ -95,7 +92,7 @@ class CashForWorkTaskDetailsFragment : Fragment(R.layout.fragment_cash_for_work_
             TaskState.Completed -> showToast("Your task Evidence is approved")
             TaskState.Disbursed -> showToast("This task has been completed and payment disbursed to beneficiary")
             is TaskState.ProgressOrRejected -> {
-                findNavController().navigate(CashForWorkTaskDetailsFragmentDirections.toCashForWorkSubmitFragment(
+                findNavController().safeNavigate(CashForWorkTaskDetailsFragmentDirections.toCashForWorkSubmitFragment(
                     taskId = taskState.worker.taskAssignment.taskId.toString(),
                     taskName = args.job.name,
                     userId = taskState.worker.taskAssignment.userId.toString(),

@@ -124,7 +124,7 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
                     binding.cfwImageSubmitProgress.root.hide()
                     val data = it.data
                     showToast(data.message)
-                    findNavController().navigate(CashForWorkImageFragmentDirections.toOnboardingFragment())
+                    findNavController().safeNavigate(CashForWorkImageFragmentDirections.toOnboardingFragment())
                 }
             }
         }
@@ -141,7 +141,7 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
                     binding.cfwImageSubmitProgress.root.hide()
                     val data = it.data
                     showToast(data.message)
-                    findNavController().navigate(CashForWorkImageFragmentDirections.toOnboardingFragment())
+                    findNavController().safeNavigate(CashForWorkImageFragmentDirections.toOnboardingFragment())
                 }
             }
         }
@@ -151,10 +151,12 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
         super.onAttach(context)
 
         launcherOne = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val imageBitmap = it.data?.extras?.get("data") as Bitmap
-            binding.cfwImageOne.setImageBitmap(imageBitmap)
-            images.add(imageBitmap)
-            cashForWorkViewModel.imageList.value = images
+            val imageBitmap = it.data?.extras?.get("data") as Bitmap?
+            imageBitmap?.let { bitmap ->
+                binding.cfwImageOne.setImageBitmap(imageBitmap)
+                images.add(bitmap)
+                cashForWorkViewModel.imageList.value = images
+            }
         }
         launcherTwo = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             val imageBitmap = it.data?.extras?.get("data") as Bitmap?

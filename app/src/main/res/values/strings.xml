@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">CHATS Field</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="onb_title_1">Simple and Easy</string>
     <string name="onb_title_2">Safe And Secure</string>
     <string name="onb_title_3">Pay Money Instantly</string>
@@ -31,7 +29,7 @@
     <string name="add_image">Add Image</string>
     <string name="camera_error">Camera Error</string>
     <string name="limit_reached">Limit reached</string>
-    <string name="add_more_image">Not enough images set...Add more images</string>
+    <string name="add_more_image">Not enough images set…Add more images</string>
     <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad architecto asperiores dolorum enim error exercitationem in, laudantium modi, neque numquam odio placeat praesentium, quos totam ullam velit voluptate. Aut autem consequuntur debitis delectus, doloribus esse eveniet ipsum laborum optio praesentium quaerat quia quibusdam quis ratione repellat similique unde veniam voluptatum.</string>
     <string name="submit">Submit</string>
     <string name="submit_task">Submit Task</string>

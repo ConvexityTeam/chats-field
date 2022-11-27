@@ -5,28 +5,27 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
-import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import chats.cash.chats_field.R
+import chats.cash.chats_field.databinding.FragmentImageCaptureBinding
 import chats.cash.chats_field.utils.hide
 import chats.cash.chats_field.utils.show
+import chats.cash.chats_field.utils.showToast
 import chats.cash.chats_field.utils.toast
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
-import chats.cash.chats_field.views.base.BaseFragment
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import kotlinx.android.synthetic.main.fragment_image_capture.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 import java.io.File
@@ -36,25 +35,29 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-typealias LumaListener = (luma: Double) -> Unit
+class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
 
-class ImageCaptureFragment : BaseFragment() {
-    private var isCaptured : Boolean = false
+    private var _binding: FragmentImageCaptureBinding? = null
+    private val binding get() = _binding!!
+
+    private var isCaptured: Boolean = false
     private var blinkCount = 0
     private lateinit var verifyTask: Runnable
     private var eyesOpen = false
     private var eyesOpenCount = 0
+
     inner class ImageProcessor : ImageAnalysis.Analyzer {
 
         @androidx.camera.core.ExperimentalGetImage
         override fun analyze(imageProxy: ImageProxy) {
             val mediaImage = imageProxy.image
             if (mediaImage != null) {
-                val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+                val image =
+                    InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
                 Timber.v("New Frame : ${image.format}")
                 detector.process(image)
                     .addOnSuccessListener { faces ->
-                        if(faces.isEmpty()){
+                        if (faces.isEmpty()) {
                             blinkCount = 0
                             //setBlinkCount()
                             //When there's no face, reset the blink counts
@@ -63,21 +66,21 @@ class ImageCaptureFragment : BaseFragment() {
                         faces.forEach { face ->
                             Timber.v("LeftEyeOpen Probability : ${face.leftEyeOpenProbability}")
                             Timber.v("RightEyeOpen Probability : ${face.rightEyeOpenProbability}")
-                            if(face.leftEyeOpenProbability != null && face.rightEyeOpenProbability != null){
+                            if (face.leftEyeOpenProbability != null && face.rightEyeOpenProbability != null) {
                                 // Used to check if eyes is shut
-                                eyesShut = if (!firstCondtionPassed){
-                                    (face.leftEyeOpenProbability<0.5) && (face.rightEyeOpenProbability <0.5)
-                                } else{
+                                eyesShut = if (!firstCondtionPassed) {
+                                    (face.leftEyeOpenProbability < 0.5) && (face.rightEyeOpenProbability < 0.5)
+                                } else {
                                     false
                                 }
                                 // Used to check if has been open after eyes was shut for 5 seconds
-                                if (firstCondtionPassed && (face.leftEyeOpenProbability>0.5) && (face.rightEyeOpenProbability >0.5)){
+                                if (firstCondtionPassed && (face.leftEyeOpenProbability > 0.5) && (face.rightEyeOpenProbability > 0.5)) {
                                     eyesOpenCount += 1
                                     eyesOpen = true
                                 }
                                 //Used to check if the user can blink after eyes has been shot for 5 seconds
-                                canBlink = (firstCondtionPassed && (eyesOpenCount>5))
-                                if (canBlink){
+                                canBlink = (firstCondtionPassed && (eyesOpenCount > 5))
+                                if (canBlink) {
                                     setBlinkCount()
                                 }
                                 Timber.v("Eyes shut: $eyesShut ")
@@ -117,16 +120,9 @@ class ImageCaptureFragment : BaseFragment() {
     private var canBlink = false
     private val viewModel by sharedViewModel<RegisterViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_image_capture, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentImageCaptureBinding.bind(view)
         // High-accuracy landmark detection and face classification
         highAccuracyOpts = FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
@@ -141,7 +137,7 @@ class ImageCaptureFragment : BaseFragment() {
             ActivityCompat.requestPermissions(
                 requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
-        camera_capture_button.setOnClickListener { takePhoto() }
+        binding.cameraCaptureButton.setOnClickListener { takePhoto() }
         verifyTask()
 
         // Set up the listener for take photo button
@@ -154,17 +150,17 @@ class ImageCaptureFragment : BaseFragment() {
     private var firstTimeShowing = true
     private var eyesShutSecCount = 0
     private var eyesShut = false
-    private fun verifyTask(){
-        var handler = Handler()
+    private fun verifyTask() {
+        val handler = Handler()
 
         verifyTask = Runnable {
-            if (eyesShut){
+            if (eyesShut) {
                 // Increase the duration of time eyes shut by 1 second
-                eyesShutSecCount +=1
+                eyesShutSecCount += 1
                 Timber.v("Eyes shut count $eyesShutSecCount")
-                if (eyesShutSecCount >=5){
-                    progressbar.visibility = GONE
-                    blinkCountText.text = "Now blink your eyes"
+                if (eyesShutSecCount >= 5) {
+                    binding.progressbar.visibility = GONE
+                    binding.blinkCountText.text = "Now blink your eyes"
                     // set initial condition of eyes being shut as true, User has passed first condition
                     firstCondtionPassed = true
                     //Reset duration of eyes shut back to zero
@@ -176,13 +172,12 @@ class ImageCaptureFragment : BaseFragment() {
             // If the user Opens his eyes before 5 seconds reset the eyes shut time back to zero
             else eyesShutSecCount = 0
             try {
-                progressbar.progress = eyesShutSecCount
-            }
-            catch (e: Exception){
+                binding.progressbar.progress = eyesShutSecCount
+            } catch (e: Exception) {
 
             }
 
-            if (firstCondtionPassed && canBlink && eyesOpen){
+            if (firstCondtionPassed && canBlink && eyesOpen) {
                 // call function for activating the capture button
                 // Stop thread
                 handler.removeCallbacksAndMessages(null)
@@ -200,7 +195,7 @@ class ImageCaptureFragment : BaseFragment() {
         isCaptured = true
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
-        camera_capture_button.isEnabled = false
+        binding.cameraCaptureButton.isEnabled = false
         showToast("Processing image please wait...")
         // Create time-stamped output file to hold the image
         val photoFile = File(
@@ -218,20 +213,20 @@ class ImageCaptureFragment : BaseFragment() {
             ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
-                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                    Timber.e("Photo capture failed: ${exc.message}")
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
                     val image: InputImage
                     try {
-                        image = InputImage.fromFilePath(context, savedUri)
+                        image = InputImage.fromFilePath(requireContext(), savedUri)
 
                         detector.process(image)
                             .addOnSuccessListener { faces ->
                                 if (faces.isEmpty() && blinkCount < 3) {
                                     photoFile.delete()
-                                    camera_capture_button.isEnabled = true
+                                    binding.cameraCaptureButton.isEnabled = true
                                     blinkCount = 0
                                     //setBlinkCount(blinkCount)
                                     isCaptured = false
@@ -242,11 +237,12 @@ class ImageCaptureFragment : BaseFragment() {
 
                             }
                             .addOnFailureListener { e ->
-
+                                Timber.e(e)
                             }
 
                     } catch (e: IOException) {
                         e.printStackTrace()
+                        FirebaseCrashlytics.getInstance().recordException(e)
                     }
                 }
             })
@@ -254,62 +250,54 @@ class ImageCaptureFragment : BaseFragment() {
 
     private fun setBlinkCount() {
         try {
-            blinkCountText.text = "Face Detected"
-            camera_capture_button.isEnabled = true
+            binding.blinkCountText.text = "Face Detected"
+            binding.cameraCaptureButton.isEnabled = true
+        } catch (e: java.lang.Exception) {
+            Timber.e(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
-        catch (e: java.lang.Exception){
-
-        }
-
     }
 
-    private fun hideCamera(photoFile: File) {
-        Glide.with(requireContext())
+    private fun hideCamera(photoFile: File) = with(binding) {
+        Glide.with(imagePreviewView)
             .load(photoFile)
             .into(imagePreviewView)
         try {
-            select_button.show()
-            retake_button.show()
-            camera_capture_button.hide()
+            selectButton.show()
+            retakeButton.show()
+            cameraCaptureButton.hide()
             viewFinder.hide()
             imagePreviewView.show()
-            retake_button.setOnClickListener {
+            retakeButton.setOnClickListener {
                 photoFile.delete()
                 showCamera()
             }
-            select_button.setOnClickListener {
+            selectButton.setOnClickListener {
                 viewModel.profileImage = photoFile.path
                 findNavController().navigateUp()
             }
             isCaptured = false
-        }catch (e : Exception){
-
+        } catch (e: Exception) {
+            Timber.e(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
-
-//        val bitmap = BitmapFactory.decodeFile(photoFile.path)
-//        Glide.with(requireContext())
-//            .asBitmap()
-//            .load(photoFile)
-//            .into(imagePreviewView)
-
-
     }
 
-    private fun showCamera() {
-        camera_capture_button.show()
+    private fun showCamera() = with(binding) {
+        cameraCaptureButton.show()
         viewFinder.show()
         imagePreviewView.hide()
-        select_button.hide()
-        retake_button.hide()
+        selectButton.hide()
+        retakeButton.hide()
         blinkCount = 0
     }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        requireContext().toast("Initializing Camera....Please Wait")
+        showToast("Initializing Camera....Please Wait")
 
-        cameraProviderFuture.addListener(Runnable {
+        cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
@@ -317,7 +305,7 @@ class ImageCaptureFragment : BaseFragment() {
             val preview = Preview.Builder()
                 .build()
                 .also {
-                    it.setSurfaceProvider(viewFinder.createSurfaceProvider())
+                    it.setSurfaceProvider(binding.viewFinder.createSurfaceProvider())
                 }
 
             imageCapture = ImageCapture.Builder()
@@ -341,9 +329,8 @@ class ImageCaptureFragment : BaseFragment() {
                     this, cameraSelector, preview, imageCapture, imageAnalysis)
 
             } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
+                Timber.e(exc)
             }
-
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
@@ -354,7 +341,8 @@ class ImageCaptureFragment : BaseFragment() {
 
     private fun getOutputDirectory(): File {
         val mediaDir = requireActivity().externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
+            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+        }
         return if (mediaDir != null && mediaDir.exists())
             mediaDir else requireActivity().filesDir
     }
@@ -362,6 +350,7 @@ class ImageCaptureFragment : BaseFragment() {
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
+        _binding = null
     }
 
     override fun onRequestPermissionsResult(
@@ -380,11 +369,11 @@ class ImageCaptureFragment : BaseFragment() {
     }
 
     companion object {
-        private const val TAG = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         const val REQUEST_CODE_PERMISSIONS = 10
-        val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val REQUIRED_PERMISSIONS =
+            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 }
 

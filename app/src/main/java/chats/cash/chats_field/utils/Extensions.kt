@@ -10,7 +10,10 @@ import android.util.Patterns
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import chats.cash.chats_field.utils.ChatsFieldConstants.COMPLETE
 import chats.cash.chats_field.utils.ChatsFieldConstants.INCOMPLETE
 import com.google.android.material.textfield.TextInputEditText
@@ -26,12 +29,12 @@ import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-fun View.show() {
-    this.visibility = View.VISIBLE
+fun View?.show() {
+    this?.visibility = View.VISIBLE
 }
 
-fun View.hide() {
-    this.visibility = View.GONE
+fun View?.hide() {
+    this?.visibility = View.GONE
 }
 
 fun Context.toast(message: String?) {
@@ -232,4 +235,12 @@ fun TextView.makeLinks(vararg links: Pair<String, View.OnClickListener>) {
     this.movementMethod =
         LinkMovementMethod.getInstance() // without LinkMovementMethod, link can not click
     this.setText(spannableString, TextView.BufferType.SPANNABLE)
+}
+
+fun NavController.safeNavigate(destination: NavDirections) {
+    currentDestination?.getAction(destination.actionId)?.run { navigate(destination) }
+}
+
+fun NavController.safeNavigate(@IdRes destination: Int) {
+    currentDestination?.getAction(destination)?.run { navigate(destination) }
 }

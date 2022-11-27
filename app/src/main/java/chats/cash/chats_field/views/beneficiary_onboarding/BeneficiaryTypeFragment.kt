@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentBeneficiaryTypeBinding
 import chats.cash.chats_field.utils.PreferenceUtil
+import chats.cash.chats_field.utils.safeNavigate
 import chats.cash.chats_field.utils.showToast
 import chats.cash.chats_field.views.auth.login.LoginDialog
 import org.koin.android.ext.android.inject
@@ -37,7 +38,7 @@ class BeneficiaryTypeFragment : Fragment(R.layout.fragment_beneficiary_type) {
                 openLogin()
                 return@setOnClickListener
             }
-            findNavController().navigate(BeneficiaryTypeFragmentDirections.toRegisterFragment())
+            findNavController().safeNavigate(BeneficiaryTypeFragmentDirections.toRegisterFragment())
         }
         existingBeneficiaryButton.setOnClickListener {
             if (preferenceUtil.getNGOId() == 0) {
@@ -45,7 +46,7 @@ class BeneficiaryTypeFragment : Fragment(R.layout.fragment_beneficiary_type) {
                 openLogin()
                 return@setOnClickListener
             }
-            findNavController().navigate(BeneficiaryTypeFragmentDirections.toExistingBeneficiaryFragment())
+            findNavController().safeNavigate(BeneficiaryTypeFragmentDirections.toExistingBeneficiaryFragment())
         }
     }
 
