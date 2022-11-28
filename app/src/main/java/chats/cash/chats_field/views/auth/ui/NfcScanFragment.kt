@@ -6,6 +6,7 @@ import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -13,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import chats.cash.chats_field.R
 import chats.cash.chats_field.utils.*
@@ -52,14 +54,14 @@ class NfcScanFragment : BottomSheetDialogFragment() {
     private var mBluetoothAdapter: BluetoothAdapter? = null
 
     // Member object for the chat services
-    private var mChatService: chats.cash.chats_field.utils.BluetoothReaderService? = null
+    private var mChatService: BluetoothReaderService? = null
 
 
     var mCardSn = ByteArray(7) // image data
 
     var mUpImageSize = 0
 
-    private var isOffline : Boolean = false
+    private var isOffline: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,30 +95,52 @@ class NfcScanFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isOffline = requireArguments().getBoolean("isOffline")
-        if(isOffline){
+        if (isOffline) {
             offlineText.show()
-        }else{
+        } else {
             offlineText.hide()
         }
         setUpData()
     }
 
     private fun setUpData() {
+        val bluetoothPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+
+            }
+        val bluetoothMultiplePermissionsLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+
+            }
         // The Handler that gets information back from the BluetoothChatService
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult
-        if (!mBluetoothAdapter!!.isEnabled) {
-            val enableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableIntent, ChatsFieldConstants.REQUEST_ENABLE_BT)
-            // Otherwise, setup the chat session
+        if (ActivityCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        ) {
+            if (!mBluetoothAdapter!!.isEnabled) {
+                val enableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                startActivityForResult(enableIntent, ChatsFieldConstants.REQUEST_ENABLE_BT)
+                // Otherwise, setup the chat session
+            } else {
+                if (mChatService == null) setupChat()
+            }
+            scanNfcBtn.text = "Connect Device"
+            scanNfcBtn.setOnClickListener {
+                openDeviceSelector()
+            }
+            closeButton.setOnClickListener { dismiss() }
         } else {
-            if (mChatService == null) setupChat()
+            // request for bluetooth permission
+            showToast("Bluetooth permission not granted")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                bluetoothMultiplePermissionsLauncher.launch(arrayOf(Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT))
+            } else {
+                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                bluetoothPermissionLauncher.launch(enableBtIntent)
+            }
         }
-        scanNfcBtn.text = "Connect Device"
-        scanNfcBtn.setOnClickListener {
-            openDeviceSelector()
-        }
-        closeButton.setOnClickListener { dismiss() }
     }
 
     private fun setupChat() {
@@ -124,13 +148,13 @@ class NfcScanFragment : BottomSheetDialogFragment() {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
                     ChatsFieldConstants.MESSAGE_STATE_CHANGE -> when (msg.arg1) {
-                        chats.cash.chats_field.utils.BluetoothReaderService.STATE_CONNECTED -> {
+                        BluetoothReaderService.STATE_CONNECTED -> {
 
                         }
-                        chats.cash.chats_field.utils.BluetoothReaderService.STATE_CONNECTING -> {
+                        BluetoothReaderService.STATE_CONNECTING -> {
 
                         }
-                        chats.cash.chats_field.utils.BluetoothReaderService.STATE_LISTEN, chats.cash.chats_field.utils.BluetoothReaderService.STATE_NONE -> {
+                        BluetoothReaderService.STATE_LISTEN, BluetoothReaderService.STATE_NONE -> {
 
                         }
                     }
@@ -173,7 +197,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
                 }
             }
         }
-        mChatService = chats.cash.chats_field.utils.BluetoothReaderService(requireContext(),
+        mChatService = BluetoothReaderService(requireContext(),
             mHandler) // Initialize the BluetoothChatService to perform bluetooth connections
 
         mOutStringBuffer = StringBuffer("")
@@ -202,7 +226,9 @@ class NfcScanFragment : BottomSheetDialogFragment() {
                             mCardSn[5] and 0xFF) + Integer.toHexString(mCardSn[6] and 0xFF)
                     requireContext().toast("NFC Card scan successfully")
                     mViewModel.nfc = cardUID
-                    targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, Intent().putExtra("isOffline",isOffline))
+                    targetFragment!!.onActivityResult(targetRequestCode,
+                        Activity.RESULT_OK,
+                        Intent().putExtra("isOffline", isOffline))
                     dismiss()
                     Timber.v("Read Card SN Succeed:" + cardUID)
                 } else {
@@ -223,83 +249,82 @@ class NfcScanFragment : BottomSheetDialogFragment() {
     }
 
 
-
-        fun SendCommand(cmdid: Byte, data: ByteArray?, size: Int) {
-            if (mIsWork) return
-            val sendsize = 9 + size
-            val sendbuf = ByteArray(sendsize)
-            sendbuf[0] = 'F'.toByte()
-            sendbuf[1] = 'T'.toByte()
-            sendbuf[2] = 0
-            sendbuf[3] = 0
-            sendbuf[4] = cmdid
-            sendbuf[5] = size.toByte()
-            sendbuf[6] = (size shr 8).toByte()
-            if (size > 0 && data != null) {
-                for (i in 0 until size) {
-                    sendbuf[7 + i] = data[i]
-                }
-            }
-            val sum: Int = BluetoothCommands.calcCheckSum(sendbuf, 7 + size)
-            sendbuf[7 + size] = sum.toByte()
-            sendbuf[8 + size] = (sum shr 8).toByte()
-            mIsWork = true
-            timeOutStart()
-            mDeviceCmd = cmdid
-            mCmdSize = 0
-            mChatService?.write(sendbuf)
-            when (sendbuf[4]) {
-                ChatsFieldConstants.CMD_CARDSN -> {
-
-                }
-                ChatsFieldConstants.CMD_GETIMAGE -> {
-                    mUpImageSize = 0
-                }
+    fun SendCommand(cmdid: Byte, data: ByteArray?, size: Int) {
+        if (mIsWork) return
+        val sendsize = 9 + size
+        val sendbuf = ByteArray(sendsize)
+        sendbuf[0] = 'F'.toByte()
+        sendbuf[1] = 'T'.toByte()
+        sendbuf[2] = 0
+        sendbuf[3] = 0
+        sendbuf[4] = cmdid
+        sendbuf[5] = size.toByte()
+        sendbuf[6] = (size shr 8).toByte()
+        if (size > 0 && data != null) {
+            for (i in 0 until size) {
+                sendbuf[7 + i] = data[i]
             }
         }
+        val sum: Int = BluetoothCommands.calcCheckSum(sendbuf, 7 + size)
+        sendbuf[7 + size] = sum.toByte()
+        sendbuf[8 + size] = (sum shr 8).toByte()
+        mIsWork = true
+        timeOutStart()
+        mDeviceCmd = cmdid
+        mCmdSize = 0
+        mChatService?.write(sendbuf)
+        when (sendbuf[4]) {
+            ChatsFieldConstants.CMD_CARDSN -> {
 
-        /**
-         * stat the timer for counting
-         */
-        fun timeOutStart() {
-            if (mTimerTimeout != null) {
-                return
             }
-            mTimerTimeout = Timer()
-            mHandlerTimeout = @SuppressLint("HandlerLeak")
-            object : Handler() {
-                override fun handleMessage(msg: Message) {
-                    timeOutStop()
-                    if (mIsWork) {
-                        mIsWork = false
-                        //Timber.v("Time Out");
-                    }
-                    super.handleMessage(msg)
-                }
-            }
-            mTaskTimeout = object : TimerTask() {
-                override fun run() {
-                    val message = Message()
-                    message.what = 1
-                    mHandlerTimeout!!.sendMessage(message)
-                }
-            }
-            mTimerTimeout!!.schedule(mTaskTimeout, 10000, 10000)
-        }
-
-        /**
-         * stop the timer
-         */
-        fun timeOutStop() {
-            if (mTimerTimeout != null) {
-                if (isAdded) {
-                }
-                mTimerTimeout!!.cancel()
-                mTimerTimeout = null
-                mTaskTimeout!!.cancel()
-                mTaskTimeout = null
+            ChatsFieldConstants.CMD_GETIMAGE -> {
+                mUpImageSize = 0
             }
         }
+    }
+
+    /**
+     * stat the timer for counting
+     */
+    fun timeOutStart() {
+        if (mTimerTimeout != null) {
+            return
+        }
+        mTimerTimeout = Timer()
+        mHandlerTimeout = @SuppressLint("HandlerLeak")
+        object : Handler() {
+            override fun handleMessage(msg: Message) {
+                timeOutStop()
+                if (mIsWork) {
+                    mIsWork = false
+                    //Timber.v("Time Out");
+                }
+                super.handleMessage(msg)
+            }
+        }
+        mTaskTimeout = object : TimerTask() {
+            override fun run() {
+                val message = Message()
+                message.what = 1
+                mHandlerTimeout!!.sendMessage(message)
+            }
+        }
+        mTimerTimeout!!.schedule(mTaskTimeout, 10000, 10000)
+    }
+
+    /**
+     * stop the timer
+     */
+    fun timeOutStop() {
+        if (mTimerTimeout != null) {
+            if (isAdded) {
+            }
+            mTimerTimeout!!.cancel()
+            mTimerTimeout = null
+            mTaskTimeout!!.cancel()
+            mTaskTimeout = null
+        }
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -321,7 +346,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
                     setupChat()
                 } else {
                     // User did not enable Bluetooth or an error occured
-                    Timber.d( "BT not enabled")
+                    Timber.d("BT not enabled")
                     Toast.makeText(requireContext(), "BT not enabled", Toast.LENGTH_SHORT).show()
 
                 }
@@ -330,7 +355,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
 
     companion object {
         //Creates a new Instance of this dialog
-        fun newInstance(isOffline : Boolean): NfcScanFragment =
+        fun newInstance(isOffline: Boolean): NfcScanFragment =
             NfcScanFragment().apply {
                 arguments = Bundle().apply {
                     putBoolean("isOffline", isOffline)
@@ -340,7 +365,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(mChatService!=null){
+        if (mChatService != null) {
             mChatService!!.stop()
         }
     }
