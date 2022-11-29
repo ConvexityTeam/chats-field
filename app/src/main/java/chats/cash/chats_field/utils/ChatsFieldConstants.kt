@@ -88,10 +88,13 @@ object ChatsFieldConstants {
 
     const val EXTRA_DEVICE_ADDRESS = "device_address"
 
+    /* Fragment Result Listeners Keys */
     const val FRAGMENT_BENEFICIARY_RESULT_LISTENER: String = "existing_beneficiary_fragment_result_listener"
     const val FRAGMENT_CAMPAIGN_RESULT_LISTENER: String = "campaign_id_fragment_result_listener"
+    const val FRAGMENT_NFC_RESULT_LISTENER: String = "nfc_scan_fragment_result_listener"
     const val BENEFICIARY_BUNDLE_KEY: String = "beneficiary_key"
     const val CAMPAIGN_BUNDLE_KEY: String = "campaign_id_key"
+    const val NFC_BUNDLE_KEY: String = "nfc_scan_key"
 
     const val FRAGMENT_LOGIN_RESULT_KEY: String = "login_result_key"
     const val LOGIN_BUNDLE_KEY: String = "login_bundle_key"

@@ -96,7 +96,7 @@ class RegisterViewModel(
                     campaign,
                     pin
                 )
-                data.apply {
+                if (data is ApiResponse.Success<RegisterResponse>) {
                     profile_pic.delete()
                 }
                 Timber.d("data: $data")

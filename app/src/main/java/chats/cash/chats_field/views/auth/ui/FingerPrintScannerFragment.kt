@@ -18,7 +18,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import chats.cash.chats_field.R
-import chats.cash.chats_field.utils.BluetoothCommands
+import chats.cash.chats_field.utils.ChatsFieldCommands
 import chats.cash.chats_field.utils.ChatsFieldConstants
 import chats.cash.chats_field.utils.ChatsFieldConstants.CMD_GETIMAGE
 import chats.cash.chats_field.utils.ChatsFieldConstants.CONNECTION_CODE
@@ -223,7 +223,7 @@ class FingerPrintScannerFragment : Fragment() {
                 sendbuf[7 + i] = data[i]
             }
         }
-        val sum: Int = BluetoothCommands.calcCheckSum(sendbuf, 7 + size)
+        val sum: Int = ChatsFieldCommands.calcCheckSum(sendbuf, 7 + size)
         sendbuf[7 + size] = sum.toByte()
         sendbuf[8 + size] = (sum shr 8).toByte()
         mIsWork = true
