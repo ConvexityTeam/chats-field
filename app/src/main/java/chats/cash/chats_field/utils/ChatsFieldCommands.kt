@@ -1,6 +1,6 @@
 package chats.cash.chats_field.utils
 
-object BluetoothCommands {
+object ChatsFieldCommands {
 
     /**
      * calculate the check sum of the byte[]

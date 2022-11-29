@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -16,9 +17,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import chats.cash.chats_field.R
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.EXTRA_DEVICE_ADDRESS
+import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_NFC_RESULT_LISTENER
+import chats.cash.chats_field.utils.ChatsFieldConstants.NFC_BUNDLE_KEY
 import chats.cash.chats_field.views.auth.dialog.DeviceSelectorDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -33,7 +38,6 @@ import java.util.*
 class NfcScanFragment : BottomSheetDialogFragment() {
 
     private val mViewModel by sharedViewModel<RegisterViewModel>()
-
 
     private var mDeviceCmd: Byte = 0x00
     private var mIsWork = false
@@ -265,7 +269,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
                 sendbuf[7 + i] = data[i]
             }
         }
-        val sum: Int = BluetoothCommands.calcCheckSum(sendbuf, 7 + size)
+        val sum: Int = ChatsFieldCommands.calcCheckSum(sendbuf, 7 + size)
         sendbuf[7 + size] = sum.toByte()
         sendbuf[8 + size] = (sum shr 8).toByte()
         mIsWork = true
@@ -363,11 +367,16 @@ class NfcScanFragment : BottomSheetDialogFragment() {
             }
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+
+        setFragmentResult(FRAGMENT_NFC_RESULT_LISTENER, bundleOf(NFC_BUNDLE_KEY to true))
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         if (mChatService != null) {
             mChatService!!.stop()
         }
     }
-
 }

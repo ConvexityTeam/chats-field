@@ -427,7 +427,7 @@ class RegisterPrintFragment : BaseFragment() {
                 sendbuf[7 + i] = data[i]
             }
         }
-        val sum: Int = BluetoothCommands.calcCheckSum(sendbuf, 7 + size)
+        val sum: Int = ChatsFieldCommands.calcCheckSum(sendbuf, 7 + size)
         sendbuf[7 + size] = sum.toByte()
         sendbuf[8 + size] = (sum shr 8).toByte()
         mIsWork = true

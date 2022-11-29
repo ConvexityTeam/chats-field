@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.model.NFCModel
@@ -15,6 +16,8 @@ import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.BENEFICIARY_TYPE
+import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_NFC_RESULT_LISTENER
+import chats.cash.chats_field.utils.ChatsFieldConstants.NFC_BUNDLE_KEY
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import chats.cash.chats_field.views.base.BaseFragment
 import com.google.gson.Gson
@@ -35,21 +38,21 @@ import kotlin.collections.ArrayList
 @InternalCoroutinesApi
 class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
-    private var profileImage : String? = null
-    private var allFingers : ArrayList<Bitmap>? = null
-    private var nfc : String? = null
-    private lateinit var firstName : String
-    private lateinit var lastname : String
-    private lateinit var email : String
-    private lateinit var password : String
-    private lateinit var phone : String
-    private lateinit var lat : String
-    private lateinit var long : String
-    private lateinit var gender : String
-    private lateinit var date : String
-    private var organizationId : Int = 0
+    private var profileImage: String? = null
+    private var allFingers: ArrayList<Bitmap>? = null
+    private var nfc: String? = null
+    private lateinit var firstName: String
+    private lateinit var lastname: String
+    private lateinit var email: String
+    private lateinit var password: String
+    private lateinit var phone: String
+    private lateinit var lat: String
+    private lateinit var long: String
+    private lateinit var gender: String
+    private lateinit var date: String
+    private var organizationId: Int = 0
     private val mViewModel by sharedViewModel<RegisterViewModel>()
-    private var beneficiary : Beneficiary? = null
+    private var beneficiary: Beneficiary? = null
     private val registerViewModel by viewModel<RegisterViewModel>()
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
@@ -57,7 +60,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     private var userId = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_register_verify, container, false)
@@ -81,72 +84,72 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
             findNavController().navigateUp()
         }
         check_image.hide()
-        if(mViewModel.specialCase){
+        if (mViewModel.specialCase) {
             verifyPrintCard.hide()
         }
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
-        if(mViewModel.profileImage!=null){
+        if (mViewModel.profileImage != null) {
             profileImage = mViewModel.profileImage
             check_image.show()
-        }else{
+        } else {
             check_image.hide()
         }
 
-        if(mViewModel.allFinger!=null){
+        if (mViewModel.allFinger != null) {
             allFingers = mViewModel.allFinger
             check_print.show()
-        }else{
+        } else {
             check_print.hide()
         }
 
-        if(mViewModel.allFinger!=null){
+        if (mViewModel.allFinger != null) {
             check_print.show()
-        }else{
+        } else {
             check_print.hide()
         }
 
-        if(mViewModel.specialCase){
-            if(profileImage != null){
+        if (mViewModel.specialCase) {
+            if (profileImage != null) {
                 completedImageIcon.setImageResource(R.drawable.ic_check)
-            }else{
+            } else {
                 completedImageIcon.setImageResource(R.drawable.ic_uncheck)
             }
-        }else{
-            if(allFingers!=null && profileImage != null){
+        } else {
+            if (allFingers != null && profileImage != null) {
                 completedImageIcon.setImageResource(R.drawable.ic_check)
-            }else{
+            } else {
                 completedImageIcon.setImageResource(R.drawable.ic_uncheck)
             }
         }
 
 
         registerVerifyBtn.setOnClickListener {
-            if(mViewModel.specialCase){
-                if(profileImage != null){
-                    if(internetAvailabilityChecker.currentInternetAvailabilityStatus.not()){
-                        if(registerViewModel.nfc == null){
+            if (mViewModel.specialCase) {
+                if (profileImage != null) {
+                    if (internetAvailabilityChecker.currentInternetAvailabilityStatus.not()) {
+                        if (registerViewModel.nfc == null) {
                             openNFCCardScanner(true)
-                        }else{
+                        } else {
                             postOnboardData()
                         }
-                    }else{
+                    } else {
                         postOnboardData()
                     }
-                }else{
+                } else {
                     showToast("All fields are required")
                 }
-            }else{
-                if(allFingers!=null && profileImage != null){
-                    if(!internetAvailabilityChecker.currentInternetAvailabilityStatus){
-                        if(registerViewModel.nfc == null){
+            } else {
+                if (allFingers != null && profileImage != null) {
+                    if (!internetAvailabilityChecker.currentInternetAvailabilityStatus) {
+                        if (registerViewModel.nfc == null) {
                             openNFCCardScanner(true)
-                        }else{
+                        } else {
                             postOnboardData()
                         }
-                    }else{
+                    } else {
                         postOnboardData()
                     }
-                }else{
+                } else {
                     showToast("All fields are required")
                 }
             }
@@ -154,14 +157,22 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         }
 
         verifyPrintCard.setOnClickListener {
-            findNavController().safeNavigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToRegisterPrintFragment())
+            findNavController().safeNavigate(RegisterVerifyFragmentDirections.toRegisterPrintFragment())
         }
         pictureCard.setOnClickListener {
-            findNavController().safeNavigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToRegisterImageFragment())
+            findNavController().safeNavigate(RegisterVerifyFragmentDirections.toRegisterImageFragment())
         }
 
         setObservers()
 
+        setFragmentResultListener(FRAGMENT_NFC_RESULT_LISTENER) { _, bundle ->
+            val shouldNavigate = bundle[NFC_BUNDLE_KEY] as Boolean?
+            shouldNavigate?.let {
+                if (it) {
+                    findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
+                }
+            }
+        }
     }
 
     private fun setObservers() {
@@ -201,7 +212,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     } catch (t: Throwable) {
                         Timber.e(t)
                     }
-                    findNavController().safeNavigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToOnboardingFragment())
+                    findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
                 }
                 is ApiResponse.Failure -> {
                     showToast(it.message)
@@ -229,7 +240,8 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         val mGender =
             gender.lowercase(Locale.ROOT).toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mDate = date.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mOrganizationId = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),organizationId.toString())
+        val mOrganizationId =
+            RequestBody.create("multipart/form-data".toMediaTypeOrNull(), organizationId.toString())
         val mProfilePic = File(profileImage!!)
         val locationBody =
             LocationBody(coordinates = listOf(long.toDouble(), lat.toDouble()), country = "Nigeria")
@@ -272,17 +284,23 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         beneficiary!!.isSpecialCase = mViewModel.specialCase
         beneficiary!!.nin = mViewModel.nin
         beneficiary!!.pin = mViewModel.pin
-        if(!mViewModel.specialCase){
-            beneficiary!!.leftThumb = writeBitmapToFile(requireContext(),allFingers!![0]).absolutePath
-            beneficiary!!.leftIndex = writeBitmapToFile(requireContext(),allFingers!![1]).absolutePath
-            beneficiary!!.leftLittle = writeBitmapToFile(requireContext(),allFingers!![2]).absolutePath
-            beneficiary!!.rightThumb = writeBitmapToFile(requireContext(),allFingers!![3]).absolutePath
-            beneficiary!!.rightIndex = writeBitmapToFile(requireContext(),allFingers!![4]).absolutePath
-            beneficiary!!.rightLittle = writeBitmapToFile(requireContext(),allFingers!![5]).absolutePath
+        if (!mViewModel.specialCase) {
+            beneficiary!!.leftThumb =
+                writeBitmapToFile(requireContext(), allFingers!![0]).absolutePath
+            beneficiary!!.leftIndex =
+                writeBitmapToFile(requireContext(), allFingers!![1]).absolutePath
+            beneficiary!!.leftLittle =
+                writeBitmapToFile(requireContext(), allFingers!![2]).absolutePath
+            beneficiary!!.rightThumb =
+                writeBitmapToFile(requireContext(), allFingers!![3]).absolutePath
+            beneficiary!!.rightIndex =
+                writeBitmapToFile(requireContext(), allFingers!![4]).absolutePath
+            beneficiary!!.rightLittle =
+                writeBitmapToFile(requireContext(), allFingers!![5]).absolutePath
         }
 
-        if(internetAvailabilityChecker.currentInternetAvailabilityStatus){
-            if(mViewModel.specialCase){
+        if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
+            if (mViewModel.specialCase) {
                 registerViewModel.onboardSpecialUser(
                     organizationId.toString(),
                     firstName = mFirstName,
@@ -302,7 +320,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     nin = mNin,
                     pin = mPin
                 )
-            }else{
+            } else {
                 registerViewModel.onboardUser(
                     organizationId.toString(),
                     firstName = mFirstName,
@@ -323,10 +341,10 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     pin = mPin
                 )
             }
-        }else{
+        } else {
             offlineViewModel.insert(beneficiary!!)
             showToast(getString(R.string.no_internet))
-            findNavController().safeNavigate(RegisterVerifyFragmentDirections.actionRegisterVerifyFragmentToOnboardingFragment())
+            findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
         }
     }
 
@@ -336,27 +354,27 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == RESULT_OK && requestCode == 7080){
-            if(data?.getBooleanExtra("isOffline", true) == false){
+        if (resultCode == RESULT_OK && requestCode == 7080) {
+            if (data?.getBooleanExtra("isOffline", true) == false) {
                 val nfcModel = NFCModel(
                     userId,
                     mViewModel.nfc.toString()
                 )
                 registerViewModel.postNFCDetails(nfcModel)
 
-            }else{
+            } else {
                 nfc = mViewModel.nfc
                 registerVerifyBtn.setOnClickListener {
-                    if(mViewModel.specialCase){
-                        if(profileImage != null){
+                    if (mViewModel.specialCase) {
+                        if (profileImage != null) {
                             postOnboardData()
-                        }else{
+                        } else {
                             showToast("All fields are required")
                         }
-                    }else{
-                        if(allFingers!=null && profileImage != null){
+                    } else {
+                        if (allFingers != null && profileImage != null) {
                             postOnboardData()
-                        }else{
+                        } else {
                             showToast("All fields are required")
                         }
                     }
@@ -366,7 +384,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         }
     }
 
-    private fun openNFCCardScanner(isOffline : Boolean) {
+    private fun openNFCCardScanner(isOffline: Boolean) {
         val bottomSheetDialogFragment = NfcScanFragment.newInstance(isOffline)
         bottomSheetDialogFragment.isCancelable = isOffline
         bottomSheetDialogFragment.setTargetFragment(this, 7080)

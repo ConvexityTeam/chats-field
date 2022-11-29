@@ -122,14 +122,14 @@
         android:label="fragment_register_verify"
         tools:layout="@layout/fragment_register_verify">
         <action
-            android:id="@+id/action_registerVerifyFragment_to_registerPrintFragment"
+            android:id="@+id/to_registerPrintFragment"
             app:destination="@id/registerPrintFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_registerVerifyFragment_to_registerImageFragment"
+            android:id="@+id/to_registerImageFragment"
             app:destination="@id/registerImageFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -157,7 +157,7 @@
             android:name="longitude"
             app:argType="string" />
         <action
-            android:id="@+id/action_registerVerifyFragment_to_onboardingFragment"
+            android:id="@+id/to_onboardingFragment"
             app:destination="@id/onboardingFragment"
             app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
