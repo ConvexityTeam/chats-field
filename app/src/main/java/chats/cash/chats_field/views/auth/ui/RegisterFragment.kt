@@ -2,12 +2,9 @@ package chats.cash.chats_field.views.auth.ui
 
 import android.Manifest
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -22,7 +19,6 @@ import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.Utils.toCountryCode
 import chats.cash.chats_field.views.auth.login.LoginDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
-import com.robin.locationgetter.EasyLocation
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -35,9 +31,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var locationManager: LocationManager
-    private var latitude: Double = 6.465422
-    private var longitude: Double = 3.406448
     private val preferenceUtil: PreferenceUtil by inject()
     private val organizationId: Int by lazy { preferenceUtil.getNGOId() }
     private val viewModel by sharedViewModel<RegisterViewModel>()
@@ -57,8 +50,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentRegisterBinding.bind(view)
 
-        locationManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         viewModel.nfc = null
         viewModel.allFinger = null
         viewModel.profileImage = null
@@ -117,12 +108,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 showToast("Location permission is required.")
                 return
             }
-            try {
-                initLocation()
-            } catch (t: Throwable) {
-                showToast("Please Ensure that the Device GPS is turned on")
-                findNavController().navigateUp()
-            }
             registerNextButton.setOnClickListener {
                 checkInputs()
             }
@@ -150,24 +135,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     private fun changeLoggedOutText() = with(binding) {
         loggedInText.text = "Not Logged In? "
         changeAccountText.text = "Log In"
-    }
-
-    private fun initLocation() {
-        EasyLocation(requireActivity(), object : EasyLocation.EasyLocationCallBack {
-            override fun permissionDenied() {
-
-            }
-
-            override fun locationSettingFailed() {
-
-
-            }
-
-            override fun getLocation(location: Location) {
-                latitude = location.latitude
-                longitude = location.longitude
-            }
-        })
     }
 
     private fun checkInputs() = with(binding) {
@@ -257,8 +224,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             email,
             phone.toCountryCode(),
             password,
-            latitude.toString(),
-            longitude.toString(),
+            preferenceUtil.getLatLong().first.toString(),
+            preferenceUtil.getLatLong().second.toString(),
             organizationId,
             gender,
             date

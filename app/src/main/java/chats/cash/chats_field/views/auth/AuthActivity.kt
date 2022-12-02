@@ -1,8 +1,12 @@
 package chats.cash.chats_field.views.auth
 
-import android.location.Location
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import chats.cash.chats_field.databinding.ActivityAuthBinding
 import chats.cash.chats_field.network.body.LocationBody
@@ -12,37 +16,68 @@ import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
 import chats.cash.chats_field.utils.Utils.checkAppPermission
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
-import com.robin.locationgetter.EasyLocation
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import com.treebo.internetavailabilitychecker.InternetConnectivityListener
 import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.io.File
 
 @InternalCoroutinesApi
-class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback, EasyLocation.EasyLocationCallBack {
+class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback {
 
     private lateinit var binding: ActivityAuthBinding
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private val mainViewModel by viewModel<RegisterViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
     private var currentBeneficiary = Beneficiary()
-    private var latitude: Double = 6.465422
-    private var longitude: Double = 3.406448
+    private val preferenceUtil: PreferenceUtil by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
         this.checkAppPermission()
-        EasyLocation(this, this)
+
+        val locationPermissionRequest =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                when {
+                    permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                        setupLocationProviderClient(this)
+                    }
+                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                        setupLocationProviderClient(this)
+                    }
+                    else -> {
+                        toast("Location access was rejected.")
+                    }
+                }
+            }
+
+        when {
+            ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
+                setupLocationProviderClient(this)
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
+
+            }
+            else -> {
+                locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION))
+            }
+        }
+
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
-        if(internetAvailabilityChecker.currentInternetAvailabilityStatus){
+        if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
             startUpload()
         }
         internetAvailabilityChecker.addInternetConnectivityListener(this)
@@ -108,7 +143,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     }
 
     override fun onInternetConnectivityChanged(isConnected: Boolean) {
-        if(isConnected){
+        if (isConnected) {
             Timber.v("Internet connectivity available")
             startUpload()
         }
@@ -187,7 +222,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         val prints = ArrayList<MultipartBody.Part>()
 
         mFingers.forEachIndexed { _, f ->
-            val mBody = ProgressRequestBody(f,"image/jpg",this)
+            val mBody = ProgressRequestBody(f, "image/jpg", this)
             val finger = MultipartBody.Part.createFormData(
                 "fingerprints",
                 f.absolutePath.substringAfterLast("/"),
@@ -196,7 +231,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             prints.add(finger)
         }
 
-        if(beneficiary.isSpecialCase){
+        if (beneficiary.isSpecialCase) {
             mainViewModel.onboardSpecialUser(
                 beneficiary.id.toString(),
                 firstName = mFirstName,
@@ -216,7 +251,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                 pin = mPin,
                 nin = mNin
             )
-        }else{
+        } else {
             mainViewModel.onboardUser(
                 beneficiary.id.toString(),
                 firstName = mFirstName,
@@ -253,7 +288,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             address = currentBeneficiary.address,
             country = currentBeneficiary.country,
             state = currentBeneficiary.state,
-            coordinates = listOf(latitude, longitude)
+            coordinates = listOf(preferenceUtil.getLatLong().first,
+                preferenceUtil.getLatLong().second)
         )
     }
 
@@ -261,14 +297,22 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         Timber.v(percentage.toString())
     }
 
-    override fun getLocation(location: Location) {
-        this.longitude = location.longitude
-        this.latitude = location.latitude
-    }
-
-    override fun locationSettingFailed() {
-    }
-
-    override fun permissionDenied() {
+    private fun setupLocationProviderClient(context: Context) {
+        try {
+            val fusedLocationClient: FusedLocationProviderClient =
+                LocationServices.getFusedLocationProviderClient(context)
+            fusedLocationClient.lastLocation.addOnCompleteListener { locationTask ->
+                if (locationTask.isSuccessful) {
+                    preferenceUtil.setLatLong(
+                        latitude = locationTask.result.latitude,
+                        longitude = locationTask.result.longitude
+                    )
+                } else {
+                    toast(locationTask.exception?.localizedMessage)
+                }
+            }
+        } catch (e: SecurityException) {
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 }
