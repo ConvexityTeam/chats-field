@@ -24,8 +24,8 @@ android {
         applicationId "chats.cash.chats_field"
         minSdkVersion 23
         targetSdkVersion 32
-        versionCode 14
-        versionName "1.0.1-beta14"
+        versionCode 15
+        versionName "1.0.1-beta15"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
@@ -113,7 +113,6 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
 // CameraX View class
     implementation "androidx.camera:camera-view:1.0.0-alpha14"
-    implementation 'com.github.robinkrsingh:easylocation:0.1.0'
 
     // Koin
     implementation "io.insert-koin:koin-android:3.0.2"
@@ -125,4 +124,5 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.2.0')
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
 }

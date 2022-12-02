@@ -34,6 +34,16 @@ class PreferenceUtil(private val context: Context) {
         return sharedPreferences.getString(NGO_NAME, "") ?: ""
     }
 
+    fun getLatLong(): Pair<Double, Double> {
+        return sharedPreferences.getFloat(LOCATION_LATITUDE, 6.465422F)
+            .toDouble() to sharedPreferences.getFloat(LOCATION_LONGITUDE, 3.406448F).toDouble()
+    }
+
+    fun setLatLong(latitude: Double, longitude: Double) {
+        sharedPreferences.edit(commit = true) { putFloat(LOCATION_LATITUDE, latitude.toFloat()) }
+        sharedPreferences.edit(commit = true) { putFloat(LOCATION_LONGITUDE, longitude.toFloat()) }
+    }
+
     fun clearPreference() {
         sharedPreferences.edit(commit = true) { clear() }
     }
@@ -42,5 +52,7 @@ class PreferenceUtil(private val context: Context) {
         const val NGO_ID = "NGO_ID"
         const val NGO_TOKEN = "NGO_TOKEN"
         const val NGO_NAME = "NGO_NAME"
+        const val LOCATION_LONGITUDE: String = "longitude"
+        const val LOCATION_LATITUDE: String = "latitude"
     }
 }

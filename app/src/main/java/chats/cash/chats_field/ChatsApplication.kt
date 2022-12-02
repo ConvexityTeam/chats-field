@@ -22,7 +22,13 @@ class ChatsApplication : Application() {
         startKoin {
             androidLogger(Level.DEBUG)
             androidContext(this@ChatsApplication)
-            modules(listOf(repositoryModule, viewModelModule, retrofitModule, apiModule, utilModule))
+            modules(
+                repositoryModule,
+                viewModelModule,
+                retrofitModule,
+                apiModule,
+                utilModule
+            )
         }
         initNetworkChecker()
     }
