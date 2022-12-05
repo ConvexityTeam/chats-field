@@ -72,7 +72,7 @@ class RegisterViewModel(
         mDate: RequestBody,
         location: RequestBody,
         campaign: RequestBody,
-        pin: RequestBody,
+        pin: RequestBody
     ) {
         onboardUser.value = ApiResponse.Loading()
         viewModelScope.launch {
@@ -122,7 +122,7 @@ class RegisterViewModel(
         location: RequestBody,
         campaign: RequestBody,
         pin: RequestBody,
-        nin: String,
+        nin: String
     ) {
         onboardUser.value = ApiResponse.Loading()
         viewModelScope.launch {
@@ -146,7 +146,7 @@ class RegisterViewModel(
                     pin,
                     nin,
                 )
-                data.apply {
+                if (data is ApiResponse.Success<RegisterResponse>) {
                     profile_pic.delete()
                 }
                 Timber.d("data: $data")
@@ -164,7 +164,7 @@ class RegisterViewModel(
         address: String,
         country: String,
         state: String,
-        coordinates: List<Double>,
+        coordinates: List<Double>
     ) {
         _vendorOnboardingUiState.value = VendorOnboardingState.Loading
         viewModelScope.launch(exceptionHandler) {

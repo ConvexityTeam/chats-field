@@ -38,7 +38,7 @@ class RegisterImageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(viewModel.profileImage!=null){
+        if (viewModel.profileImage != null) {
             Glide.with(requireContext())
                 .load(File(viewModel.profileImage!!))
                 .into(registerImageView)

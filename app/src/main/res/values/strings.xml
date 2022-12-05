@@ -82,4 +82,5 @@
     <string name="text_upload_picture">Upload Picture</string>
     <string name="text_upload_picture_details">Upload a clear picture showing task completion</string>
     <string name="text_terms_and_conditions">By logging in, you are agreeing to our <b>Terms and Conditions</b> and <b>Privacy Policy</b></string>
+    <string name="text_placeholder_date">12/08/2020</string>
 </resources>
