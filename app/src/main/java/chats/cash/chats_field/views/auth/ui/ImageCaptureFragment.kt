@@ -5,8 +5,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
@@ -16,10 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentImageCaptureBinding
-import chats.cash.chats_field.utils.hide
-import chats.cash.chats_field.utils.show
-import chats.cash.chats_field.utils.showToast
-import chats.cash.chats_field.utils.toast
+import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.mlkit.vision.common.InputImage
@@ -46,91 +45,38 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
     private var eyesOpen = false
     private var eyesOpenCount = 0
 
-    inner class ImageProcessor : ImageAnalysis.Analyzer {
-
-        @androidx.camera.core.ExperimentalGetImage
-        override fun analyze(imageProxy: ImageProxy) {
-            val mediaImage = imageProxy.image
-            if (mediaImage != null) {
-                val image =
-                    InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-                Timber.v("New Frame : ${image.format}")
-                detector.process(image)
-                    .addOnSuccessListener { faces ->
-                        if (faces.isEmpty()) {
-                            blinkCount = 0
-                            //setBlinkCount()
-                            //When there's no face, reset the blink counts
-                        }
-                        // Returns an array containing all the detected faces
-                        faces.forEach { face ->
-                            Timber.v("LeftEyeOpen Probability : ${face.leftEyeOpenProbability}")
-                            Timber.v("RightEyeOpen Probability : ${face.rightEyeOpenProbability}")
-                            if (face.leftEyeOpenProbability != null && face.rightEyeOpenProbability != null) {
-                                // Used to check if eyes is shut
-                                eyesShut = if (!firstCondtionPassed) {
-                                    (face.leftEyeOpenProbability < 0.5) && (face.rightEyeOpenProbability < 0.5)
-                                } else {
-                                    false
-                                }
-                                // Used to check if has been open after eyes was shut for 5 seconds
-                                if (firstCondtionPassed && (face.leftEyeOpenProbability > 0.5) && (face.rightEyeOpenProbability > 0.5)) {
-                                    eyesOpenCount += 1
-                                    eyesOpen = true
-                                }
-                                //Used to check if the user can blink after eyes has been shot for 5 seconds
-                                canBlink = (firstCondtionPassed && (eyesOpenCount > 5))
-                                if (canBlink) {
-                                    setBlinkCount()
-                                }
-                                Timber.v("Eyes shut: $eyesShut ")
-                                /*if ((face.leftEyeOpenProbability < 0.5) && (face.rightEyeOpenProbability >= 0.3)) {
-                                    //Since Average Blink Count for a Human is about 20 per Minute, This Will try to detect at least 5 blink counts
-                                        hasBlinkedLeftEye = true
-                                    //setBlinkCount(blinkCount)
-                                    Timber.v("Blinking: $hasBlinkedLeftEye")
-                                }
-                                if (face.rightEyeOpenProbability < 0.5 && hasBlinkedLeftEye && face.leftEyeOpenProbability >= 0.3){
-                                    hasBlinkedRightEye = true
-                                }*/
-                            }
-
-                        }
-                    }
-                    .addOnFailureListener {
-                        Timber.e(it)
-                    }
-                    .addOnCompleteListener {
-                        mediaImage.close()
-                        imageProxy.close()
-                        Timber.v("Image Closed")
-                    }
-            }
-        }
-    }
-
     private var imageCapture: ImageCapture? = null
 
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
-    private lateinit var highAccuracyOpts: FaceDetectorOptions
-    private lateinit var detector: FaceDetector
-
     private var firstCondtionPassed = false
+
     private var canBlink = false
     private val viewModel by sharedViewModel<RegisterViewModel>()
 
+    private val highAccuracyOpts: FaceDetectorOptions = FaceDetectorOptions.Builder()
+        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+        .build()
+
+    private val detector: FaceDetector by lazy { FaceDetection.getClient(highAccuracyOpts) }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_image_capture, container, false)
+        _binding = FragmentImageCaptureBinding.bind(view)
+        return view
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentImageCaptureBinding.bind(view)
+
         // High-accuracy landmark detection and face classification
-        highAccuracyOpts = FaceDetectorOptions.Builder()
-            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
-            .build()
-        // Request camera permission
-        detector = FaceDetection.getClient(highAccuracyOpts)
+
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -198,10 +144,9 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
         binding.cameraCaptureButton.isEnabled = false
         showToast("Processing image please wait...")
         // Create time-stamped output file to hold the image
-        val photoFile = File(
-            outputDirectory,
-            SimpleDateFormat(FILENAME_FORMAT, Locale.US
-            ).format(System.currentTimeMillis()) + ".jpg")
+        val photoFile = File(outputDirectory,
+            SimpleDateFormat(FILENAME_FORMAT,
+                Locale.US).format(System.currentTimeMillis()) + ".jpg")
 
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
@@ -315,7 +260,49 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
 
-            imageAnalysis.setAnalyzer(cameraExecutor, ImageProcessor())
+            imageAnalysis.setAnalyzer(cameraExecutor, ImageProcessor(
+                detector = detector,
+                onSuccess = { faces ->
+                if (faces.isEmpty()) {
+                    blinkCount = 0
+                    //setBlinkCount()
+                    //When there's no face, reset the blink counts
+                }
+                // Returns an array containing all the detected faces
+                faces.forEach { face ->
+                    Timber.v("LeftEyeOpen Probability : ${face.leftEyeOpenProbability}")
+                    Timber.v("RightEyeOpen Probability : ${face.rightEyeOpenProbability}")
+                    if (face.leftEyeOpenProbability != null && face.rightEyeOpenProbability != null) {
+                        // Used to check if eyes is shut
+                        eyesShut = if (!firstCondtionPassed) {
+                            (face.leftEyeOpenProbability < 0.5) && (face.rightEyeOpenProbability < 0.5)
+                        } else {
+                            false
+                        }
+                        // Used to check if has been open after eyes was shut for 5 seconds
+                        if (firstCondtionPassed && (face.leftEyeOpenProbability > 0.5) && (face.rightEyeOpenProbability > 0.5)) {
+                            eyesOpenCount += 1
+                            eyesOpen = true
+                        }
+                        //Used to check if the user can blink after eyes has been shot for 5 seconds
+                        canBlink = (firstCondtionPassed && (eyesOpenCount > 5))
+                        if (canBlink) {
+                            setBlinkCount()
+                        }
+                        Timber.v("Eyes shut: $eyesShut ")
+                        /*if ((face.leftEyeOpenProbability < 0.5) && (face.rightEyeOpenProbability >= 0.3)) {
+                            //Since Average Blink Count for a Human is about 20 per Minute, This Will try to detect at least 5 blink counts
+                                hasBlinkedLeftEye = true
+                            //setBlinkCount(blinkCount)
+                            Timber.v("Blinking: $hasBlinkedLeftEye")
+                        }
+                        if (face.rightEyeOpenProbability < 0.5 && hasBlinkedLeftEye && face.leftEyeOpenProbability >= 0.3){
+                            hasBlinkedRightEye = true
+                        }*/
+                    }
+
+                }
+            }, onFailure = { showToast(it.localizedMessage) }))
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA

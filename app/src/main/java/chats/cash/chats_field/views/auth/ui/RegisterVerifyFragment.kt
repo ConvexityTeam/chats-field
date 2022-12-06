@@ -208,7 +208,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     val data = it.data
                     showToast(data.message)
                     try {
-                        File(profileImage!!).delete()
+                        //File(profileImage!!).delete()
                     } catch (t: Throwable) {
                         Timber.e(t)
                     }
