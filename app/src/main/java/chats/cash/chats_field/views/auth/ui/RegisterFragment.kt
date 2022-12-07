@@ -66,13 +66,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 findNavController().safeNavigate(RegisterFragmentDirections.toCampaignDialog())
             }
             val adapter =
-                ArrayAdapter(requireContext(), R.layout.spinner_drop_down, listOf("Male", "Female"))
+                ArrayAdapter(requireContext(), android.R.layout.simple_selectable_list_item, listOf("Male", "Female"))
             registerGenderEdit.setAdapter(adapter)
 
             observeLoginDone()
 
             val specialAdapter =
-                ArrayAdapter(requireContext(), R.layout.spinner_drop_down, listOf("No", "Yes"))
+                ArrayAdapter(requireContext(), android.R.layout.simple_selectable_list_item, listOf("No", "Yes"))
             registerSpecialCaseEdit.setAdapter(specialAdapter)
             registerNINLayout.hide()
             txtNin.hide()
@@ -174,7 +174,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 return@with
             }
         }
-        if (registerPhoneEdit.isValid()) {
+        if (registerPhoneEdit.isValid() && registerPhoneEdit.text.toString().isValidPhoneNo()) {
             registerPhoneLayout.error = ""
             phone = registerPhoneEdit.text.toString()
         } else {
@@ -195,7 +195,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         } else {
             registerCampaignLayout.error = ""
         }
-        val gender: String = registerGenderEdit.text.toString()
+        val gender = registerGenderEdit.text.toString()
+        if (gender.isBlank()) {
+            registerGenderLayout.error = "Gender is required"
+            return
+        } else {
+            registerGenderLayout.error = ""
+        }
         val password: String = Utils.generatePassword()
         Timber.v(password)
         campaign?.let { viewModel.campaign = it.id.toString() }

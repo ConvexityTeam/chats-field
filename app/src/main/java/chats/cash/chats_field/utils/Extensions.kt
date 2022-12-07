@@ -110,7 +110,7 @@ fun Date.convertDateTimeToString(): String {
 }
 
 fun String?.isValidPhoneNo(): Boolean {
-    return this != null && this.length >= 7 && this.length <= 17
+    return this != null && this.length == 11
 }
 
 fun TextInputEditText.isValid(): Boolean {

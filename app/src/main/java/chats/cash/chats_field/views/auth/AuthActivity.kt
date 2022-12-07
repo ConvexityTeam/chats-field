@@ -64,7 +64,9 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
 
         when {
             ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
                 setupLocationProviderClient(this)
             }
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
@@ -274,7 +276,6 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         }
     }
 
-
     private fun registerVendor(currentBeneficiary: Beneficiary) {
         mainViewModel.vendorOnboarding(
             businessName = currentBeneficiary.storeName,
@@ -313,6 +314,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             }
         } catch (e: SecurityException) {
             FirebaseCrashlytics.getInstance().recordException(e)
+        } catch (t: Throwable) {
+            FirebaseCrashlytics.getInstance().recordException(t)
         }
     }
 }
