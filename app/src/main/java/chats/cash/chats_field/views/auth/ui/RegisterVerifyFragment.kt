@@ -186,7 +186,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     val data = it.data
                     showToast(data.message)
                     userId = data.data
-                    openNFCCardScanner(false)
+                    openNFCCardScanner(true)
                     verifyProgress.hide()
                     registerVerifyBtn.isEnabled = true
                 }
@@ -219,7 +219,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     verifyProgress.hide()
                     registerVerifyBtn.isEnabled = true
                     registerVerifyBtn.setOnClickListener {
-                        openNFCCardScanner(false)
+                        openNFCCardScanner(true)
                     }
                 }
             }
