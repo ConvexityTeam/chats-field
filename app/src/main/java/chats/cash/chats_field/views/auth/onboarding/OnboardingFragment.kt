@@ -15,6 +15,7 @@ import chats.cash.chats_field.databinding.FragmentOnboardingBinding
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_LOGIN_RESULT_KEY
 import chats.cash.chats_field.utils.ChatsFieldConstants.LOGIN_BUNDLE_KEY
+import chats.cash.chats_field.utils.ChatsFieldConstants.REQUEST_CODE_PERMISSIONS
 import chats.cash.chats_field.views.auth.adapter.OnBoarding
 import chats.cash.chats_field.views.auth.adapter.OnboardingAdapter
 import chats.cash.chats_field.views.auth.login.LoginDialog
@@ -74,8 +75,9 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 requireActivity(),
-                ImageCaptureFragment.REQUIRED_PERMISSIONS,
-                ImageCaptureFragment.REQUEST_CODE_PERMISSIONS)
+                REQUIRED_PERMISSIONS,
+                REQUEST_CODE_PERMISSIONS
+            )
         }
     }
 
@@ -103,7 +105,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         permissions: Array<out String>,
         grantResults: IntArray,
     ) {
-        if (requestCode == ImageCaptureFragment.REQUEST_CODE_PERMISSIONS) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 findNavController().safeNavigate(RegisterImageFragmentDirections.toImageCaptureFragment())
             } else {

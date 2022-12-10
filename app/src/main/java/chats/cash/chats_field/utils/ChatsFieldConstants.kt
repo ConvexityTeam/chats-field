@@ -113,4 +113,9 @@ object ChatsFieldConstants {
 
     const val TERMS_OF_USE: String = "https://chats.cash/terms-of-use"
     const val PRIVACY_POLICY: String = "https://chats.cash/privacy-policy"
+
+    const val REQUEST_CODE_PERMISSIONS = 10
+    val REQUIRED_PERMISSIONS =
+        arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE)
 }
