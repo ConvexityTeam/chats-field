@@ -19,6 +19,8 @@ import com.bumptech.glide.Glide
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentImageCaptureBinding
 import chats.cash.chats_field.utils.*
+import chats.cash.chats_field.utils.ChatsFieldConstants.REQUEST_CODE_PERMISSIONS
+import chats.cash.chats_field.utils.ChatsFieldConstants.REQUIRED_PERMISSIONS
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.mlkit.vision.common.InputImage
@@ -177,9 +179,12 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
                                     isCaptured = false
                                     requireContext().toast("No Real Face detected, Please retake photo.")
                                 } else {
-                                    hideCamera(photoFile)
+                                    try {
+                                        hideCamera(photoFile)
+                                    } catch (t: Throwable) {
+                                        FirebaseCrashlytics.getInstance().recordException(t)
+                                    }
                                 }
-
                             }
                             .addOnFailureListener { e ->
                                 Timber.e(e)
@@ -300,7 +305,6 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
                             hasBlinkedRightEye = true
                         }*/
                     }
-
                 }
             }, onFailure = { showToast(it.localizedMessage) }))
 
@@ -357,10 +361,5 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
 
     companion object {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-        const val REQUEST_CODE_PERMISSIONS = 10
-        val REQUIRED_PERMISSIONS =
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 }
-
