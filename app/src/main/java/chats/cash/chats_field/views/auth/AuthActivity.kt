@@ -3,6 +3,7 @@ package chats.cash.chats_field.views.auth
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +18,9 @@ import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
 import chats.cash.chats_field.utils.Utils.checkAppPermission
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
@@ -40,6 +43,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
     private var currentBeneficiary = Beneficiary()
     private val preferenceUtil: PreferenceUtil by inject()
+
+    private val cancellationTokenSource by lazy { CancellationTokenSource() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,6 +159,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     override fun onDestroy() {
         super.onDestroy()
         internetAvailabilityChecker.removeAllInternetConnectivityChangeListeners()
+        cancellationTokenSource.cancel()
     }
 
     private fun startUpload() {
@@ -302,19 +308,27 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         try {
             val fusedLocationClient: FusedLocationProviderClient =
                 LocationServices.getFusedLocationProviderClient(context)
-            fusedLocationClient.lastLocation.addOnCompleteListener { locationTask ->
-                if (locationTask.isSuccessful) {
-                    preferenceUtil.setLatLong(
-                        latitude = locationTask.result.latitude,
-                        longitude = locationTask.result.longitude
-                    )
-                } else {
-                    toast(locationTask.exception?.localizedMessage)
-                }
+            fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY,
+                cancellationTokenSource.token)
+                .addOnSuccessListener { location: Location? ->
+                    if (location != null) {
+                        preferenceUtil.setLatLong(
+                            latitude = location.latitude,
+                            longitude = location.longitude
+                        )
+                    } else {
+                        toast("Location is turned off on this device")
+                    }
+                }.addOnFailureListener {
+                    toast(it.localizedMessage)
+                    FirebaseCrashlytics.getInstance().recordException(it)
             }
         } catch (e: SecurityException) {
+            toast(e.localizedMessage)
+            Timber.e(e)
             FirebaseCrashlytics.getInstance().recordException(e)
         } catch (t: Throwable) {
+            Timber.e(t)
             FirebaseCrashlytics.getInstance().recordException(t)
         }
     }
