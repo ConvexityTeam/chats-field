@@ -439,10 +439,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:visibility="visible"
-            app:counterEnabled="true"
-            app:counterMaxLength="16"
-            app:counterOverflowTextColor="@color/counter_overflow_color"
-            app:helperText="vNIN must be 16 characters long"
+            app:helperText="Enter a NIN, vNIN or VIN"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txt_nin"
@@ -456,7 +453,7 @@
                 android:layout_height="wrap_content"
                 android:hint="XXXXXXXXX"
                 android:inputType="text|textNoSuggestions"
-                android:maxLength="18"
+                android:maxLength="16"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 

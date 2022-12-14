@@ -219,7 +219,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                     viewModel.nin = registerNINEdit.text.toString()
                 }
                 else -> {
-                    showToast("NIN not valid")
+                    showToast("NIN is not valid")
                     return
                 }
             }
@@ -248,7 +248,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             changeLoggedInText()
         }
     }
-
 
     private fun openCalendar() {
         val date =
