@@ -60,7 +60,7 @@
     <string name="text_special_case">Special Case</string>
     <string name="text_no">No</string>
     <string name="text_date_of_birth">Date of Birth</string>
-    <string name="text_nin_abbrev">vNIN</string>
+    <string name="text_nin_abbrev">vNIN - National Identity</string>
     <string name="text_change_account">Change Account?</string>
     <string name="text_created">Created</string>
     <string name="text_amount">Amount</string>
