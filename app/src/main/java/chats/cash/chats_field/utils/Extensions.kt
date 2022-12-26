@@ -113,6 +113,10 @@ fun String?.isValidPhoneNo(): Boolean {
     return this != null && this.length == 11
 }
 
+fun String?.isValidPin(): Boolean {
+    return this != null && this.length == 4
+}
+
 fun TextInputEditText.isValid(): Boolean {
     return !this.text.isNullOrBlank()
 }

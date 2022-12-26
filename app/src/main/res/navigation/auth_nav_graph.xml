@@ -170,6 +170,9 @@
         <argument
             android:name="date"
             app:argType="string" />
+        <argument
+            android:name="pin"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/registerPrintFragment"
