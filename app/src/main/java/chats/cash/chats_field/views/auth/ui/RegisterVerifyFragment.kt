@@ -50,6 +50,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     private lateinit var long: String
     private lateinit var gender: String
     private lateinit var date: String
+    private lateinit var pin: String
     private var organizationId: Int = 0
     private val mViewModel by sharedViewModel<RegisterViewModel>()
     private var beneficiary: Beneficiary? = null
@@ -80,6 +81,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         organizationId = args.organizationId
         gender = args.gender
         date = args.date
+        pin = args.pin
         back_btn.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -224,7 +226,6 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                 }
             }
         }
-
     }
 
     private fun postOnboardData() {
@@ -249,7 +250,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         val mLocation = location.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mCampaign = mViewModel.campaign.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mNin = mViewModel.nin
-        val mPin = mViewModel.pin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val mPin = pin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
         val mFingers = ArrayList<File>()
 
@@ -283,7 +284,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         beneficiary!!.profilePic = profileImage!!
         beneficiary!!.isSpecialCase = mViewModel.specialCase
         beneficiary!!.nin = mViewModel.nin
-        beneficiary!!.pin = mViewModel.pin
+        beneficiary!!.pin = pin
         if (!mViewModel.specialCase) {
             beneficiary!!.leftThumb =
                 writeBitmapToFile(requireContext(), allFingers!![0]).absolutePath

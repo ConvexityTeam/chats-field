@@ -143,6 +143,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         val email: String
         val phone: String
         val date: String
+        val pin: String
         if (organizationId == 0) {
             showToast("Please Log In")
             openLogin()
@@ -179,6 +180,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             phone = registerPhoneEdit.text.toString()
         } else {
             registerPhoneLayout.error = "Phone number is required"
+            return
+        }
+        if (inputPinEdit.isValid() && inputPinEdit.text.toString().isValidPin()) {
+            inputPinLayout.error = ""
+            pin = inputPinEdit.text.toString()
+        } else {
+            inputPinLayout.error = "A 4-digit PIN is required"
             return
         }
         if (registerDateEdit.isValid()) {
@@ -225,16 +233,17 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             }
         }
         findNavController().safeNavigate(RegisterFragmentDirections.toRegisterVerifyFragment(
-            firstName,
-            lastName,
-            email,
-            phone.toCountryCode(),
-            password,
-            preferenceUtil.getLatLong().first.toString(),
-            preferenceUtil.getLatLong().second.toString(),
-            organizationId,
-            gender,
-            date
+            firstName = firstName,
+            lastName = lastName,
+            email = email,
+            phone = phone.toCountryCode(),
+            password = password,
+            latitude = preferenceUtil.getLatLong().first.toString(),
+            longitude = preferenceUtil.getLatLong().second.toString(),
+            organizationId = organizationId,
+            gender = gender,
+            date = date,
+            pin = pin
         ))
     }
 

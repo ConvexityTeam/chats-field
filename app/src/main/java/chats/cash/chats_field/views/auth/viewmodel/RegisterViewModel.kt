@@ -54,7 +54,7 @@ class RegisterViewModel(
     var specialCase = false
     var nin = ""
     var campaign: String = "1"
-    var pin = "0000"
+
     fun onboardUser(
         organisationId: String,
         firstName: RequestBody,

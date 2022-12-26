@@ -24,8 +24,8 @@ android {
         applicationId "chats.cash.chats_field"
         minSdkVersion 23
         targetSdkVersion 32
-        versionCode 20
-        versionName "1.0.1-beta20"
+        versionCode 21
+        versionName "1.0.1-beta21"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
