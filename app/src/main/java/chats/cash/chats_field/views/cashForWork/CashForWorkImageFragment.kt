@@ -12,13 +12,18 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import chats.cash.chats_field.BuildConfig
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentCashForWorkImageBinding
 import chats.cash.chats_field.utils.*
+import chats.cash.chats_field.utils.location.LocationManager
 import chats.cash.chats_field.views.auth.adapter.PrintPagerAdapter
+import chats.cash.chats_field.views.core.showSnackbarWithAction
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
@@ -80,6 +85,8 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
         }
     }
 
+    val locationManager = LocationManager(requireActivity())
+
     private fun submitImages(desc: String) {
         val imagesPart = ArrayList<File>()
 
@@ -88,13 +95,34 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
                 "cash_for_work" + System.currentTimeMillis() + "$index" + ".png")
             imagesPart.add(f)
         }
+        lifecycleScope.launch {
+          getLocationAndUploadTask(desc, imagesPart).also {
+              if(!it){
+                  showSnackbarWithAction(R.string.location_not_found,binding.root,R.string.tryagain,R.color.design_default_color_error){
+                      lifecycleScope.launch {
+                          getLocationAndUploadTask(desc, imagesPart)
+                      }
+                  }
+              }
+          }
 
-        cashForWorkViewModel.postTaskImages(
-            beneficiaryId = args.beneficiaryId,
-            taskAssignmentId = args.taskId,
-            description = desc,
-            images = imagesPart
-        )
+        }
+
+    }
+
+    private suspend fun getLocationAndUploadTask(desc:String,imagesPart:ArrayList<File>):Boolean{
+        val location =  locationManager.getLastKnownLocationAsync().await()
+        if(location!=null) {
+            cashForWorkViewModel.postTaskImages(
+                beneficiaryId = args.beneficiaryId,
+                taskAssignmentId = args.taskId,
+                description = desc,
+                location = location,
+                images = imagesPart
+            )
+            return true
+        }
+        return false
     }
 
     private fun dispatchTakePictureIntent(launcher: ActivityResultLauncher<Intent>?) {

@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import chats.cash.chats_field.databinding.ActivityAuthBinding
 import chats.cash.chats_field.network.body.LocationBody
 import chats.cash.chats_field.offline.Beneficiary
@@ -16,6 +17,7 @@ import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
 import chats.cash.chats_field.utils.Utils.checkAppPermission
+import chats.cash.chats_field.utils.location.LocationManager
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
@@ -26,6 +28,7 @@ import com.google.gson.Gson
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import com.treebo.internetavailabilitychecker.InternetConnectivityListener
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -52,36 +55,46 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         setContentView(binding.root)
         this.checkAppPermission()
 
-        val locationPermissionRequest =
-            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-                when {
-                    permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
-                        setupLocationProviderClient(this)
-                    }
-                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
-                        setupLocationProviderClient(this)
-                    }
-                    else -> {
-                        toast("Location access was rejected.")
-                    }
-                }
-            }
+        val locationManager = LocationManager(this)
+        lifecycleScope.launch {
 
-        when {
-            ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
-                setupLocationProviderClient(this)
-            }
-            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
-
-            }
-            else -> {
-                locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION))
-            }
+            locationManager.getLastKnownLocationAsync().await()?.let {
+                preferenceUtil.setLatLong(
+                    latitude = it.latitude,
+                    longitude = it.long
+                )
+            }?: toast("Location access was rejected.")
         }
+//        val locationPermissionRequest =
+//            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+//                when {
+//                    permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+//                        setupLocationProviderClient(this)
+//                    }
+//                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+//                        setupLocationProviderClient(this)
+//                    }
+//                    else -> {
+//                        toast("Location access was rejected.")
+//                    }
+//                }
+//            }
+//
+//        when {
+//            ContextCompat.checkSelfPermission(this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+//                    ContextCompat.checkSelfPermission(this,
+//                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
+//                setupLocationProviderClient(this)
+//            }
+//            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
+//                locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+//                    Manifest.permission.ACCESS_COARSE_LOCATION))
+//            }
+//            else -> {
+//
+//            }
+//        }
 
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
         if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
