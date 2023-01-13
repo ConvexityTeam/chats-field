@@ -21,6 +21,7 @@ import chats.cash.chats_field.databinding.FragmentImageCaptureBinding
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.REQUEST_CODE_PERMISSIONS
 import chats.cash.chats_field.utils.ChatsFieldConstants.REQUIRED_PERMISSIONS
+import chats.cash.chats_field.utils.ImageProcessor
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.mlkit.vision.common.InputImage
@@ -280,12 +281,14 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
                     if (face.leftEyeOpenProbability != null && face.rightEyeOpenProbability != null) {
                         // Used to check if eyes is shut
                         eyesShut = if (!firstCondtionPassed) {
-                            (face.leftEyeOpenProbability < 0.5) && (face.rightEyeOpenProbability < 0.5)
+                            (face.leftEyeOpenProbability!! < 0.5) && (face.rightEyeOpenProbability!! < 0.5)
                         } else {
                             false
                         }
                         // Used to check if has been open after eyes was shut for 5 seconds
-                        if (firstCondtionPassed && (face.leftEyeOpenProbability > 0.5) && (face.rightEyeOpenProbability > 0.5)) {
+                        if (firstCondtionPassed && ((face.leftEyeOpenProbability
+                                ?: 0f) > 0.5) && ((face.rightEyeOpenProbability ?: 0f) > 0.5)
+                        ) {
                             eyesOpenCount += 1
                             eyesOpen = true
                         }
@@ -306,7 +309,8 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
                         }*/
                     }
                 }
-            }, onFailure = { showToast(it.localizedMessage) }))
+            }, onFailure = { showToast(it.localizedMessage) })
+            )
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
