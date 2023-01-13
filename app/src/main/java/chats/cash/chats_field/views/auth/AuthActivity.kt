@@ -1,13 +1,9 @@
 package chats.cash.chats_field.views.auth
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import chats.cash.chats_field.databinding.ActivityAuthBinding
@@ -61,7 +57,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             locationManager.getLastKnownLocationAsync().await()?.let {
                 preferenceUtil.setLatLong(
                     latitude = it.latitude,
-                    longitude = it.long
+                    longitude = it.longitude
                 )
             }?: toast("Location access was rejected.")
         }
