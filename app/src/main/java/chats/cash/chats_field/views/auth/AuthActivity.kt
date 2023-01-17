@@ -1,8 +1,10 @@
 package chats.cash.chats_field.views.auth
 
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -340,5 +342,12 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             Timber.e(t)
             FirebaseCrashlytics.getInstance().recordException(t)
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        Timber.d("INTENT GOTTEN ${intent?.action}")
+
     }
 }

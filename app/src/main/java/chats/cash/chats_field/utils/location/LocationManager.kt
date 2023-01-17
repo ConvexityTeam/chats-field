@@ -25,7 +25,9 @@ class LocationManager(val context: FragmentActivity) {
 
                val request = fusedLocationClient.lastLocation
                request .addOnSuccessListener {
-                   lastKnownLocation.complete(UserLocation(it.longitude, it.latitude))
+                   it?.let {location->
+                       lastKnownLocation.complete(UserLocation(location.longitude, location.latitude))
+                   }
                }.addOnFailureListener { lastKnownLocation.complete(null) }
 
            }

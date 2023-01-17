@@ -256,7 +256,7 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
             val preview = Preview.Builder()
                 .build()
                 .also {
-                    it.setSurfaceProvider(binding.viewFinder.createSurfaceProvider())
+                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
 
             imageCapture = ImageCapture.Builder()

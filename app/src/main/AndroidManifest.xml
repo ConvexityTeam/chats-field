@@ -22,6 +22,7 @@
 
     <uses-feature android:name="android.hardware.camera"
         android:required="true" />
+    <uses-permission android:name="android.permission.NFC" />
     <application
         android:name="chats.cash.chats_field.ChatsApplication"
         android:allowBackup="true"
@@ -32,12 +33,36 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.BluetoothSensor">
         <activity android:name="chats.cash.chats_field.views.auth.AuthActivity"
-            android:exported="true">
+            android:exported="true" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
+
+            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/techlist" />
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
         </activity>
 
         <meta-data

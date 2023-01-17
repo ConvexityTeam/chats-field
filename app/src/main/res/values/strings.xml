@@ -85,4 +85,6 @@
     <string name="text_placeholder_date">12/08/2020</string>
     <string name="tryagain">Try again</string>
     <string name="location_not_found">We couldn\'t get your current location</string>
+    <string name="nfc_place_nfc_tag_close_to_">Place the NFC Tag close to the device to write data</string>
+    <string name="dismiss">Dismiss</string>
 </resources>
