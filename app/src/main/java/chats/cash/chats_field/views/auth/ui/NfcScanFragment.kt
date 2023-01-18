@@ -126,20 +126,26 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         NfcManager = NfcManager(requireActivity())
         if(NfcManager.isNFCSupported()){
             if(NfcManager.isNfcEnabled()){
-                Toast.makeText(requireContext(),"NFC is enabled", Toast.LENGTH_LONG).show()
+
             }
             else{
-                AlertDialog(requireContext(),"Enable NFC", "NFC is disabled in settings, please enable it to continue",
-                    postiveText = "Enable", onNegativeClicked = {
-                        this.dismiss()
-                    }){
-                    NfcManager.goToEnableNfcSettings()
-                }.show()
+                lifecycleScope.launch {
+                    delay(1000)
+                    AlertDialog(requireContext(),
+                        getString(R.string.enable_nfc),
+                        getString(R.string.nfc_disabled_message),
+                        postiveText = getString(R.string.enable),
+                        onNegativeClicked = {
+                            this@NfcScanFragment.dismiss()
+                        }) {
+                        NfcManager.goToEnableNfcSettings()
+                    }.show()
+                }
             }
         }
         else{
             binding.scanNfcBtn.isEnabled = false
-            val error = getErrorDialog("NFC not supported on this device", requireContext())
+            val error = getErrorDialog(getString(R.string.nfc_not_supported), requireContext())
             lifecycleScope.launch {
                 delay(1000)
                 error.show()
@@ -166,7 +172,8 @@ class NfcScanFragment : BottomSheetDialogFragment() {
 
 
     private fun registerNFCCallbacks(){
-        NfcManager.ndefMessage =NdefMessage (NdefRecord.createTextRecord(Locale.ENGLISH.language,"email"))
+        val email = requireArguments().getString(emailBundle)
+        NfcManager.ndefMessage = email
         NfcManager.onSuccess = {
             lifecycleScope.launch(Dispatchers.Main) {
                 dismiss()
@@ -175,6 +182,15 @@ class NfcScanFragment : BottomSheetDialogFragment() {
                 dialog.show()
             }
         }
+        NfcManager.onSuccessFullRead = {
+            lifecycleScope.launch(Dispatchers.Main) {
+                dismiss()
+                val dialog =
+                    getSuccessDialog("Data read from ${it.replace("?","")}", requireContext())
+                dialog.show()
+            }
+        }
+
         NfcManager.onError = {
             lifecycleScope.launch(Dispatchers.Main) {
                 dismiss()
@@ -211,61 +227,6 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         NfcManager.onResume()
         Timber.d(requireActivity().intent.action)
 
-//        if(isInScanMode) {
-//
-//            if (NfcAdapter.ACTION_TAG_DISCOVERED == requireActivity().intent.action ) {
-//
-//                Timber.d("Intent passed")
-//
-//                Toast.makeText(requireContext(), "NDEF DISCOVERED", Toast.LENGTH_LONG).show()
-//                lifecycleScope.launch (Dispatchers.IO){
-//                    NfcManager.writeToTag(requireActivity().intent, NdefMessage(record), onSuccess = {
-//
-//                        lifecycleScope.launch(Dispatchers.Main) {
-//                            dismiss()
-//                            val error =
-//                                getSuccessDialog("NFC tag written", requireContext())
-//                            error.show()
-//                        }
-//                    }
-//                    ) {
-//                        lifecycleScope.launch(Dispatchers.Main) {
-//                            dismiss()
-//                            val error =
-//                                getErrorDialog("An error occured while writting to card", requireContext())
-//                            error.show()
-//                        }
-//                    }
-//
-//                }
-//            }
-
-//            else  if (NfcAdapter.ACTION_NDEF_DISCOVERED == requireActivity().intent.action) {
-//                requireActivity().intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)?.also { rawMessages ->
-//                    val messages: List<NdefMessage> = rawMessages.map { it as NdefMessage }
-//                    // Process the messages array.
-//                    lifecycleScope.launch(Dispatchers.IO) {
-//                        parserNDEFMessage(messages)
-//                    }
-//                }
-//            }
-
-
-    }
-
-    private suspend fun parserNDEFMessage(messages: List<NdefMessage>) {
-        val builder = StringBuilder()
-        val records = NdefMessageParser.parse(messages[0])
-        val size = records.size
-
-        for (i in 0 until size) {
-            val record = records.get(i)
-            val str = record.str()
-            builder.append(str).append("\n")
-        }
-        withContext(Dispatchers.Main) {
-            binding.scanNfcBtn.text = builder.toString()
-        }
     }
 
 

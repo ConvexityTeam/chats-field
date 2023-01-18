@@ -87,4 +87,8 @@
     <string name="location_not_found">We couldn\'t get your current location</string>
     <string name="nfc_place_nfc_tag_close_to_">Place the NFC Tag close to the device to write data</string>
     <string name="dismiss">Dismiss</string>
+    <string name="enable_nfc">Enable NFC</string>
+    <string name="nfc_disabled_message">NFC is disabled in settings, please enable it to continue</string>
+    <string name="enable">Enable</string>
+    <string name="nfc_not_supported">NFC not supported on this device</string>
 </resources>

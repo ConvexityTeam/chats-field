@@ -3,25 +3,19 @@ package chats.cash.chats_field.utils.nfc
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
-import android.media.RingtoneManager
-import android.net.Uri
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.Tag
-import android.nfc.tech.Ndef
-import android.nfc.tech.NdefFormatable
+import android.nfc.tech.MifareClassic
 import android.nfc.tech.NfcF
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import chats.cash.chats_field.views.auth.AuthActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 
@@ -31,11 +25,12 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
 
     private var nfcAdapter: NfcAdapter? = null
 
-    var onSuccess:() -> Unit ={}
-    var onError:() -> Unit ={}
-    var onErrorReading:(String) -> Unit ={}
-    var onRead:(String)->Unit={ }
-    var ndefMessage: NdefMessage? = null
+    var onSuccess: () -> Unit = {}
+    var onSuccessFullRead: (String) -> Unit = {}
+    var onError: () -> Unit = {}
+    var onErrorReading: (String) -> Unit = {}
+    var onRead: (String) -> Unit = { }
+    var ndefMessage: String? = null
     var scanMode = false
 
     init {
@@ -123,57 +118,57 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
 
     fun writeToTag(
         tag: Tag?,
-        ndefMessage: NdefMessage, onSuccess: () -> Unit,
+       onSuccess: () -> Unit,
         onError: () -> Unit,
     ) {
 
         try {
             Timber.d("started writing")
-
             tag?.let {
-                Timber.d("tag read success")
-                val Ndef = Ndef.get(tag)
-                if(Ndef!=null){
-                    Timber.d("ndef read success")
-                    Ndef.connect()
-                    if (Ndef.isWritable) {
-                        Timber.d("ndef writable success")
-                        Ndef.writeNdefMessage(ndefMessage)
+                val nfcA = MifareClassic.get(tag)
+                if (nfcA != null) {
 
-                        Ndef.close()
-                        onSuccess()
-                    } else {
-                        Timber.d("ndef read failed")
-                        onError()
-                    }
-                }
-                else {
-                    Timber.d("ndef read not success")
-                    val ndefFormatable = NdefFormatable.get(tag)
-                    ndefFormatable?.let {
-                        Timber.d("formatting read success")
-                        ndefFormatable.connect()
-                        ndefFormatable.format(ndefMessage)
-                        ndefFormatable.close()
-                        try {
-                            val notification: Uri =
-                                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                            val r = RingtoneManager.getRingtone(
-                                context,
-                                notification
-                            )
-                            r.play()
-                            CoroutineScope(Main).launch {
-                                delay(1000)
-                                r.stop()
-                            }
-                        } catch (e: java.lang.Exception) {
-                            // Some error playing sound
+                    nfcA.connect()
+                    val authB: Boolean = nfcA.authenticateSectorWithKeyB(2, MifareClassic.KEY_DEFAULT)
+
+                    if(authB) {
+                        Timber.d(ndefMessage.toString())
+
+                        val bWrite = ByteArray(16)
+                        if(ndefMessage!!.length<16) {
+                            val dataToSend: ByteArray =
+                                ndefMessage!!.toByteArray(StandardCharsets.UTF_8)
+                            System.arraycopy(dataToSend, 0, bWrite, 0, dataToSend.size)
+
+                            nfcA.writeBlock(8, bWrite)
                         }
+                        else{
+                            val bWrite2 = ByteArray(16)
+                            val first = ndefMessage!!.substring(0,15)
+                            val second = ndefMessage!!.substring(15,ndefMessage!!.length)
+                            val dataToSend: ByteArray =
+                                first.toByteArray(StandardCharsets.UTF_8)
+                            System.arraycopy(dataToSend, 0, bWrite, 0, dataToSend.size)
+
+                            val dataToSend2: ByteArray =
+                                second.toByteArray(StandardCharsets.UTF_8)
+                            System.arraycopy(dataToSend2, 0, bWrite2, 0, dataToSend2.size)
+
+                            nfcA.writeBlock(8, bWrite)
+                            nfcA.writeBlock(9, bWrite2)
+                        }
+                        Timber.d("ndef writable success")
+                        val bRead: ByteArray = nfcA.readBlock(8)
+                        val str = String(bRead, StandardCharsets.UTF_8)
+                        Timber.d("ndef read success $str")
+                        nfcA.close()
                         onSuccess()
-                    } ?: {
-                        onError()
                     }
+                    else{
+                        Timber.d("Not authenticated")
+                    }
+                } else {
+                    onError()
                 }
             }
             if (tag == null) {
@@ -186,29 +181,62 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
         }
     }
 
-    override fun onTagDiscovered(tag: Tag?) {
-        Timber.v(tag?.techList.toString())
-        ndefMessage?.let {
-            if(scanMode) {
-                writeToTag(tag, it, onSuccess, onError)
-            }
-            else{
-                val ndef = Ndef.get(tag)
-                ndef.connect()
-                val ndefMessages = ndef.ndefMessage
-                ndefMessages?.let {
-                    if(it.records.isNullOrEmpty()){
-                        onErrorReading("No Records")
+
+
+    fun readToTag(
+        tag: Tag?,
+        onSuccess: (String) -> Unit,
+        onError: () -> Unit,
+    ) {
+
+        try {
+            Timber.d("started reading")
+            tag?.let {
+                Timber.d("tag read success")
+                val nfcA = MifareClassic.get(tag)
+                if (nfcA != null) {
+                    Timber.d("ndef read success")
+                    nfcA.connect()
+                    val authB: Boolean = nfcA.authenticateSectorWithKeyB(2, MifareClassic.KEY_DEFAULT)
+                    if(authB) {
+                        val bRead: ByteArray = nfcA.readBlock(8)
+                        val bRead2: ByteArray = nfcA.readBlock(9)
+
+                        val str = String(bRead, StandardCharsets.UTF_8)
+                        val str2 =  if(bRead2.isEmpty()) "" else String(bRead2, StandardCharsets.UTF_8)
+                        val combinedString = (str+str2).replace("?","")
+                        Timber.d("ndef read success $combinedString")
+                        nfcA.close()
+                        onSuccess(combinedString)
                     }
-                    else {
-                        val record = it.records[0]
-                        onRead(record.payload.toString())
+                    else{
+                        Timber.d("Not authenticated")
                     }
-                }?:{
-                    onErrorReading("No NDef Messages")
+                } else {
+                    onError()
                 }
             }
+            if (tag == null) {
+                onError()
+            }
+
+        } catch (e: Exception) {
+            onError()
+            e.printStackTrace()
         }
+    }
+
+
+
+    override fun onTagDiscovered(tag: Tag?) {
+
+        if (scanMode) {
+            writeToTag(tag, onSuccess, onError)
+        }
+        else{
+            readToTag(tag, onSuccessFullRead, onError)
+        }
+
     }
 }
 

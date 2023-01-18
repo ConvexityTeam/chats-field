@@ -58,7 +58,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentRegisterBinding.bind(view)
 
-        openNFCCardScanner(true,"simon")
+        openNFCCardScanner(true,"${System.currentTimeMillis()}@gmail.com")
 
         viewModel.nfc = null
         viewModel.allFinger = null

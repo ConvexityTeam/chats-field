@@ -347,7 +347,5 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
-        Timber.d("INTENT GOTTEN ${intent?.action}")
-
     }
 }
