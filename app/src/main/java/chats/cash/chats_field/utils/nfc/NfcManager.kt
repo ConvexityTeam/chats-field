@@ -1,20 +1,14 @@
 package chats.cash.chats_field.utils.nfc
 
-import android.app.PendingIntent
 import android.content.Intent
-import android.content.IntentFilter
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.MifareClassic
-import android.nfc.tech.NfcF
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
-import chats.cash.chats_field.views.auth.AuthActivity
+import chats.cash.chats_field.utils.isDebugMode
 import kotlinx.coroutines.InternalCoroutinesApi
 import timber.log.Timber
-import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -30,7 +24,7 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
     var onError: () -> Unit = {}
     var onErrorReading: (String) -> Unit = {}
     var onRead: (String) -> Unit = { }
-    var ndefMessage: String? = null
+    var userEmail: String? = null
     var scanMode = false
 
     init {
@@ -76,76 +70,65 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
         nfcAdapter?.disableReaderMode(context)
     }
 
-    private fun enableForegroundDispatch() {
-        val intent = Intent(context, AuthActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-        val pendingIntent =
-            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val filters = arrayOfNulls<IntentFilter>(1)
-        val techList = arrayOf(arrayOf<String>(NfcF::class.java.name))
-        filters[0] = IntentFilter()
-        with(filters[0]) {
-            this?.addAction(NfcAdapter.ACTION_TAG_DISCOVERED)
-            this?.addCategory(Intent.CATEGORY_DEFAULT)
-            try {
-                this?.addDataType("*/*")
-            } catch (ex: IntentFilter.MalformedMimeTypeException) {
-                ex.printStackTrace()
-                throw RuntimeException(ex)
-            }
-        }
-        nfcAdapter?.enableForegroundDispatch(context, pendingIntent, filters, techList)
-    }
-
-    private fun disableForegroundDispatch() {
-        nfcAdapter?.disableForegroundDispatch(context)
-    }
-
-    fun createTextRecord(payload: String, locale: Locale, encodeInUtf8: Boolean): NdefRecord {
-        Timber.d("creating")
-        val langBytes = locale.language.toByteArray(Charset.forName("US-ASCII"))
-        val utfEncoding = if (encodeInUtf8) Charset.forName("UTF-8") else Charset.forName("UTF-16")
-        val textBytes = payload.toByteArray(utfEncoding)
-        val utfBit: Int = if (encodeInUtf8) 0 else 1 shl 7
-        val status = (utfBit + langBytes.size).toChar()
-        val data = ByteArray(1 + langBytes.size + textBytes.size)
-        data[0] = status.code.toByte()
-        System.arraycopy(langBytes, 0, data, 1, langBytes.size)
-        System.arraycopy(textBytes, 0, data, 1 + langBytes.size, textBytes.size)
-        Timber.d(data.toString())
-        return NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, ByteArray(0), data)
-    }
-
     fun writeToTag(
         tag: Tag?,
-       onSuccess: () -> Unit,
+        onSuccess: () -> Unit,
         onError: () -> Unit,
     ) {
 
         try {
-            Timber.d("started writing")
+
             tag?.let {
+
+                //get the Mifareclassic
                 val nfcA = MifareClassic.get(tag)
+
                 if (nfcA != null) {
 
+                    //connect to the tag
                     nfcA.connect()
+
+                    //authenticate the tag
                     val authB: Boolean = nfcA.authenticateSectorWithKeyB(2, MifareClassic.KEY_DEFAULT)
 
                     if(authB) {
-                        Timber.d(ndefMessage.toString())
 
+                        //create an empty byte array to write data
                         val bWrite = ByteArray(16)
-                        if(ndefMessage!!.length<16) {
+
+                        //if email is less than 16, we can write to only one sector (8) and clear sector 9
+                        if(userEmail!!.length<16) {
+
+                            //get the email and convert it to byte array with UTF8 encoding
                             val dataToSend: ByteArray =
-                                ndefMessage!!.toByteArray(StandardCharsets.UTF_8)
+                                userEmail!!.toByteArray(StandardCharsets.UTF_8)
                             System.arraycopy(dataToSend, 0, bWrite, 0, dataToSend.size)
 
-                            nfcA.writeBlock(8, bWrite)
-                        }
-                        else{
+                            //since all data can fit into sector 8, we need to clear sector 9 previous string with empty string,
+                            // incase there was data before, it wont show again,
+
                             val bWrite2 = ByteArray(16)
-                            val first = ndefMessage!!.substring(0,15)
-                            val second = ndefMessage!!.substring(15,ndefMessage!!.length)
+                            val dataToSend2: ByteArray =
+                                "".toByteArray(StandardCharsets.UTF_8)
+                            System.arraycopy(dataToSend2, 0, bWrite2, 0, dataToSend2.size)
+
+                            //writing to blocks
+                            nfcA.writeBlock(8, bWrite)
+                            nfcA.writeBlock(9,bWrite2)
+
+                        }
+
+                        //the strings needs two sectors to write, as its length is bigger than 16
+                        else{
+
+                            //create another empty byte arrays
+                            val bWrite2 = ByteArray(16)
+
+                            //split the string into two parts, from 0 ,15 and 15 to length, e.g Simonnnnnnn = simonnnn , nnnnn
+                            val first = userEmail!!.substring(0,15)
+                            val second = userEmail!!.substring(15,userEmail!!.length)
+
+                            //convert string to byte arrays
                             val dataToSend: ByteArray =
                                 first.toByteArray(StandardCharsets.UTF_8)
                             System.arraycopy(dataToSend, 0, bWrite, 0, dataToSend.size)
@@ -154,13 +137,11 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
                                 second.toByteArray(StandardCharsets.UTF_8)
                             System.arraycopy(dataToSend2, 0, bWrite2, 0, dataToSend2.size)
 
+                            //write ths trings
                             nfcA.writeBlock(8, bWrite)
                             nfcA.writeBlock(9, bWrite2)
                         }
-                        Timber.d("ndef writable success")
-                        val bRead: ByteArray = nfcA.readBlock(8)
-                        val str = String(bRead, StandardCharsets.UTF_8)
-                        Timber.d("ndef read success $str")
+
                         nfcA.close()
                         onSuccess()
                     }
@@ -190,27 +171,43 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
     ) {
 
         try {
-            Timber.d("started reading")
+
             tag?.let {
-                Timber.d("tag read success")
+
+                //getting the tag
                 val nfcA = MifareClassic.get(tag)
+
                 if (nfcA != null) {
-                    Timber.d("ndef read success")
+
+                    //connecting to the tag
                     nfcA.connect()
+
+                    //authenticating the tag, this returns a boolean
                     val authB: Boolean = nfcA.authenticateSectorWithKeyB(2, MifareClassic.KEY_DEFAULT)
+
                     if(authB) {
+
+                        //reading block 8
                         val bRead: ByteArray = nfcA.readBlock(8)
+
+                        //reading block 9
                         val bRead2: ByteArray = nfcA.readBlock(9)
 
+                        //convert the byte array to string using UTF_*
                         val str = String(bRead, StandardCharsets.UTF_8)
                         val str2 =  if(bRead2.isEmpty()) "" else String(bRead2, StandardCharsets.UTF_8)
+
+                        //combining the two strings, and replace the other blocks which are empty (?) with empty strings ""
                         val combinedString = (str+str2).replace("?","")
-                        Timber.d("ndef read success $combinedString")
+
+                        //close the tag
                         nfcA.close()
+
+                        //return success
                         onSuccess(combinedString)
                     }
                     else{
-                        Timber.d("Not authenticated")
+                        onError()
                     }
                 } else {
                     onError()
@@ -231,10 +228,14 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
     override fun onTagDiscovered(tag: Tag?) {
 
         if (scanMode) {
-            writeToTag(tag, onSuccess, onError)
+            userEmail?.let {
+                writeToTag(tag, onSuccess, onError)
+            }
         }
         else{
-            readToTag(tag, onSuccessFullRead, onError)
+            if(isDebugMode()) {
+                readToTag(tag, onSuccessFullRead, onError)
+            }
         }
 
     }

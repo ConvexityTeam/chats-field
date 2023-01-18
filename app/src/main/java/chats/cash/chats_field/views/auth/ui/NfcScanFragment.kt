@@ -7,9 +7,6 @@ import android.bluetooth.BluetoothAdapter
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
-import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -32,12 +29,10 @@ import chats.cash.chats_field.utils.ChatsFieldConstants.NFC_BUNDLE_KEY
 import chats.cash.chats_field.utils.dialogs.AlertDialog
 import chats.cash.chats_field.utils.dialogs.getErrorDialog
 import chats.cash.chats_field.utils.dialogs.getSuccessDialog
-import chats.cash.chats_field.utils.nfc.NdefMessageParser
 import chats.cash.chats_field.utils.nfc.NfcManager
 import chats.cash.chats_field.views.auth.dialog.DeviceSelectorDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_nfc_scan.*
 import kotlinx.coroutines.*
 import okhttp3.internal.and
@@ -173,7 +168,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
 
     private fun registerNFCCallbacks(){
         val email = requireArguments().getString(emailBundle)
-        NfcManager.ndefMessage = email
+        NfcManager.userEmail = email
         NfcManager.onSuccess = {
             lifecycleScope.launch(Dispatchers.Main) {
                 dismiss()

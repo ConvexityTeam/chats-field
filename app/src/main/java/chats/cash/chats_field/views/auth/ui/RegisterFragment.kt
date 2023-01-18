@@ -46,19 +46,10 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         }
     }
 
-    private fun openNFCCardScanner(isOffline: Boolean,email:String) {
-        val bottomSheetDialogFragment = NfcScanFragment.newInstance(isOffline,email)
-        bottomSheetDialogFragment.isCancelable = isOffline
-        bottomSheetDialogFragment.setTargetFragment(this, 7080)
-        bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),
-            "BottomSheetDialog")
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentRegisterBinding.bind(view)
 
-        openNFCCardScanner(true,"${System.currentTimeMillis()}@gmail.com")
 
         viewModel.nfc = null
         viewModel.allFinger = null

@@ -119,3 +119,8 @@ object ChatsFieldConstants {
         arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE)
 }
+
+
+fun isDebugMode(): Boolean {
+    return (BuildConfig.BUILD_TYPE.equals("debug", true))
+}
