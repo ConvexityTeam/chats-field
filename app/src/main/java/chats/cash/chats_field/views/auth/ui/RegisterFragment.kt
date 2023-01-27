@@ -233,7 +233,20 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 }
             }
         }
-        findNavController().safeNavigate(RegisterFragmentDirections.toRegisterVerifyFragment(
+//        findNavController().safeNavigate(RegisterFragmentDirections.toRegisterVerifyFragment(
+//            firstName = firstName,
+//            lastName = lastName,
+//            email = email,
+//            phone = phone.toCountryCode(),
+//            password = password,
+//            latitude = preferenceUtil.getLatLong().first.toString(),
+//            longitude = preferenceUtil.getLatLong().second.toString(),
+//            organizationId = organizationId,
+//            gender = gender,
+//            date = date,
+//            pin = pin
+//        ))
+        findNavController().safeNavigate(RegisterFragmentDirections.toRegisterOptinCampaignFragment2(
             firstName = firstName,
             lastName = lastName,
             email = email,
@@ -244,7 +257,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             organizationId = organizationId,
             gender = gender,
             date = date,
-            pin = pin
+            pin = pin,
+            campaign = campaign!!
         ))
     }
 

@@ -106,7 +106,7 @@
             app:layout_constraintTop_toBottomOf="@id/imageView4" />
 
         <TextView
-            android:id="@+id/logged_in_text"
+            android:id="@+id/loggedInText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -128,11 +128,11 @@
             android:text="@string/text_change_account"
             android:textAppearance="@style/TextAppearance.TextBold"
             android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="@id/logged_in_text"
+            app:layout_constraintBottom_toBottomOf="@id/loggedInText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@id/logged_in_text"
-            app:layout_constraintTop_toTopOf="@id/logged_in_text" />
+            app:layout_constraintStart_toEndOf="@id/loggedInText"
+            app:layout_constraintTop_toTopOf="@id/loggedInText" />
 
         <TextView
             android:id="@+id/textView45"
@@ -144,7 +144,7 @@
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/logged_in_text" />
+            app:layout_constraintTop_toBottomOf="@id/loggedInText" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registerCampaignLayout"

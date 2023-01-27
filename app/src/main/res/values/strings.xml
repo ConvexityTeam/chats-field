@@ -91,4 +91,20 @@
     <string name="nfc_disabled_message">NFC is disabled in settings, please enable it to continue</string>
     <string name="enable">Enable</string>
     <string name="nfc_not_supported">NFC not supported on this device</string>
+    <string name="opt_in">Opt in - %1$s</string>
+    <string name="take_below_survey_to_opt_in_to_the_campaign">Take below survey to opt in to the campaign.</string>
+    <string name="how_did_you_hear_about_this_campaign">How did you hear about this campaign?</string>
+    <string name="tv">TV</string>
+    <string name="twitter">Twitter</string>
+    <string name="newspaper">Newspaper</string>
+    <string name="what_is_your_age_bracket">What is your age bracket?</string>
+    <string name="_12_17">12 - 17</string>
+    <string name="_18_28">18 - 28</string>
+    <string name="_29_42">29 - 42</string>
+    <string name="_43_and_above">43 and above</string>
+    <string name="whats_your_mother_maiden_name">What is your mother’s maiden name?</string>
+    <string name="answer">Answer</string>
+    <string name="please_tell_us_how_you_heared_about">\"Please tell us how you heard about this campaign"</string>
+    <string name="please_tell_your_mother_maiden_name">Please tell us your mother\'s maiden name</string>
+    <string name="please_tell_your_age">Please tell us your age bracket</string>
 </resources>

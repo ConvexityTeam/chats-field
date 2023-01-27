@@ -72,6 +72,16 @@
         <action
             android:id="@+id/toCampaignDialog"
             app:destination="@id/campaignDialog" />
+        <action
+            android:id="@+id/action_registerFragment_to_registerOptinCampaignFragment"
+            app:destination="@id/registerOptinCampaignFragment" />
+        <action
+            android:id="@+id/to_registerOptinCampaignFragment2"
+            app:destination="@id/registerOptinCampaignFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/registerOtpFragment"
@@ -355,5 +365,56 @@
         <argument
             android:name="campaignId"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerOptinCampaignFragment"
+        tools:layout="@layout/fragment_register_opt_in"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterOptinCampaignFragment"
+        android:label="RegisterOptinCampaignFragment" >
+        <argument
+            android:name="campaign"
+            app:argType="chats.cash.chats_field.model.ModelCampaign" />
+        <action
+            android:id="@+id/action_registerOptinCampaignFragment_to_registerVerifyFragment"
+            app:destination="@id/registerVerifyFragment" />
+
+        <argument
+            android:name="firstName"
+            app:argType="string" />
+        <argument
+            android:name="lastName"
+            app:argType="string" />
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <argument
+            android:name="phone"
+            app:argType="string" />
+        <argument
+            android:name="password"
+            app:argType="string" />
+        <argument
+            android:name="latitude"
+            app:argType="string" />
+        <argument
+            android:name="longitude"
+            app:argType="string" />
+        <action
+            android:id="@+id/to_onboardingFragment"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="organizationId"
+            app:argType="integer" />
+        <argument
+            android:name="gender"
+            app:argType="string" />
+        <argument
+            android:name="date"
+            app:argType="string" />
+        <argument
+            android:name="pin"
+            app:argType="string" />
     </fragment>
 </navigation>

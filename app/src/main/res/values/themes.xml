@@ -63,6 +63,14 @@
     <style name="TextAppearance.TextBold" parent="TextAppearance.TextRegular">
         <item name="android:fontFamily">@font/gilroy_bold</item>
     </style>
+
+    <style name="TextAppearance.TextSemiBold" parent="TextAppearance.TextRegular">
+        <item name="android:fontFamily">@font/gilroy_semibold</item>
+        <item name="android:textColor">@color/semiblack</item>
+        <item name="android:lineSpacingExtra">5sp</item>
+        <item name="lineSpacing">5sp</item>
+    </style>
+
     <style name="TextAppearance.TextMedium" parent="TextAppearance.TextRegular">
         <item name="android:fontFamily">@font/gilroy_medium</item>
     </style>
@@ -126,7 +134,7 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
-    <dimen name="sm_radius">12dp</dimen>
+    <dimen name="sm_radius">8dp</dimen>
     <dimen name="lg_radius">24dp</dimen>
 
     <style name="RoundImageStyle" parent="">

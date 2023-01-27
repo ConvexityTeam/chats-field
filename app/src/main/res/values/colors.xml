@@ -10,11 +10,14 @@
     <color name="colorYellowTransparent">#40EAD40D</color>
 
     <color name="textColorPrimary">#333333</color>
+    <color name="strokeColorUnfocused">#C4C4C4</color>
     <color name="textColorSecondary">#222222</color>
     <color name="textColorTertiary">#999999</color>
     <color name="textColorDark">#646A86</color>
     <color name="lightGrey">#EAEAEA</color>
     <color name="black">#FF000000</color>
+    <color name="semiblack">#B5000000</color>
+    <color name="bg">#FFFCFCFE</color>
     <color name="white">#FFFFFFFF</color>
     <color name="lineColor">#C4C4C4</color>
     <color name="card_bg">#DEF1EA</color>
