@@ -104,6 +104,10 @@ class RegisterOptinCampaignFragment : Fragment() {
             onViewMediumClicked(Mediums.Newspaper.value)
         }
 
+        binding.backBtn.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
         binding.optinSubmitbutton.setOnClickListener {
 
             checkIfAllFieldsAreFilledCorrectly() {
