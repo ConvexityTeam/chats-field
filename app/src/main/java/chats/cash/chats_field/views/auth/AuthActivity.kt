@@ -15,6 +15,7 @@ import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
 import chats.cash.chats_field.utils.Utils.checkAppPermission
+import chats.cash.chats_field.utils.encryption.AESEncrption
 import chats.cash.chats_field.utils.location.LocationManager
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
