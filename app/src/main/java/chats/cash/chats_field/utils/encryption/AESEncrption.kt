@@ -38,6 +38,22 @@ object AESEncrption  {
         return cipherText
     }
 
+    fun encrypt(strToEncrypt: String,cipher: Cipher): ByteArray {
+        val plainText = strToEncrypt.toByteArray(Charsets.UTF_8)
+//        val keygen = KeyGenerator.getInstance("AES")
+//        keygen.init(256)
+////        val key = keygen.generateKey()
+////        val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+////        cipher.init(Cipher.ENCRYPT_MODE, key)
+        val cipherText = cipher.doFinal(plainText)
+        val sb = StringBuilder()
+        for (b in cipherText) {
+            sb.append(b.toChar())
+        }
+        return cipherText
+    }
+
+
     fun decrypt(context:Context, dataToDecrypt: ByteArray): ByteArray {
         val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
         val ivSpec = IvParameterSpec(getSavedInitializationVector(context))
@@ -49,6 +65,21 @@ object AESEncrption  {
             sb.append(b.toChar())
         }
         Toast.makeText(context, "dbg decrypted = [$sb]", Toast.LENGTH_LONG).show()
+
+        return cipherText
+    }
+
+    fun decrypt( dataToDecrypt: ByteArray,iv: IvParameterSpec,secretKey: SecretKey): ByteArray {
+
+        val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, iv)
+        val cipherText = cipher.doFinal(dataToDecrypt)
+
+        val sb = StringBuilder()
+        for (b in cipherText) {
+            sb.append( b.toInt().toChar())
+        }
 
         return cipherText
     }
