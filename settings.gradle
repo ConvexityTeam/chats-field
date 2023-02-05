@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name = "Bluetooth Sensor"
+rootProject.name = "CHATS Field"

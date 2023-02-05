@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.codose.chats.views.auth.ui.SplashFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.SplashFragment"
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash">
         <action
@@ -21,31 +21,31 @@
     </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
-        android:name="com.codose.chats.views.auth.ui.OnboardingFragment"
+        android:name="chats.cash.chats_field.views.auth.onboarding.OnboardingFragment"
         android:label="fragment_onboarding"
         tools:layout="@layout/fragment_onboarding">
         <!-- TODO comeback and change back to register fragment !-->
         <action
-            android:id="@+id/action_onboardingFragment_to_registerFragment"
-            app:destination="@id/registerFragment"
+            android:id="@+id/to_beneficiaryTypeFragment"
+            app:destination="@id/beneficiaryTypeFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_onboardingFragment_to_vendorFragment"
+            android:id="@+id/to_vendorFragment"
             app:destination="@id/vendorFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_onboardingFragment_to_cashForWorkFragment"
+            android:id="@+id/to_cashForWorkFragment"
             app:destination="@id/cashForWorkFragment" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.codose.chats.views.auth.ui.RegisterFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register">
         <action
@@ -56,7 +56,7 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_registerFragment_to_registerVerifyFragment"
+            android:id="@+id/to_registerVerifyFragment"
             app:destination="@id/registerVerifyFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -69,11 +69,23 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
-
+        <action
+            android:id="@+id/toCampaignDialog"
+            app:destination="@id/campaignDialog" />
+        <action
+            android:id="@+id/action_registerFragment_to_registerOptinCampaignFragment"
+            app:destination="@id/registerOptinCampaignFragment" />
+        <action
+            android:id="@+id/to_registerOptinCampaignFragment2"
+            app:destination="@id/registerOptinCampaignFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/registerOtpFragment"
-        android:name="com.codose.chats.views.auth.ui.RegisterOtpFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterOtpFragment"
         android:label="fragment_register_otp"
         tools:layout="@layout/fragment_register_otp">
         <action
@@ -83,21 +95,51 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="firstName"
+            app:argType="string" />
+        <argument
+            android:name="lastName"
+            app:argType="string" />
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <argument
+            android:name="phone"
+            app:argType="string" />
+        <argument
+            android:name="password"
+            app:argType="string" />
+        <argument
+            android:name="latitude"
+            app:argType="string" />
+        <argument
+            android:name="longitude"
+            app:argType="string" />
+        <argument
+            android:name="organizationId"
+            app:argType="string" />
+        <argument
+            android:name="gender"
+            app:argType="string" />
+        <argument
+            android:name="date"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/registerVerifyFragment"
-        android:name="com.codose.chats.views.auth.ui.RegisterVerifyFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterVerifyFragment"
         android:label="fragment_register_verify"
         tools:layout="@layout/fragment_register_verify">
         <action
-            android:id="@+id/action_registerVerifyFragment_to_registerPrintFragment"
+            android:id="@+id/to_registerPrintFragment"
             app:destination="@id/registerPrintFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_registerVerifyFragment_to_registerImageFragment"
+            android:id="@+id/to_registerImageFragment"
             app:destination="@id/registerImageFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -125,7 +167,7 @@
             android:name="longitude"
             app:argType="string" />
         <action
-            android:id="@+id/action_registerVerifyFragment_to_onboardingFragment"
+            android:id="@+id/to_onboardingFragment"
             app:destination="@id/onboardingFragment"
             app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
@@ -138,10 +180,13 @@
         <argument
             android:name="date"
             app:argType="string" />
+        <argument
+            android:name="pin"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/registerPrintFragment"
-        android:name="com.codose.chats.views.auth.ui.RegisterPrintFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterPrintFragment"
         android:label="fragment_register_print"
         tools:layout="@layout/fragment_register_print" >
         <action
@@ -150,16 +195,16 @@
     </fragment>
     <fragment
         android:id="@+id/fingerPrintScannerFragment"
-        android:name="com.codose.chats.views.auth.ui.FingerPrintScannerFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.FingerPrintScannerFragment"
         android:label="fragment_finger_print_scanner"
         tools:layout="@layout/fragment_finger_print_scanner" />
     <fragment
         android:id="@+id/registerImageFragment"
-        android:name="com.codose.chats.views.auth.ui.RegisterImageFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterImageFragment"
         android:label="fragment_register_image"
         tools:layout="@layout/fragment_register_image">
         <action
-            android:id="@+id/action_registerImageFragment_to_imageCaptureFragment"
+            android:id="@+id/to_imageCaptureFragment"
             app:destination="@id/imageCaptureFragment" />
         <action
             android:id="@+id/action_registerImageFragment_to_registerVerifyFragment"
@@ -167,88 +212,89 @@
     </fragment>
     <fragment
         android:id="@+id/vendorFragment"
-        android:name="com.codose.chats.views.auth.ui.VendorFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.VendorFragment"
         android:label="fragment_vendor"
         tools:layout="@layout/fragment_vendor" />
     <fragment
         android:id="@+id/imageCaptureFragment"
-        android:name="com.codose.chats.views.auth.ui.ImageCaptureFragment"
+        android:name="chats.cash.chats_field.views.auth.ui.ImageCaptureFragment"
         android:label="ImageCaptureFragment" />
     <fragment
         android:id="@+id/cashForWorkFragment"
-        android:name="com.codose.chats.views.cashForWork.CashForWorkFragment"
+        android:name="chats.cash.chats_field.views.cashForWork.CashForWorkFragment"
         android:label="fragment_cash_for_work"
         tools:layout="@layout/fragment_cash_for_work">
         <action
-            android:id="@+id/action_cashForWorkFragment_to_cashForWorkTaskFragment"
+            android:id="@+id/to_cashForWorkTaskFragment"
             app:destination="@id/cashForWorkTaskFragment" />
+        <action
+            android:id="@+id/to_beneficiaryListFragment"
+            app:destination="@id/beneficiaryListFragment" />
     </fragment>
     <fragment
         android:id="@+id/cashForWorkTaskFragment"
-        android:name="com.codose.chats.views.cashForWork.CashForWorkTaskFragment"
+        android:name="chats.cash.chats_field.views.cashForWork.CashForWorkTaskFragment"
         android:label="fragment_cash_for_work_task"
         tools:layout="@layout/fragment_cash_for_work_task">
         <action
-            android:id="@+id/action_cashForWorkTaskFragment_to_cashForWorkTaskDetailsFragment"
+            android:id="@+id/to_cashForWorkTaskDetailsFragment"
             app:destination="@id/cashForWorkTaskDetailsFragment" />
         <argument
-            android:name="cfwId"
-            app:argType="string" />
-        <argument
-            android:name="cfwName"
-            app:argType="string" />
+            android:name="jobs"
+            app:argType="chats.cash.chats_field.views.cashForWork.model.Job[]" />
     </fragment>
     <fragment
         android:id="@+id/cashForWorkTaskDetailsFragment"
-        android:name="com.codose.chats.views.cashForWork.CashForWorkTaskDetailsFragment"
+        android:name="chats.cash.chats_field.views.cashForWork.CashForWorkTaskDetailsFragment"
         android:label="fragment_cash_for_work_task_details"
         tools:layout="@layout/fragment_cash_for_work_task_details">
-        <argument
-            android:name="taskId"
-            app:argType="string" />
         <action
-            android:id="@+id/action_cashForWorkTaskDetailsFragment_to_cashForWorkSubmitFragment"
+            android:id="@+id/to_cashForWorkSubmitFragment"
             app:destination="@id/cashForWorkSubmitFragment" />
         <action
-            android:id="@+id/action_cashForWorkTaskDetailsFragment_to_cashForWorkImageFragment"
+            android:id="@+id/to_cashForWorkImageFragment"
             app:destination="@id/cashForWorkImageFragment" />
         <argument
-            android:name="taskName"
-            app:argType="string" />
+            android:name="job"
+            app:argType="chats.cash.chats_field.views.cashForWork.model.Job" />
     </fragment>
     <fragment
         android:id="@+id/cashForWorkSubmitFragment"
-        android:name="com.codose.chats.views.cashForWork.CashForWorkSubmitFragment"
+        android:name="chats.cash.chats_field.views.cashForWork.CashForWorkSubmitFragment"
         android:label="fragment_cash_for_work_submit"
         tools:layout="@layout/fragment_cash_for_work_submit">
 
         <action
-            android:id="@+id/action_cashForWorkSubmitFragment_to_onboardingFragment"
+            android:id="@+id/to_onboardingFragment"
             app:destination="@id/onboardingFragment"
             app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
-        <argument
-            android:name="taskId"
-            app:argType="string" />
         <argument
             android:name="userName"
             app:argType="string" />
         <argument
+            android:name="taskId"
+            app:argType="string" />
+        <argument
             android:name="taskName"
             app:argType="string" />
         <argument
             android:name="userId"
             app:argType="string" />
+        <argument
+            android:name="beneficiaryId"
+            app:argType="integer" />
         <action
-            android:id="@+id/action_cashForWorkSubmitFragment_to_cashForWorkImageFragment"
+            android:id="@+id/to_cashForWorkImageFragment"
             app:destination="@id/cashForWorkImageFragment" />
     </fragment>
     <fragment
         android:id="@+id/cashForWorkImageFragment"
-        android:name="com.codose.chats.views.cashForWork.CashForWorkImageFragment"
-        android:label="CashForWorkImageFragment">
+        android:name="chats.cash.chats_field.views.cashForWork.CashForWorkImageFragment"
+        android:label="CashForWorkImageFragment"
+        tools:layout="@layout/fragment_cash_for_work_image">
         <action
-            android:id="@+id/action_cashForWorkImageFragment_to_onboardingFragment"
+            android:id="@+id/to_onboardingFragment"
             app:destination="@id/onboardingFragment"
             app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
@@ -260,6 +306,115 @@
             app:argType="string" />
         <argument
             android:name="userId"
+            app:argType="string" />
+        <argument
+            android:name="beneficiaryId"
+            app:argType="integer" />
+    </fragment>
+    <dialog
+        android:id="@+id/beneficiarySearchDialog"
+        android:name="chats.cash.chats_field.views.beneficiary_search.BeneficiarySearchDialog"
+        android:label="BeneficiarySearchDialog"
+        tools:layout="@layout/dialog_beneficiary_search"/>
+    <fragment
+        android:id="@+id/beneficiaryTypeFragment"
+        android:name="chats.cash.chats_field.views.beneficiary_onboarding.BeneficiaryTypeFragment"
+        android:label="fragment_beneficiary_type"
+        tools:layout="@layout/fragment_beneficiary_type" >
+        <action
+            android:id="@+id/to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/to_existingBeneficiaryFragment"
+            app:destination="@id/existingBeneficiaryFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/existingBeneficiaryFragment"
+        android:name="chats.cash.chats_field.views.beneficiary_onboarding.ExistingBeneficiaryFragment"
+        android:label="fragment_existing_beneficiary"
+        tools:layout="@layout/fragment_existing_beneficiary">
+        <action
+            android:id="@+id/to_beneficiarySearchDialog"
+            app:destination="@id/beneficiarySearchDialog" />
+        <action
+            android:id="@+id/to_campaignDialog"
+            app:destination="@id/campaignDialog" />
+        <action
+            android:id="@+id/to_onboardingFragment"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/onboardingFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/campaignDialog"
+        android:name="chats.cash.chats_field.views.beneficiary_onboarding.campaigns.CampaignDialog"
+        android:label="dialog_campaign"
+        tools:layout="@layout/dialog_campaign" />
+    <fragment
+        android:id="@+id/beneficiaryListFragment"
+        android:name="chats.cash.chats_field.views.beneficiary_list.BeneficiaryListFragment"
+        android:label="fragment_beneficiary_list"
+        tools:layout="@layout/fragment_beneficiary_list">
+        <argument
+            android:name="campaignId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerOptinCampaignFragment"
+        tools:layout="@layout/fragment_register_opt_in"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterOptinCampaignFragment"
+        android:label="RegisterOptinCampaignFragment" >
+        <argument
+            android:name="campaign"
+            app:argType="chats.cash.chats_field.model.ModelCampaign" />
+        <action
+            android:id="@+id/action_registerOptinCampaignFragment_to_registerVerifyFragment"
+            app:destination="@id/registerVerifyFragment" />
+
+        <argument
+            android:name="firstName"
+            app:argType="string" />
+        <argument
+            android:name="lastName"
+            app:argType="string" />
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <argument
+            android:name="phone"
+            app:argType="string" />
+        <argument
+            android:name="password"
+            app:argType="string" />
+        <argument
+            android:name="latitude"
+            app:argType="string" />
+        <argument
+            android:name="longitude"
+            app:argType="string" />
+        <action
+            android:id="@+id/to_onboardingFragment"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="organizationId"
+            app:argType="integer" />
+        <argument
+            android:name="gender"
+            app:argType="string" />
+        <argument
+            android:name="date"
+            app:argType="string" />
+        <argument
+            android:name="pin"
             app:argType="string" />
     </fragment>
 </navigation>

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    tools:context=".views.auth.ui.RegisterFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:id="@+id/constraints"
+        android:layout_height="wrap_content"
+        tools:ignore="RtlSymmetry">
+
+        <ImageButton
+            android:id="@+id/back_btn"
+            style="@style/ImageButton.Default"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="12dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/opt_in"
+            android:textAppearance="@style/TextAppearance.TextSemiBold"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="18sp"
+            android:maxLines="1"
+
+            app:layout_constraintBottom_toBottomOf="@+id/back_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.15"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/back_btn"
+            app:layout_constraintTop_toTopOf="@+id/back_btn" />
+
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_percent="0.58"
+            android:layout_height="wrap_content"
+            android:text="@string/take_below_survey_to_opt_in_to_the_campaign"
+            android:textAppearance="@style/TextAppearance.TextBold"
+            android:textSize="16sp"
+            android:layout_marginStart="6dp"
+            android:textColor="@color/textColorPrimary"
+            android:layout_marginTop="20dp"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/back_btn"
+            app:layout_constraintTop_toBottomOf="@+id/back_btn" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardview_howdidyouhear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="16dp"
+            android:clipChildren="true"
+            android:clipToPadding="true"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp"
+            app:contentPadding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/subtitle"
+            app:layout_constraintTop_toBottomOf="@id/subtitle">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="130dp"
+                    android:lineSpacingExtra="5sp"
+                    android:text="@string/how_did_you_hear_about_this_campaign"
+                    android:textAppearance="@style/TextAppearance.TextSemiBold" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="@string/tv"
+                    android:textAppearance="@style/TextAppearance.TextRegular"
+                    app:buttonTint="@color/button_color" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/twitter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="@string/twitter"
+                    android:textAppearance="@style/TextAppearance.TextRegular"
+                    app:buttonTint="@color/button_color" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/newspaper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="@string/newspaper"
+                    android:textAppearance="@style/TextAppearance.TextRegular"
+                    app:buttonTint="@color/button_color" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/newspaper2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="@string/newspaper"
+                    android:textAppearance="@style/TextAppearance.TextRegular"
+                    app:buttonTint="@color/button_color" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardview_agebracket"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="16dp"
+            android:clipChildren="true"
+            android:clipToPadding="true"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp"
+            app:contentPadding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/subtitle"
+            app:layout_constraintTop_toBottomOf="@id/cardview_howdidyouhear">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/what_is_your_age_bracket"
+                    android:textAppearance="@style/TextAppearance.TextSemiBold" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <RadioGroup
+                    android:id="@+id/optin_radiogroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/age1217"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_12_17"
+                        android:textAppearance="@style/TextAppearance.TextRegular"
+                        app:buttonTint="@color/button_color" />
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/age1828"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_18_28"
+                        android:textAppearance="@style/TextAppearance.TextRegular"
+                        app:buttonTint="@color/button_color" />
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/age2942"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_29_42"
+                        android:textAppearance="@style/TextAppearance.TextRegular"
+                        app:buttonTint="@color/button_color" />
+
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/age43above"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_43_and_above"
+                        android:textAppearance="@style/TextAppearance.TextRegular"
+                        app:buttonTint="@color/button_color" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardview_mothersmaiden"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="16dp"
+            android:clipChildren="true"
+            android:clipToPadding="true"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp"
+            app:contentPadding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/subtitle"
+            app:layout_constraintTop_toBottomOf="@id/cardview_agebracket">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="130dp"
+                    android:lineSpacingExtra="5sp"
+                    android:text="@string/whats_your_mother_maiden_name"
+                    android:textAppearance="@style/TextAppearance.TextSemiBold" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="130dp"
+                    android:lineSpacingExtra="5sp"
+                    android:text="@string/answer"
+                    android:textAppearance="@style/TextAppearance.TextRegular"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/optin_mothermaidenname_parent"
+                    style="@style/TextInputLayout.FormEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/optin_mothermaidenname"
+                        style="@style/TextInputEditText.Padding"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName|textCapWords" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <Button
+            android:id="@+id/optin_submitbutton"
+            style="@style/Widget.MaterialComponents.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="25dp"
+            android:text="@string/submit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/cardview_mothersmaiden"
+            app:layout_constraintStart_toStartOf="@+id/cardview_howdidyouhear"
+            app:layout_constraintTop_toBottomOf="@id/cardview_mothersmaiden" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

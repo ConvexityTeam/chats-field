@@ -5,13 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".views.auth.ui.RegisterImageFragment">
+    tools:context="chats.cash.chats_field.views.cashForWork.CashForWorkImageFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="32dp"
-        tools:context=".views.auth.ui.RegisterImageFragment">
+        android:paddingBottom="32dp">
 
         <ImageButton
             android:id="@+id/cfw_image_back_btn"

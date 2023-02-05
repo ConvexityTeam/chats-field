@@ -9,27 +9,47 @@
         <entry key="..\:/Users/aminu/StudioProjects/frontend-fieldapp-develop/app/src/main/res/layout/fragment_register_image.xml" value="0.2046875" />
         <entry key="..\:/Users/aminu/StudioProjects/frontend-fieldapp-develop/app/src/main/res/layout/fragment_register_print.xml" value="0.2046875" />
         <entry key="..\:/Users/aminu/StudioProjects/frontend-fieldapp-develop/app/src/main/res/layout/fragment_register_verify.xml" value="0.2046875" />
+        <entry key="app/src/main/res/drawable/add_image.xml" value="0.137" />
         <entry key="app/src/main/res/drawable/cirle_bg_ripple.xml" value="0.2851851851851852" />
         <entry key="app/src/main/res/drawable/dummy_image.xml" value="0.16875" />
+        <entry key="app/src/main/res/drawable/ic_cancel.xml" value="0.162" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.151" />
+        <entry key="app/src/main/res/drawable/ic_scan_nfc_img.xml" value="0.162" />
         <entry key="app/src/main/res/drawable/rectangle_text.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/drawable/transparent_rectangle_blue.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/drawable/transparent_rectangle_green.xml" value="0.16302083333333334" />
         <entry key="app/src/main/res/drawable/transparent_rectangle_yellow.xml" value="0.16302083333333334" />
-        <entry key="app/src/main/res/layout/activity_auth.xml" value="0.125" />
+        <entry key="app/src/main/res/layout/activity_auth.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/dialog_campaign.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/dialog_login.xml" value="0.3182291666666667" />
+        <entry key="app/src/main/res/layout/dialog_selector.xml" value="0.25833333333333336" />
+        <entry key="app/src/main/res/layout/fragment_base.xml" value="0.12083333333333333" />
+        <entry key="app/src/main/res/layout/fragment_beneficiary_list.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/fragment_beneficiary_type.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work.xml" value="0.20907420656412676" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work_beneficiaries_task_list.xml" value="0.30416666666666664" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work_image.xml" value="0.23530938300641668" />
         <entry key="app/src/main/res/layout/fragment_cash_for_work_submit.xml" value="0.5554773083515638" />
-        <entry key="app/src/main/res/layout/fragment_cash_for_work_task.xml" value="1.7470604090270863" />
-        <entry key="app/src/main/res/layout/fragment_cash_for_work_task_details.xml" value="0.5997575997127674" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work_task.xml" value="0.2875" />
+        <entry key="app/src/main/res/layout/fragment_cash_for_work_task_details.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/fragment_existing_beneficiary.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_image_capture.xml" value="0.125" />
+        <entry key="app/src/main/res/layout/fragment_nfc_scan.xml" value="0.25833333333333336" />
         <entry key="app/src/main/res/layout/fragment_onboarding.xml" value="0.2672631068739748" />
         <entry key="app/src/main/res/layout/fragment_register.xml" value="0.28020833333333334" />
         <entry key="app/src/main/res/layout/fragment_register_image.xml" value="0.25379033630037057" />
-        <entry key="app/src/main/res/layout/fragment_register_otp.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_register_otp.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_register_print.xml" value="0.19737272826094426" />
-        <entry key="app/src/main/res/layout/fragment_register_verify.xml" value="0.3767441860465116" />
-        <entry key="app/src/main/res/layout/fragment_vendor.xml" value="0.4129547708972228" />
+        <entry key="app/src/main/res/layout/fragment_register_verify.xml" value="0.2360215297965116" />
+        <entry key="app/src/main/res/layout/fragment_select_beneficiaries.xml" value="0.30416666666666664" />
+        <entry key="app/src/main/res/layout/fragment_splash.xml" value="0.16111111111111112" />
+        <entry key="app/src/main/res/layout/fragment_vendor.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/item_campaign_header.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_cash_for_work_beneficiaries.xml" value="0.30416666666666664" />
+        <entry key="app/src/main/res/layout/item_cash_for_work_beneficiary.xml" value="0.25833333333333336" />
         <entry key="app/src/main/res/layout/item_cash_for_work_item.xml" value="0.34913793103448276" />
+        <entry key="app/src/main/res/layout/item_cash_for_work_task_item.xml" value="0.2875" />
+        <entry key="app/src/main/res/layout/item_existing_beneficiary.xml" value="0.25833333333333336" />
         <entry key="app/src/main/res/layout/layout_empty.xml" value="0.20128311156331694" />
         <entry key="app/src/main/res/layout/onboarding_item_layout.xml" value="0.14336372847011145" />
         <entry key="app/src/main/res/layout/print_pager_view.xml" value="0.1" />
@@ -39,7 +59,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

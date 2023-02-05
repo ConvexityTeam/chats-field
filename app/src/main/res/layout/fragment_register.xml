@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".views.auth.ui.RegisterFragment">
+        tools:ignore="RtlSymmetry">
 
         <ImageButton
             android:id="@+id/back_btn"
@@ -19,16 +19,17 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
+            android:contentDescription="@null"
             android:src="@drawable/ic_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
 
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
+            android:contentDescription="@null"
             android:src="@drawable/logo_sm"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,33 +40,47 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
+            android:contentDescription="@null"
             android:src="@drawable/ic_check"
-            app:layout_constraintEnd_toStartOf="@+id/imageView4"
+            app:layout_constraintEnd_toStartOf="@id/imageView4"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+            app:layout_constraintTop_toBottomOf="@id/imageView2" />
 
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@null"
             android:src="@drawable/ic_uncheck"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-            app:layout_constraintEnd_toStartOf="@+id/imageView5"
+            app:layout_constraintBottom_toBottomOf="@id/imageView3"
+            app:layout_constraintEnd_toStartOf="@id/imageView5"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/imageView3"
-            app:layout_constraintTop_toTopOf="@+id/imageView3" />
+            app:layout_constraintStart_toEndOf="@id/imageView3"
+            app:layout_constraintTop_toTopOf="@id/imageView3" />
 
         <ImageView
             android:id="@+id/imageView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@null"
             android:src="@drawable/ic_uncheck"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+            app:layout_constraintBottom_toBottomOf="@id/imageView4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/imageView4"
-            app:layout_constraintTop_toTopOf="@+id/imageView4" />
+            app:layout_constraintStart_toEndOf="@id/imageView4"
+            app:layout_constraintTop_toTopOf="@id/imageView4" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/lineColor"
+            app:layout_constraintBottom_toBottomOf="@id/imageView3"
+            app:layout_constraintEnd_toStartOf="@id/imageView4"
+            app:layout_constraintStart_toEndOf="@id/imageView3"
+            app:layout_constraintTop_toTopOf="@id/imageView3" />
 
         <View
             android:layout_width="0dp"
@@ -74,20 +89,9 @@
             android:layout_marginEnd="8dp"
             android:background="@color/lineColor"
             app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-            app:layout_constraintEnd_toStartOf="@+id/imageView4"
-            app:layout_constraintStart_toEndOf="@+id/imageView3"
-            app:layout_constraintTop_toTopOf="@+id/imageView3" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@color/lineColor"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-            app:layout_constraintEnd_toStartOf="@+id/imageView5"
-            app:layout_constraintStart_toEndOf="@+id/imageView4"
-            app:layout_constraintTop_toTopOf="@+id/imageView3" />
+            app:layout_constraintEnd_toStartOf="@id/imageView5"
+            app:layout_constraintStart_toEndOf="@id/imageView4"
+            app:layout_constraintTop_toTopOf="@id/imageView3" />
 
         <TextView
             android:id="@+id/textView2"
@@ -99,124 +103,36 @@
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+            app:layout_constraintTop_toBottomOf="@id/imageView4" />
 
         <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/first_name"
-            android:textAppearance="@style/TextAppearance.TextMedium"
-            android:textColor="@color/textColorSecondary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/registerCampaignLayout" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registerFirstNameLayout"
-            style="@style/TextInputLayout.FormEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/registerFirstNameEdit"
-                style="@style/TextInputEditText.Padding"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/john"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/logged_in_text"
+            android:id="@+id/loggedInText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Logged In"
+            android:text="@string/text_logged_in"
             android:textAppearance="@style/TextAppearance.TextBold"
             android:textColor="@color/textColorPrimary"
             app:layout_constraintEnd_toStartOf="@+id/change_account_text"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            app:layout_constraintTop_toBottomOf="@id/textView2" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/change_account_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/last_name"
-            android:textAppearance="@style/TextAppearance.TextMedium"
-            android:textColor="@color/textColorSecondary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/registerFirstNameLayout" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registerLastNameLayout"
-            style="@style/TextInputLayout.FormEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:text="@string/text_change_account"
+            android:textAppearance="@style/TextAppearance.TextBold"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="@id/loggedInText"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/registerLastNameEdit"
-                style="@style/TextInputEditText.Padding"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/john"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/textView44"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:text="Gender"
-            android:textAppearance="@style/TextAppearance.TextMedium"
-            android:textColor="@color/textColorSecondary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/registerLastNameLayout" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registerGenderLayout"
-            style="@style/TextInputLayout.FormEditText.DropDown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView44">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/registerGenderEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.TextRegular"
-                android:paddingStart="16dp"
-                android:focusable="false"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="Male" />
-        </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/loggedInText"
+            app:layout_constraintTop_toTopOf="@id/loggedInText" />
 
         <TextView
             android:id="@+id/textView45"
@@ -224,11 +140,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Campaigns"
+            android:text="@string/text_campaigns"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logged_in_text" />
+            app:layout_constraintTop_toBottomOf="@id/loggedInText" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registerCampaignLayout"
@@ -240,35 +156,100 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView45">
+            app:layout_constraintTop_toBottomOf="@id/textView45">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/registerCampaignEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.TextRegular"
-                android:paddingStart="16dp"
                 android:focusable="false"
+                android:hint="@string/text_select_a_campaign"
+                android:paddingStart="16dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:hint="Select Campaigns"/>
+                android:textAppearance="@style/TextAppearance.TextRegular" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
         <TextView
-            android:id="@+id/textView55"
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:text="Special Case"
+            android:text="@string/first_name"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/registerDateLayout" />
+            app:layout_constraintTop_toBottomOf="@id/registerCampaignLayout" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registerSpecialCaseLayout"
+            android:id="@+id/registerFirstNameLayout"
+            style="@style/TextInputLayout.FormEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView3">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/registerFirstNameEdit"
+                style="@style/TextInputEditText.Padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/john"
+                android:inputType="textPersonName|textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/last_name"
+            android:textAppearance="@style/TextAppearance.TextMedium"
+            android:textColor="@color/textColorSecondary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registerFirstNameLayout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/registerLastNameLayout"
+            style="@style/TextInputLayout.FormEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView4">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/registerLastNameEdit"
+                style="@style/TextInputEditText.Padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/john"
+                android:inputType="textPersonName|textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textView44"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/text_gender"
+            android:textAppearance="@style/TextAppearance.TextMedium"
+            android:textColor="@color/textColorSecondary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registerLastNameLayout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/registerGenderLayout"
             style="@style/TextInputLayout.FormEditText.DropDown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -277,20 +258,21 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView55">
+            app:layout_constraintTop_toBottomOf="@id/textView44">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/registerSpecialCaseEdit"
+                android:id="@+id/registerGenderEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.TextRegular"
-                android:paddingStart="16dp"
+                android:clickable="false"
                 android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="@string/text_male"
+                android:paddingStart="16dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:text="No" />
+                android:textAppearance="@style/TextAppearance.TextRegular" />
         </com.google.android.material.textfield.TextInputLayout>
-
 
         <TextView
             android:id="@+id/textView5"
@@ -302,7 +284,7 @@
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/registerGenderLayout" />
+            app:layout_constraintTop_toBottomOf="@id/registerGenderLayout" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registerEmailLayout"
@@ -347,7 +329,7 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6">
+            app:layout_constraintTop_toBottomOf="@id/textView6">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/registerPhoneEdit"
@@ -356,7 +338,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/_081000xxxxx"
                 android:inputType="phone"
-                android:maxLength="11" />
+                android:maxLength="15" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -365,12 +347,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:text="Date of Birth"
+            android:text="@string/text_date_of_birth"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/registerPhoneLayout" />
+            app:layout_constraintTop_toBottomOf="@id/registerPhoneLayout" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registerDateLayout"
@@ -383,7 +365,7 @@
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView7"
+            app:layout_constraintTop_toBottomOf="@id/textView7"
             app:passwordToggleEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -392,8 +374,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                android:hint="12/08/2020"
+                android:hint="@string/text_placeholder_date"
                 android:inputType="date" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textView55"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/text_special_case"
+            android:textAppearance="@style/TextAppearance.TextMedium"
+            android:textColor="@color/textColorSecondary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registerDateLayout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/registerSpecialCaseLayout"
+            style="@style/TextInputLayout.FormEditText.DropDown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView55">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/registerSpecialCaseEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="@string/text_no"
+                android:paddingStart="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textAppearance="@style/TextAppearance.TextRegular" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -402,13 +422,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:text="NIN"
+            android:text="@string/text_nin_abbrev"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/registerSpecialCaseLayout"
-            tools:visibility="gone" />
+            app:layout_constraintTop_toBottomOf="@id/registerSpecialCaseLayout"
+            tools:visibility="visible" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registerNINLayout"
@@ -419,11 +439,12 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:visibility="visible"
+            app:helperText="Enter a NIN, vNIN or VIN"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_nin"
+            app:layout_constraintTop_toBottomOf="@id/txt_nin"
             app:passwordToggleEnabled="false"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/registerNINEdit"
@@ -431,22 +452,50 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="XXXXXXXXX"
-                android:inputType="number"
-                android:singleLine="true"
-                android:maxLength="11" />
+                android:inputType="text|textNoSuggestions"
+                android:maxLength="16"
+                android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <Button
-            android:id="@+id/registerNextButton"
-            style="@style/Widget.MaterialComponents.Button.Primary"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/inputPinText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="@string/next"
-            app:layout_constraintEnd_toEndOf="@id/registerPhoneLayout"
-            app:layout_constraintStart_toStartOf="@id/registerPhoneLayout"
-            app:layout_constraintTop_toBottomOf="@+id/registerNINLayout" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/input_pin"
+            android:textAppearance="@style/TextAppearance.TextMedium"
+            android:textColor="@color/textColorSecondary"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registerNINLayout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputPinLayout"
+            style="@style/TextInputLayout.FormEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="visible"
+            app:helperText="Enter a 4-digit PIN"
+            app:counterMaxLength="4"
+            app:counterEnabled="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/inputPinText"
+            app:passwordToggleEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputPinEdit"
+                style="@style/TextInputEditText.Padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="1234"
+                android:inputType="number"
+                android:maxLength="4" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/textView8"
@@ -459,11 +508,22 @@
             android:textAppearance="@style/TextAppearance.TextRegular"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/registerLoginText"
+            app:layout_constraintEnd_toStartOf="@id/registerLoginText"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/registerNextButton" />
+            app:layout_constraintTop_toBottomOf="@id/registerNextButton" />
+
+        <Button
+            android:id="@+id/registerNextButton"
+            style="@style/Widget.MaterialComponents.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/next"
+            app:layout_constraintEnd_toEndOf="@id/registerPhoneLayout"
+            app:layout_constraintStart_toStartOf="@id/registerPhoneLayout"
+            app:layout_constraintTop_toBottomOf="@id/inputPinLayout" />
 
         <TextView
             android:id="@+id/registerLoginText"
@@ -473,24 +533,10 @@
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/colorPrimary"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/textView8"
+            app:layout_constraintBottom_toBottomOf="@id/textView8"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/textView8"
-            app:layout_constraintTop_toTopOf="@+id/textView8" />
-
-        <TextView
-            android:id="@+id/change_account_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Change Account?"
-            android:textAppearance="@style/TextAppearance.TextBold"
-            android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="@+id/logged_in_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/logged_in_text"
-            app:layout_constraintTop_toTopOf="@+id/logged_in_text" />
+            app:layout_constraintStart_toEndOf="@id/textView8"
+            app:layout_constraintTop_toTopOf="@id/textView8" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

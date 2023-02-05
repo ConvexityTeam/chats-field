@@ -5,7 +5,7 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.cashForWork.CashForWorkFragment">
+    tools:context=".views.cashForWork.CashForWorkSubmitFragment">
 
     <ImageButton
         android:id="@+id/cfw_submit_back_btn"
@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
+        android:contentDescription="@null"
         android:src="@drawable/ic_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Cash for work"
+        android:text="@string/text_cash_for_work"
         android:textAppearance="@style/TextAppearance.TextMedium"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/cfw_submit_back_btn"
@@ -55,6 +56,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
+                android:contentDescription="@null"
                 android:src="@drawable/ic_upload"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -67,7 +69,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
-                android:text="Upload Picture"
+                android:text="@string/text_upload_picture"
                 android:textAppearance="@style/TextAppearance.TextMedium"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@+id/textView13"
@@ -81,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="24dp"
-                android:text="Upload a clear picture showing task completion"
+                android:text="@string/text_upload_picture_details"
                 android:textAppearance="@style/TextAppearance.TextRegular"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -94,6 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
+                android:contentDescription="@null"
                 android:src="@drawable/ic_check"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -116,8 +119,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cfw_picture_card" />
-
+        app:layout_constraintTop_toBottomOf="@+id/cfw_picture_card"
+        tools:visibility="visible" />
 
     <include
         android:id="@+id/cfw_submit_progress"
@@ -134,19 +137,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:text="UserName"
+        android:text="Username"
         android:textAppearance="@style/TextAppearance.TextBold"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/cfw_submit_back_btn"
         app:layout_constraintTop_toBottomOf="@+id/cfw_submit_title" />
 
-    <include
-        android:id="@+id/cfw_submit_progress"
-        layout="@layout/progress_layout"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!-- <include
+         android:id="@+id/cfw_submit_progress"
+         layout="@layout/progress_layout"
+         android:visibility="gone"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>
