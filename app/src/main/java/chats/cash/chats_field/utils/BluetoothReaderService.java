@@ -1,14 +1,19 @@
 package chats.cash.chats_field.utils;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +35,7 @@ public class BluetoothReaderService {
     private static final String NAME = "BluetoothChat";
 
     // Unique UUID for this application
-    									 				
+
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     // Member fields
@@ -40,7 +45,7 @@ public class BluetoothReaderService {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
-    
+
     private InputStream mInStream;
     private OutputStream mOutStream;
 
@@ -58,6 +63,7 @@ public class BluetoothReaderService {
     public BluetoothReaderService(Context context, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
+
         mHandler = handler;
     }
 
@@ -86,10 +92,16 @@ public class BluetoothReaderService {
         if (D) Log.d(TAG, "start");
 
         // Cancel any thread attempting to make a connection
-        if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
 
         // Cancel any thread currently running a connection
-        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
 
         // Start the thread to listen on a BluetoothServerSocket
         if (mAcceptThread == null) {
@@ -109,11 +121,17 @@ public class BluetoothReaderService {
         // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
 
-            if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
+            if (mConnectThread != null) {
+                mConnectThread.cancel();
+                mConnectThread = null;
+            }
         }
 
         // Cancel any thread currently running a connection
-        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
 
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
@@ -126,17 +144,27 @@ public class BluetoothReaderService {
      * @param socket  The BluetoothSocket on which the connection was made
      * @param device  The BluetoothDevice that has been connected
      */
+    @SuppressLint("MissingPermission")
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
         if (D) Log.d(TAG, "connected");
 
         // Cancel the thread that completed the connection
-        if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
 
         // Cancel any thread currently running a connection
-        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
 
         // Cancel the accept thread because we only want to connect to one device
-        if (mAcceptThread != null) {mAcceptThread.cancel(); mAcceptThread = null;}
+        if (mAcceptThread != null) {
+            mAcceptThread.cancel();
+            mAcceptThread = null;
+        }
 
         // Start the thread to manage the connection and perform transmissions
         mConnectedThread = new ConnectedThread(socket);
@@ -145,6 +173,7 @@ public class BluetoothReaderService {
         // Send the name of the connected device back to the UI Activity
         Message msg = mHandler.obtainMessage(ChatsFieldConstants.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
+
         bundle.putString(ChatsFieldConstants.DEVICE_NAME, device.getName());
         msg.setData(bundle);
         mHandler.sendMessage(msg);
@@ -217,6 +246,7 @@ public class BluetoothReaderService {
         // The local server socket
         private final BluetoothServerSocket mmServerSocket;
 
+        @SuppressLint("MissingPermission")
         public AcceptThread() {
             BluetoothServerSocket tmp = null;
 
@@ -290,6 +320,7 @@ public class BluetoothReaderService {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
 
+        @SuppressLint("MissingPermission")
         public ConnectThread(BluetoothDevice device) {
             mmDevice = device;
             BluetoothSocket tmp = null;
@@ -304,6 +335,7 @@ public class BluetoothReaderService {
             mmSocket = tmp;
         }
 
+        @SuppressLint("MissingPermission")
         public void run() {
             Log.i(TAG, "BEGIN mConnectThread");
             setName("ConnectThread");
