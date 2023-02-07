@@ -14,6 +14,7 @@ import chats.cash.chats_field.network.response.progress.SubmitProgressModel
 import chats.cash.chats_field.network.response.tasks.GetTasksModel
 import chats.cash.chats_field.utils.ApiResponse
 import chats.cash.chats_field.utils.handleThrowable
+import chats.cash.chats_field.utils.location.UserLocation
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,12 +63,14 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
         beneficiaryId: Int,
         taskAssignmentId: String,
         description: String,
+        location:UserLocation,
         images: ArrayList<File>,
     ) {
         _imageUpload.value = ImageUploadState.Loading
         viewModelScope.launch(exceptionHandler) {
             val response = networkRepository.uploadTaskEvidence(
                 beneficiaryId = beneficiaryId,
+                location = location,
                 taskAssignmentId = taskAssignmentId,
                 comment = description,
                 uploads = images

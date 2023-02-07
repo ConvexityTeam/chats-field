@@ -100,20 +100,6 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         _binding = null
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                findNavController().safeNavigate(RegisterImageFragmentDirections.toImageCaptureFragment())
-            } else {
-                requireContext().toast("Permissions not granted by the user.")
-                findNavController().navigateUp()
-            }
-        }
-    }
 
     companion object {
         val REQUIRED_PERMISSIONS =

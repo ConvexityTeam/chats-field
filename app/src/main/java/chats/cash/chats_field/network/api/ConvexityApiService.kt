@@ -159,6 +159,7 @@ interface ConvexityApiService {
         @Path("beneficiaryId") beneficiaryId: Int,
         @Part("TaskAssignmentId") taskAssignmentId: RequestBody,
         @Part("comment") description: RequestBody,
+        @Part("location") location:RequestBody,
         @Part("type") type: RequestBody,
         @Part uploads: ArrayList<MultipartBody.Part>,
         @Header("Authorization") authorization: String

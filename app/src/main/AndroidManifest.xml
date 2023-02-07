@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="chats.cash.chats_field">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -9,10 +10,11 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission
         android:name="android.permission.BLUETOOTH_SCAN"
-        android:usesPermissionFlags="neverForLocation" />
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-feature android:name="android.hardware.bluetooth" />
@@ -20,6 +22,7 @@
 
     <uses-feature android:name="android.hardware.camera"
         android:required="true" />
+    <uses-permission android:name="android.permission.NFC" />
     <application
         android:name="chats.cash.chats_field.ChatsApplication"
         android:allowBackup="true"
@@ -29,19 +32,45 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.BluetoothSensor">
+
         <activity android:name="chats.cash.chats_field.views.auth.AuthActivity"
-            android:exported="true">
+            android:exported="true" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
+
+            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/techlist" />
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
         </activity>
 
         <meta-data
             android:name="io.sentry.dsn"
             android:value="https://253d2c749a5b4cc3a787759880719ba2@o449946.ingest.sentry.io/5521610" />
-        <activity android:name="chats.cash.chats_field.views.MainActivity" />
+
+        <activity android:name="chats.cash.chats_field.views.MainActivity" android:exported="true" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -52,6 +81,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+<!--        <service-->
+<!--            android:name="MyNavigationService"-->
+<!--            android:foregroundServiceType="location" >-->
+<!--        &lt;!&ndash; Any inner elements would go here. &ndash;&gt;-->
+<!--    </service>-->
+
     </application>
 
 </manifest>

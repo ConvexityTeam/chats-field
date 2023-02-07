@@ -386,7 +386,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     }
 
     private fun openNFCCardScanner(isOffline: Boolean) {
-        val bottomSheetDialogFragment = NfcScanFragment.newInstance(isOffline)
+        val bottomSheetDialogFragment = NfcScanFragment.newInstance(isOffline,email)
         bottomSheetDialogFragment.isCancelable = isOffline
         bottomSheetDialogFragment.setTargetFragment(this, 7080)
         bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),

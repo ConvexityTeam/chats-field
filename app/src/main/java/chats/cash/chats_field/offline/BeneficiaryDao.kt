@@ -2,7 +2,7 @@ package chats.cash.chats_field.offline
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.network.response.organization.campaign.Campaign
 

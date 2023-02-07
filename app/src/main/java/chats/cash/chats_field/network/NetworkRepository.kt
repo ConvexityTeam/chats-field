@@ -27,6 +27,7 @@ import chats.cash.chats_field.offline.OfflineRepository
 import chats.cash.chats_field.utils.ApiResponse
 import chats.cash.chats_field.utils.PreferenceUtil
 import chats.cash.chats_field.utils.Utils
+import chats.cash.chats_field.utils.location.UserLocation
 import chats.cash.chats_field.views.beneficiary_list.BeneficiaryUi
 import chats.cash.chats_field.views.cashForWork.model.TaskDetailsResponse
 import com.google.gson.Gson
@@ -402,12 +403,14 @@ class NetworkRepository(
     suspend fun uploadTaskEvidence(
         beneficiaryId: Int,
         taskAssignmentId: String,
+        location:UserLocation,
         comment: String,
         type: String = "image",
         uploads: ArrayList<File>,
     ): BaseResponse<Any> = withContext(Dispatchers.IO) {
         val typeBody = type.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val commentBody = comment.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val locationJson =Gson().toJson(location).toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val taskAssignmentBody =
             taskAssignmentId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val imageParts = ArrayList<MultipartBody.Part>()
@@ -425,6 +428,7 @@ class NetworkRepository(
             taskAssignmentId = taskAssignmentBody,
             description = commentBody,
             type = typeBody,
+            location = locationJson,
             uploads = imageParts,
             authorization = preferenceUtil.getNGOToken()
         )
