@@ -183,6 +183,9 @@
         <argument
             android:name="pin"
             app:argType="string" />
+        <argument
+            android:name="campaign"
+            app:argType="chats.cash.chats_field.model.ModelCampaign" />
     </fragment>
     <fragment
         android:id="@+id/registerPrintFragment"
@@ -209,6 +212,9 @@
         <action
             android:id="@+id/action_registerImageFragment_to_registerVerifyFragment"
             app:destination="@id/registerVerifyFragment" />
+        <action
+            android:id="@+id/action_registerImageFragment_to_imageCaptureFragment"
+            app:destination="@id/imageCaptureFragment" />
     </fragment>
     <fragment
         android:id="@+id/vendorFragment"

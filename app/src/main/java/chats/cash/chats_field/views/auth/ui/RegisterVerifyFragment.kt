@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
+import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.NFCModel
 import chats.cash.chats_field.network.body.LocationBody
 import chats.cash.chats_field.offline.Beneficiary
@@ -18,6 +19,7 @@ import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.BENEFICIARY_TYPE
 import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_NFC_RESULT_LISTENER
 import chats.cash.chats_field.utils.ChatsFieldConstants.NFC_BUNDLE_KEY
+import chats.cash.chats_field.utils.encryption.AES256Encrypt
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import chats.cash.chats_field.views.base.BaseFragment
 import com.google.gson.Gson
@@ -42,6 +44,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     private var allFingers: ArrayList<Bitmap>? = null
     private var nfc: String? = null
     private lateinit var firstName: String
+    private lateinit var campaign: ModelCampaign
     private lateinit var lastname: String
     private lateinit var email: String
     private lateinit var password: String
@@ -57,6 +60,8 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     private val registerViewModel by viewModel<RegisterViewModel>()
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
+
+    private var encryptedEmail:String?=null
 
     private var userId = 0
     override fun onCreateView(
@@ -74,6 +79,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         firstName = args.firstName
         lastname = args.lastName
         email = args.email
+        campaign = args.campaign
         password = args.password
         phone = args.phone
         lat = args.latitude
@@ -129,25 +135,9 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
             if (mViewModel.specialCase) {
                 if (profileImage != null) {
                     if (internetAvailabilityChecker.currentInternetAvailabilityStatus.not()) {
-                        if (registerViewModel.nfc == null) {
-                            openNFCCardScanner(true)
-                        } else {
-                            postOnboardData()
-                        }
-                    } else {
+
                         postOnboardData()
-                    }
-                } else {
-                    showToast("All fields are required")
-                }
-            } else {
-                if (allFingers != null && profileImage != null) {
-                    if (!internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-                        if (registerViewModel.nfc == null) {
-                            openNFCCardScanner(true)
-                        } else {
-                            postOnboardData()
-                        }
+
                     } else {
                         postOnboardData()
                     }
@@ -155,8 +145,23 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     showToast("All fields are required")
                 }
             }
+                else {
+                    if (allFingers != null && profileImage != null) {
+                        if (!internetAvailabilityChecker.currentInternetAvailabilityStatus) {
+                            if (registerViewModel.nfc == null) {
 
-        }
+                                postOnboardData()
+                            }
+                        } else {
+                            postOnboardData()
+                        }
+                    } else {
+                        showToast("All fields are required")
+                    }
+                }
+            }
+
+
 
         verifyPrintCard.setOnClickListener {
             findNavController().safeNavigate(RegisterVerifyFragmentDirections.toRegisterPrintFragment())
@@ -185,47 +190,28 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     registerVerifyBtn.isEnabled = false
                 }
                 is ApiResponse.Success -> {
-                    val data = it.data
-                    showToast(data.message)
-                    userId = data.data
-                    openNFCCardScanner(true)
+
+                    campaign.ck8?.let {
+                        val encrypt = AES256Encrypt(it).encrypt(email)
+                        Timber.d(encrypt.toString())
+                        Timber.d(AES256Encrypt(it).decrypt(encrypt).toString())
+                        encrypt?.let { it1 -> openNFCCardScanner(false, it1) }
+                    }
+
                     verifyProgress.hide()
                     registerVerifyBtn.isEnabled = true
                 }
                 is ApiResponse.Failure -> {
                     showToast(it.message)
                     verifyProgress.hide()
-                    registerVerifyBtn.isEnabled = true
+                    registerVerifyBtn.isEnabled = false
                 }
             }
         }
 
-        registerViewModel.nfcDetails.observe(viewLifecycleOwner) {
-            when (it) {
-                is ApiResponse.Loading -> {
-                    verifyProgress.show()
-                    registerVerifyBtn.isEnabled = false
-                }
-                is ApiResponse.Success -> {
-                    val data = it.data
-                    showToast(data.message)
-                    try {
-                        //File(profileImage!!).delete()
-                    } catch (t: Throwable) {
-                        Timber.e(t)
-                    }
-                    findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
-                }
-                is ApiResponse.Failure -> {
-                    showToast(it.message)
-                    verifyProgress.hide()
-                    registerVerifyBtn.isEnabled = true
-                    registerVerifyBtn.setOnClickListener {
-                        openNFCCardScanner(true)
-                    }
-                }
-            }
-        }
+
+
+
     }
 
     private fun postOnboardData() {
@@ -353,40 +339,10 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         Timber.v("Percentage for upload: $percentage")
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && requestCode == 7080) {
-            if (data?.getBooleanExtra("isOffline", true) == false) {
-                val nfcModel = NFCModel(
-                    userId,
-                    mViewModel.nfc.toString()
-                )
-                registerViewModel.postNFCDetails(nfcModel)
 
-            } else {
-                nfc = mViewModel.nfc
-                registerVerifyBtn.setOnClickListener {
-                    if (mViewModel.specialCase) {
-                        if (profileImage != null) {
-                            postOnboardData()
-                        } else {
-                            showToast("All fields are required")
-                        }
-                    } else {
-                        if (allFingers != null && profileImage != null) {
-                            postOnboardData()
-                        } else {
-                            showToast("All fields are required")
-                        }
-                    }
-                }
-            }
 
-        }
-    }
-
-    private fun openNFCCardScanner(isOffline: Boolean) {
-        val bottomSheetDialogFragment = NfcScanFragment.newInstance(isOffline,email)
+    private fun openNFCCardScanner(isOffline: Boolean,emails: String) {
+        val bottomSheetDialogFragment = NfcScanFragment.newInstance(isOffline,emails)
         bottomSheetDialogFragment.isCancelable = isOffline
         bottomSheetDialogFragment.setTargetFragment(this, 7080)
         bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),

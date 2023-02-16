@@ -23,6 +23,7 @@ import chats.cash.chats_field.views.cashForWork.model.TaskDetailsResponse
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.Response
 import retrofit2.http.*
 import kotlin.collections.ArrayList
 
@@ -52,6 +53,7 @@ interface ConvexityApiService {
     ): Deferred<RegisterResponse>
 
     @Multipart
+    @Deprecated("")
     @POST("ngos/{organisation_id}/beneficiaries/special-case")
     fun onboardSpecialUser(
         @Path("organisation_id") id: String,
@@ -73,6 +75,29 @@ interface ConvexityApiService {
         @Part("pin") pin: RequestBody,
         @Header("Authorization") authorization: String
     ): Deferred<RegisterResponse>
+
+    @Multipart
+    @POST("ngos/{organisation_id}/beneficiaries/special-case")
+    suspend fun onboardSpecialBeneficiary(
+        @Path("organisation_id") organisationId: String,
+        @Part("first_name") firstName: RequestBody,
+        @Part("last_name") lastName: RequestBody,
+        @Part("email") email: RequestBody,
+        @Part("phone") phone: RequestBody,
+        @Part("password") password: RequestBody,
+        @Part("latitude") lat: RequestBody,
+        @Part("longitude") long: RequestBody,
+        @Part("location") location: RequestBody,
+        @Part("nfc") nfc: RequestBody,
+        @Part("role") status: RequestBody,
+        @Part("nin") nin: RequestBody?,
+        @Part profile_pic: MultipartBody.Part,
+        @Part("gender") gender: RequestBody,
+        @Part("dob") date: RequestBody,
+        @Part("campaign") campaign: RequestBody,
+        @Part("pin") pin: RequestBody,
+        @Header("Authorization") authorization: String
+    ): Response<RegisterResponse>
 
     @POST("organisations/{organisation_id}/vendors")
     @FormUrlEncoded
