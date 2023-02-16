@@ -159,8 +159,11 @@ class NfcScanFragment : BottomSheetDialogFragment() {
             }
             else{
                 NfcManager.scanMode=false
-                binding.scanNfcBtn.text = "Click here to start scanning"
+                binding.scanNfcBtn.text = getString(R.string.click_here_to_start_scanning)
             }
+        }
+        binding.closeButton.setOnClickListener {
+            dismiss()
         }
         registerNFCCallbacks()
     }

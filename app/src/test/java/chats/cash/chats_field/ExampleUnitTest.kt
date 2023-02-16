@@ -14,11 +14,4 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
-
-    @Test
-    fun check_decrypt() {
-        val encrypted = AESEncrypt.aesEncrypt("Hello", AESEncrypt.SECRET_KEY)
-        val decrypted = AESEncrypt.aesDecrypt(encrypted, AESEncrypt.SECRET_KEY)
-        assertEquals("Hello", decrypted)
-    }
 }

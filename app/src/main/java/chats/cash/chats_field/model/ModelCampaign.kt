@@ -39,6 +39,8 @@ data class ModelCampaign(
     val start_date: String?,
     @SerializedName("end_date")
     val end_date: String?,
+    @SerializedName("ck8")
+    val ck8:String?,
     @SerializedName("createdAt")
     val createdAt: String?,
     @SerializedName("updatedAt")
@@ -61,6 +63,7 @@ data class ModelCampaign(
         location: String?,
         start_date: String?,
         end_date: String?,
+        ck8: String?,
         createdAt: String?,
         updatedAt: String
     ) : this(
@@ -77,6 +80,7 @@ data class ModelCampaign(
         location,
         start_date,
         end_date,
+        ck8,
         createdAt,
         updatedAt,
         emptyList()

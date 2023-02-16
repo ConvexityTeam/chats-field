@@ -242,7 +242,7 @@ fun TextView.makeLinks(vararg links: Pair<String, View.OnClickListener>) {
 }
 
 fun NavController.safeNavigate(destination: NavDirections) {
-    currentDestination?.getAction(destination.actionId)?.run { navigate(destination) }
+    currentDestination?.getAction(destination.actionId)?.run { navigate(destination) }?: run{Timber.v("destination does not exist")}
 }
 
 fun NavController.safeNavigate(@IdRes destination: Int) {

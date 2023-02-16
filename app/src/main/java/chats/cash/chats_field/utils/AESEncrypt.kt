@@ -5,7 +5,9 @@ import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
+import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 import android.util.Base64 as encrypt
 
@@ -20,10 +22,18 @@ object AESEncrypt {
 private object AES256 {
 
     private fun cipher(opmode: Int, secretKey: String): Cipher {
+        val random =  SecureRandom();
+        val salt = ByteArray(16);
+        random.nextBytes(salt);
+
+        val spec =  PBEKeySpec("password".toCharArray(), salt, 65536, 256); // AES-256
+        val f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        val key = f.generateSecret(spec).encoded;
+        val  keySpec =  SecretKeySpec(key, "AES")
+
         val c = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        val sk = SecretKeySpec(secretKey.toByteArray(Charsets.UTF_8), "AES")
         val iv = IvParameterSpec(secretKey.substring(0, 16).toByteArray(Charsets.UTF_8))
-        c.init(opmode, sk, iv)
+        c.init(opmode, keySpec, iv)
         return c
     }
 
@@ -80,4 +90,6 @@ class AES {
         }
         return null
     }
+
+
 }

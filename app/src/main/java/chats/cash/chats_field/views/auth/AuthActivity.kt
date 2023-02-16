@@ -2,6 +2,7 @@ package chats.cash.chats_field.views.auth
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.widget.Toast
@@ -15,8 +16,9 @@ import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
 import chats.cash.chats_field.utils.Utils.checkAppPermission
-import chats.cash.chats_field.utils.encryption.AESEncrption
 import chats.cash.chats_field.utils.location.LocationManager
+import chats.cash.chats_field.utils.permissions.POST_NOTIFICATION_PERMISSION_REQUEST_CODE
+import chats.cash.chats_field.utils.permissions.RequestNotificationPermission
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
@@ -36,6 +38,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.io.File
 
+
 @InternalCoroutinesApi
 class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback {
 
@@ -52,7 +55,10 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         this.checkAppPermission()
+
+        RequestNotificationPermission(this).onCreate()
 
         val locationManager = LocationManager(this)
         lifecycleScope.launch {
@@ -64,36 +70,6 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                 )
             }?: toast("Location access was rejected.")
         }
-//        val locationPermissionRequest =
-//            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-//                when {
-//                    permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
-//                        setupLocationProviderClient(this)
-//                    }
-//                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
-//                        setupLocationProviderClient(this)
-//                    }
-//                    else -> {
-//                        toast("Location access was rejected.")
-//                    }
-//                }
-//            }
-//
-//        when {
-//            ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-//                    ContextCompat.checkSelfPermission(this,
-//                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
-//                setupLocationProviderClient(this)
-//            }
-//            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
-//                locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION))
-//            }
-//            else -> {
-//
-//            }
-//        }
 
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
         if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
@@ -172,6 +148,28 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         super.onDestroy()
         internetAvailabilityChecker.removeAllInternetConnectivityChangeListeners()
         cancellationTokenSource.cancel()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            POST_NOTIFICATION_PERMISSION_REQUEST_CODE -> {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED
+                ) {
+
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
+                }
+                return
+            }
+        }
     }
 
     private fun startUpload() {

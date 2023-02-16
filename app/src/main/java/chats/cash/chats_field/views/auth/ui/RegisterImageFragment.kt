@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import chats.cash.chats_field.R
+import chats.cash.chats_field.databinding.FragmentRegisterImageBinding
 import chats.cash.chats_field.utils.ChatsFieldConstants.REQUEST_CODE_PERMISSIONS
 import chats.cash.chats_field.utils.ChatsFieldConstants.REQUIRED_PERMISSIONS
 import chats.cash.chats_field.utils.safeNavigate
@@ -23,19 +24,24 @@ import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import kotlinx.android.synthetic.main.fragment_register_image.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import timber.log.Timber
 import java.io.File
 
 @InternalCoroutinesApi
 class RegisterImageFragment : Fragment() {
 
     private val viewModel by sharedViewModel<RegisterViewModel>()
+    private lateinit var _binding:FragmentRegisterImageBinding
+    private val binding:FragmentRegisterImageBinding
+        get() = _binding
     private var imageBitmap : Bitmap? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register_image, container, false)
+        _binding = FragmentRegisterImageBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,22 +54,24 @@ class RegisterImageFragment : Fragment() {
                 findNavController().navigateUp()
             }
         }
-        registerImageView.setOnClickListener {
+
+        binding.registerImageView.setOnClickListener {
             //Navigate to image intent
+            Timber.v("Clicked")
             requestCameraPermission()
         }
-        registerImageBackButton.setOnClickListener {
+        binding.registerImageBackButton.setOnClickListener {
             findNavController().navigateUp()
         }
         //Declared Nav Btn from CaptureImage to ScanFingerPrintScan
-        registerImageNextBtn.setOnClickListener {
+        binding.registerImageNextBtn.setOnClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun requestCameraPermission() {
         if (allPermissionsGranted()) {
-            findNavController().safeNavigate(RegisterImageFragmentDirections.toImageCaptureFragment())
+            findNavController().navigate(RegisterImageFragmentDirections.toImageCaptureFragment())
         } else {
             ActivityCompat.requestPermissions(
                 requireActivity(),
@@ -73,6 +81,7 @@ class RegisterImageFragment : Fragment() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -80,7 +89,7 @@ class RegisterImageFragment : Fragment() {
     ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                findNavController().safeNavigate(RegisterImageFragmentDirections.toImageCaptureFragment())
+                findNavController().navigate(RegisterImageFragmentDirections.toImageCaptureFragment())
             } else {
                 requireContext().toast("Permissions not granted by the user.")
                 findNavController().navigateUp()
@@ -106,15 +115,8 @@ class RegisterImageFragment : Fragment() {
             requireActivity().baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            imageBitmap = data?.extras?.get("data") as Bitmap
-//            registerImageView.setImageBitmap(imageBitmap)
-//            viewModel.profileImage = imageBitmap
-//            registerImageNextBtn.setOnClickListener {
-//                findNavController().navigateUp()
-//            }
-//        }
-//    }
+
+
+
 
 }

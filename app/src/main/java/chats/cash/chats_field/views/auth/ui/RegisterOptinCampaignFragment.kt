@@ -124,7 +124,8 @@ class RegisterOptinCampaignFragment : Fragment() {
                         organizationId = organizationId,
                         gender = gender,
                         date = date,
-                        pin = pin
+                        pin = pin,
+                        campaign = campaign,
                     )
                 )
             }

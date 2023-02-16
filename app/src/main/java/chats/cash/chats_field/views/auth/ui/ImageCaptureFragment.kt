@@ -39,8 +39,8 @@ import java.util.concurrent.Executors
 
 class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
 
-    private var _binding: FragmentImageCaptureBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var _binding: FragmentImageCaptureBinding
+    private val binding get() = _binding
 
     private var isCaptured: Boolean = false
     private var blinkCount = 0
@@ -70,9 +70,8 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_image_capture, container, false)
-        _binding = FragmentImageCaptureBinding.bind(view)
-        return view
+        _binding = FragmentImageCaptureBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -345,7 +344,6 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
-        _binding = null
     }
 
     override fun onRequestPermissionsResult(
@@ -358,7 +356,7 @@ class ImageCaptureFragment : Fragment(R.layout.fragment_image_capture) {
                 startCamera()
             } else {
                 requireContext().toast("Permissions not granted by the user.")
-                findNavController().navigateUp()
+//                findNavController().navigateUp()
             }
         }
     }

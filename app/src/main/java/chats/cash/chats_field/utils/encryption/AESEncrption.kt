@@ -18,6 +18,7 @@ import javax.crypto.spec.SecretKeySpec
 
 object AESEncrption  {
 
+
     fun encrypt(context: Context, strToEncrypt: String): ByteArray {
         val plainText = strToEncrypt.toByteArray(Charsets.UTF_8)
         val keygen = KeyGenerator.getInstance("AES")
@@ -30,9 +31,11 @@ object AESEncrption  {
         saveInitializationVector(context, cipher.iv)
 
         val sb = StringBuilder()
+
         for (b in cipherText) {
             sb.append(b.toChar())
         }
+
         Toast.makeText(context, "dbg encrypted = [$sb]", Toast.LENGTH_LONG).show()
 
         return cipherText
