@@ -3,6 +3,7 @@ package chats.cash.chats_field.network
 import android.content.Context
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.NFCModel
+import chats.cash.chats_field.model.campaignform.AllCampaignFormResponse
 import chats.cash.chats_field.network.api.ConvexityApiService
 import chats.cash.chats_field.network.api.NinVerificationApi
 import chats.cash.chats_field.network.api.RetrofitClient
@@ -15,6 +16,7 @@ import chats.cash.chats_field.network.response.RegisterResponse
 import chats.cash.chats_field.network.response.UserDetailsResponse
 import chats.cash.chats_field.network.response.beneficiary_onboarding.Beneficiary
 import chats.cash.chats_field.network.response.campaign.CampaignByOrganizationModel
+import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
 import chats.cash.chats_field.network.response.forgot.ForgotBody
 import chats.cash.chats_field.network.response.forgot.ForgotPasswordResponse
 import chats.cash.chats_field.network.response.login.LoginResponse
@@ -33,15 +35,17 @@ import chats.cash.chats_field.views.cashForWork.model.TaskDetailsResponse
 import com.google.gson.Gson
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.Protocol
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.*
 import timber.log.Timber
 import java.io.File
-import java.lang.Exception
 
 class NetworkRepository(
     private val api: ConvexityApiService,
@@ -220,12 +224,11 @@ class NetworkRepository(
         }
     }
 
-    @Deprecated(message = "Replaced with Coroutine-supported methods",
-        level = DeprecationLevel.WARNING)
+
     suspend fun loginNGO(loginBody: LoginBody): ApiResponse<LoginResponse> {
         ApiResponse.Loading<LoginResponse>()
         return try {
-            val data = api.loginNGO(loginBody).await()
+            val data = api.loginNGO(loginBody)
             preferenceUtil.setNGOToken("Bearer " + data.data.token)
             getCampaigns()
             ApiResponse.Success(data)
@@ -240,7 +243,7 @@ class NetworkRepository(
     suspend fun sendForgotEmail(email: String): ApiResponse<ForgotPasswordResponse> {
         return try {
             val forgotBody = ForgotBody(email)
-            val data = api.sendForgotMail(forgotBody).await()
+            val data = api.sendForgotMail(forgotBody)
             ApiResponse.Success(data)
         } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
@@ -253,7 +256,7 @@ class NetworkRepository(
     suspend fun postNFCDetails(nfcModel: NFCModel): ApiResponse<NfcUpdateResponse> {
         return try {
             val data =
-                api.postNfcDetails(nfcModel, authorization = preferenceUtil.getNGOToken()).await()
+                api.postNfcDetails(nfcModel, authorization = preferenceUtil.getNGOToken())
             ApiResponse.Success(data)
         } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
@@ -265,7 +268,7 @@ class NetworkRepository(
 
     suspend fun getCampaigns(): ApiResponse<CampaignResponse> {
         return try {
-            val data = api.getCampaigns(authorization = preferenceUtil.getNGOToken()).await()
+            val data = api.getCampaigns(authorization = preferenceUtil.getNGOToken())
             Timber.v("Campaign: $data")
             offlineRepository.insertCampaign(data.data)
             ApiResponse.Success(data)
@@ -279,8 +282,8 @@ class NetworkRepository(
 
     suspend fun getAllCampaigns(): List<ModelCampaign> {
         return try {
-            val apiService = RetrofitClient.apiService().create(ConvexityApiService::class.java)
-            val data = apiService.getAllCampaigns(preferenceUtil.getNGOId(),
+
+            val data = api.getAllCampaigns(preferenceUtil.getNGOId(),
                 null,
                 authorization = preferenceUtil.getNGOToken()).data
             Timber.v("XXXgetAllCampaigns: called$data")
@@ -292,6 +295,53 @@ class NetworkRepository(
             data
         }
     }
+
+    suspend fun getAllCampaignsForms():  Flow<NetworkResponse<AllCampaignFormResponse>> = flow {
+        emit(NetworkResponse.Loading())
+         try {
+
+            val response =  api.getAllCampaignForms(preferenceUtil.getNGOId(),
+                authorization = preferenceUtil.getNGOToken())
+            if(response.isSuccessful && response.body()?.data?.isNotEmpty()==true) {
+                Timber.v("XXXgetAllCampaignsForms: called${response.body()}")
+                response.body()?.data?.let {
+                    offlineRepository.deleteAllCampaignForms()
+                    offlineRepository.insertAllCampaignForms(it)
+                    emit(NetworkResponse.Success(response.body()!!))
+                }
+
+            }
+             else{
+                 emit(NetworkResponse.SimpleError(response.message()))
+             }
+
+        } catch (e: Exception) {
+            Timber.v("XXXgetAllCampaigns %s", e.message)
+             emit(NetworkResponse.Error(e.message.toString(),e))
+        }
+    }
+
+
+    suspend fun getCampaignSurveyQuestions(campaignId: Int): Flow<NetworkResponse<CampaignSurveyResponse>> = flow {
+        emit(NetworkResponse.Loading())
+         try {
+
+            val data = api.getCampaignSurvey(campaignId,
+                authorization = preferenceUtil.getNGOToken())
+            Timber.v("XXXgetAllCampaigns: called$data")
+            if(data.isSuccessful && data.body()!=null ){
+                 emit(NetworkResponse.Success(data.body()!!))
+            }
+            else{
+                emit(NetworkResponse.SimpleError(data.message()))
+            }
+        } catch (e: Exception) {
+            Timber.v("XXXgetAllCampaigns %s", e.message)
+             emit(NetworkResponse.Error(e.localizedMessage?:"Unknown Error Occured",e))
+        }
+
+    }
+
 
     suspend fun getExistingBeneficiaries(
         firstName: String? = null,
@@ -332,7 +382,7 @@ class NetworkRepository(
     suspend fun getCampaignByOrganization(organizationId: String): ApiResponse<CampaignByOrganizationModel> {
         return try {
             val data = api.getCampaignsByOrganization(organizationId,
-                authorization = preferenceUtil.getNGOToken()).await()
+                authorization = preferenceUtil.getNGOToken())
             ApiResponse.Success(data)
         } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
@@ -491,6 +541,7 @@ class NetworkRepository(
                 emptyList()
             }
         }
+
         val allBeneficiaries = allBeneficiariesDef.await()
         val campaignBeneficiaries = campaignBeneficiariesDef.await()
         allBeneficiaries.map {
@@ -505,4 +556,16 @@ class NetworkRepository(
             )
         }
     }
+}
+
+
+
+sealed class NetworkResponse<out T>(){
+
+    data class Success<out T>(val body: T, val _message: String="SUCCESS"):NetworkResponse<T>()
+    data class Error<out T>(val _message: String, val e:Throwable):NetworkResponse<T>()
+    data class SimpleError<out T>(val _message: String, ):NetworkResponse<T>()
+
+     class Loading<out T>():NetworkResponse<T>()
+
 }

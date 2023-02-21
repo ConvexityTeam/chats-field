@@ -108,4 +108,5 @@
     <string name="please_tell_your_mother_maiden_name">Please tell us your mother\'s maiden name</string>
     <string name="please_tell_your_age">Please tell us your age bracket</string>
     <string name="click_here_to_start_scanning">Click here to start scanning</string>
+    <string name="text_user_onboarded_success">Beneficiary Onboarded Successfully</string>
 </resources>

@@ -1,41 +1,37 @@
 package chats.cash.chats_field.views.auth.ui
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.model.ModelCampaign
-import chats.cash.chats_field.model.NFCModel
 import chats.cash.chats_field.network.body.LocationBody
 import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.BENEFICIARY_TYPE
-import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_NFC_RESULT_LISTENER
-import chats.cash.chats_field.utils.ChatsFieldConstants.NFC_BUNDLE_KEY
 import chats.cash.chats_field.utils.encryption.AES256Encrypt
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import chats.cash.chats_field.views.base.BaseFragment
+import chats.cash.chats_field.views.core.showSnackbarWithAction
+import chats.cash.chats_field.views.core.showSuccessSnackbar
 import com.google.gson.Gson
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import kotlinx.android.synthetic.main.fragment_register_verify.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 @InternalCoroutinesApi
 class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
@@ -61,7 +57,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
 
-    private var encryptedEmail:String?=null
+    private var encryptedEmail: String? = null
 
     private var userId = 0
     override fun onCreateView(
@@ -144,22 +140,21 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                 } else {
                     showToast("All fields are required")
                 }
-            }
-                else {
-                    if (allFingers != null && profileImage != null) {
-                        if (!internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-                            if (registerViewModel.nfc == null) {
+            } else {
+                if (allFingers != null && profileImage != null) {
+                    if (!internetAvailabilityChecker.currentInternetAvailabilityStatus) {
+                        if (registerViewModel.nfc == null) {
 
-                                postOnboardData()
-                            }
-                        } else {
                             postOnboardData()
                         }
                     } else {
-                        showToast("All fields are required")
+                        postOnboardData()
                     }
+                } else {
+                    showToast("All fields are required")
                 }
             }
+        }
 
 
 
@@ -172,14 +167,6 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
         setObservers()
 
-        setFragmentResultListener(FRAGMENT_NFC_RESULT_LISTENER) { _, bundle ->
-            val shouldNavigate = bundle[NFC_BUNDLE_KEY] as Boolean?
-            shouldNavigate?.let {
-                if (it) {
-                    findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
-                }
-            }
-        }
     }
 
     private fun setObservers() {
@@ -195,6 +182,10 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                         val encrypt = AES256Encrypt(it).encrypt(email)
                         Timber.d(encrypt.toString())
                         Timber.d(AES256Encrypt(it).decrypt(encrypt).toString())
+                        showSuccessSnackbar(
+                            R.string.text_user_onboarded_success,
+                            this.requireView()
+                        )
                         encrypt?.let { it1 -> openNFCCardScanner(false, it1) }
                     }
 
@@ -202,14 +193,17 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     registerVerifyBtn.isEnabled = true
                 }
                 is ApiResponse.Failure -> {
-                    showToast(it.message)
+                    showSnackbarWithAction(
+                        it.message, this.requireView(), R.string.dismiss,
+                        ContextCompat.getColor(requireContext(), R.color.design_default_color_error)
+                    ) {
+                        findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
+                    }
                     verifyProgress.hide()
                     registerVerifyBtn.isEnabled = false
                 }
             }
         }
-
-
 
 
     }
@@ -228,7 +222,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
             gender.lowercase(Locale.ROOT).toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mDate = date.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mOrganizationId =
-            RequestBody.create("multipart/form-data".toMediaTypeOrNull(), organizationId.toString())
+            organizationId.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val mProfilePic = File(profileImage!!)
         val locationBody =
             LocationBody(coordinates = listOf(long.toDouble(), lat.toDouble()), country = "Nigeria")
@@ -241,8 +235,10 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         val mFingers = ArrayList<File>()
 
         allFingers?.forEachIndexed { index, bitmap ->
-            val f = bitmap.toFile(requireContext(),
-                "finger_print" + System.currentTimeMillis() + "$index" + ".png")
+            val f = bitmap.toFile(
+                requireContext(),
+                "finger_print" + System.currentTimeMillis() + "$index" + ".png"
+            )
             mFingers.add(f)
         }
         val prints = ArrayList<MultipartBody.Part>()
@@ -329,9 +325,22 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                 )
             }
         } else {
-            offlineViewModel.insert(beneficiary!!)
-            showToast(getString(R.string.no_internet))
-            findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
+
+            campaign.ck8?.let {
+                val encrypt = AES256Encrypt(it).encrypt(email)
+                Timber.d(encrypt.toString())
+                Timber.d(AES256Encrypt(it).decrypt(encrypt).toString())
+                offlineViewModel.insert(beneficiary!!)
+                showSnackbarWithAction(
+                    R.string.no_internet, this.requireView(), R.string.dismiss,
+                    ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+                ) {
+                    encrypt?.let { it1 ->
+                        openNFCCardScanner(true, it1)
+                    }
+
+                }
+            }
         }
     }
 
@@ -340,12 +349,19 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     }
 
 
+    private fun openNFCCardScanner(isOffline: Boolean, emails: String) {
+        val bottomSheetDialogFragment = NfcScanFragment.newInstance(isOffline, emails)
+        bottomSheetDialogFragment.isCancelable = false
+        this.setFragmentResultListener(NFC_REQUEST_KEY) { string, bundle ->
+            findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
+            Timber.v("On Result")
+        }
+        bottomSheetDialogFragment.show(
+            parentFragmentManager.beginTransaction(),
+            "BottomSheetDialog"
+        )
 
-    private fun openNFCCardScanner(isOffline: Boolean,emails: String) {
-        val bottomSheetDialogFragment = NfcScanFragment.newInstance(isOffline,emails)
-        bottomSheetDialogFragment.isCancelable = isOffline
-        bottomSheetDialogFragment.setTargetFragment(this, 7080)
-        bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),
-            "BottomSheetDialog")
     }
 }
+
+const val NFC_REQUEST_KEY = "7080"

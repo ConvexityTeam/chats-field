@@ -3,6 +3,7 @@ package chats.cash.chats_field.offline
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import chats.cash.chats_field.model.ModelCampaign
+import chats.cash.chats_field.model.campaignform.CampaignForm
 import chats.cash.chats_field.network.response.organization.campaign.Campaign
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -24,6 +25,10 @@ class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
     suspend fun insertAllCampaign(campaigns: List<ModelCampaign>){
         beneficiaryDao?.insertAllCampaigns(campaigns)
     }
+    @WorkerThread
+    suspend fun insertAllCampaignForms(campaigns: List<CampaignForm>){
+        beneficiaryDao?.insertAllCampaignsForms(campaigns)
+    }
 
     @WorkerThread
     suspend fun insertAllCashForWork(campaigns: List<ModelCampaign>) {
@@ -34,6 +39,12 @@ class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
     @WorkerThread
     suspend fun delete(beneficiary : Beneficiary){
         beneficiaryDao?.deleteBeneficiary(beneficiary)
+    }
+
+
+    @WorkerThread
+    suspend fun deleteAllCampaignForms(){
+        beneficiaryDao?.deleteAllCampaignsForms()
     }
 
     fun getAllBeneficiary() : LiveData<List<Beneficiary>>{

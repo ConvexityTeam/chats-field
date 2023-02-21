@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.NFCModel
 import chats.cash.chats_field.network.NetworkRepository
+import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.network.body.login.LoginBody
 import chats.cash.chats_field.network.response.NfcUpdateResponse
 import chats.cash.chats_field.network.response.RegisterResponse
@@ -49,6 +50,26 @@ class RegisterViewModel(
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         _vendorOnboardingUiState.value = VendorOnboardingState.Error(throwable.handleThrowable())
+    }
+
+    init {
+        viewModelScope.launch {
+            val questions =  repository.getCampaignSurveyQuestions(113)
+            questions.collect {
+                Timber.v(it.toString())
+                if(it is NetworkResponse.Success){
+                    Timber.v(it.body.data.toString())
+                }
+            }
+
+            val allForms =  repository.getAllCampaignsForms()
+            allForms.collect {
+                Timber.v(it.toString())
+                if(it is NetworkResponse.Success){
+                    Timber.v(it.body.data.toString())
+                }
+            }
+        }
     }
 
     var specialCase = false
