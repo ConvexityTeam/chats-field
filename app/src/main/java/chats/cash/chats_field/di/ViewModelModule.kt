@@ -15,10 +15,10 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel {
-        RegisterViewModel(get(), get())
+        RegisterViewModel(get(), get(), get())
     }
     viewModel {
-        OfflineViewModel(get())
+        OfflineViewModel(get(),get())
     }
     viewModel { CashForWorkViewModel(networkRepository = get()) }
 

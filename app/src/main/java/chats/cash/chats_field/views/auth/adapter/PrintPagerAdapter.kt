@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import chats.cash.chats_field.R
-import kotlinx.android.synthetic.main.print_pager_view.view.*
+import chats.cash.chats_field.databinding.PrintPagerViewBinding
 
 
 /*
@@ -22,16 +22,16 @@ on 17/07/2020.
 class PrintPagerAdapter(val context : Context) :
     ListAdapter<PrintPager, PrintPagerAdapter.MyViewHolder>(PrintPagerDiffCallback()) {
 
-    class MyViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
+    class MyViewHolder(val binding:PrintPagerViewBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(
             context: Context,
             item: PrintPager
         ) {
             if(item.bitmap == null){
-                itemView.registerImageView.setImageDrawable(context.resources.getDrawable(item.image))
+                binding.registerImageView.setImageDrawable(context.resources.getDrawable(item.image))
             }else{
-                itemView.registerImageView.setImageBitmap(item.bitmap)
+                binding.registerImageView.setImageBitmap(item.bitmap)
             }
 
         }
@@ -45,7 +45,8 @@ class PrintPagerAdapter(val context : Context) :
     private fun from(parent: ViewGroup) : MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.print_pager_view,parent,false)
-        return MyViewHolder(view)
+        val binding = PrintPagerViewBinding.inflate(layoutInflater,parent,false)
+        return MyViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {

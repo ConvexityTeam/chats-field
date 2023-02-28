@@ -8,6 +8,7 @@ import chats.cash.chats_field.network.response.organization.campaign.Campaign
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 
 class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
 
@@ -53,6 +54,10 @@ class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
 
     fun getAllCampaigns(type: String) : LiveData<List<ModelCampaign>>{
         return beneficiaryDao!!.geAllLiveCampaigns(type)
+    }
+
+    fun getCampaignsForm() : Flow<List<CampaignForm>> {
+        return beneficiaryDao!!.getAllCampaignForms()
     }
 
     suspend fun deleteAllTables() {

@@ -59,7 +59,7 @@
             app:layout_constraintTop_toBottomOf="@+id/back_btn" />
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardview_howdidyouhear"
+            android:id="@+id/cardview_one"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -81,6 +81,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
+                    android:id="@+id/question_one_title"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="130dp"
                     android:lineSpacingExtra="5sp"
@@ -92,7 +93,7 @@
                     android:layout_height="10dp" />
 
                 <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/tv"
+                    android:id="@+id/question_one_option_one"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="false"
@@ -101,7 +102,7 @@
                     app:buttonTint="@color/button_color" />
 
                 <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/twitter"
+                    android:id="@+id/question_one_option_two"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="false"
@@ -109,23 +110,6 @@
                     android:textAppearance="@style/TextAppearance.TextRegular"
                     app:buttonTint="@color/button_color" />
 
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/newspaper"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:text="@string/newspaper"
-                    android:textAppearance="@style/TextAppearance.TextRegular"
-                    app:buttonTint="@color/button_color" />
-
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/newspaper2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:text="@string/newspaper"
-                    android:textAppearance="@style/TextAppearance.TextRegular"
-                    app:buttonTint="@color/button_color" />
 
             </LinearLayout>
 
@@ -133,7 +117,7 @@
 
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardview_agebracket"
+            android:id="@+id/cardview_two"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -146,7 +130,7 @@
             app:contentPadding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/subtitle"
-            app:layout_constraintTop_toBottomOf="@id/cardview_howdidyouhear">
+            app:layout_constraintTop_toBottomOf="@id/cardview_one">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -155,6 +139,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
+                    android:id="@+id/question_two_title"
                     android:layout_height="wrap_content"
                     android:text="@string/what_is_your_age_bracket"
                     android:textAppearance="@style/TextAppearance.TextSemiBold" />
@@ -169,7 +154,7 @@
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/age1217"
+                        android:id="@+id/question_two_option_one"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/_12_17"
@@ -177,28 +162,14 @@
                         app:buttonTint="@color/button_color" />
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/age1828"
+                        android:id="@+id/question_two_option_two"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/_18_28"
                         android:textAppearance="@style/TextAppearance.TextRegular"
                         app:buttonTint="@color/button_color" />
 
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/age2942"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_29_42"
-                        android:textAppearance="@style/TextAppearance.TextRegular"
-                        app:buttonTint="@color/button_color" />
 
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/age43above"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_43_and_above"
-                        android:textAppearance="@style/TextAppearance.TextRegular"
-                        app:buttonTint="@color/button_color" />
 
                 </RadioGroup>
 
@@ -208,7 +179,7 @@
 
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardview_mothersmaiden"
+            android:id="@+id/cardview_three"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -221,7 +192,7 @@
             app:contentPadding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/subtitle"
-            app:layout_constraintTop_toBottomOf="@id/cardview_agebracket">
+            app:layout_constraintTop_toBottomOf="@id/cardview_two">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -231,6 +202,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
+                    android:id="@+id/question_three_title"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="130dp"
                     android:lineSpacingExtra="5sp"
@@ -252,14 +224,14 @@
                     android:textSize="15sp" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/optin_mothermaidenname_parent"
+                    android:id="@+id/optin_questionthree_parent"
                     style="@style/TextInputLayout.FormEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/optin_mothermaidenname"
+                        android:id="@+id/optin_questionthree"
                         style="@style/TextInputEditText.Padding"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -279,9 +251,9 @@
             android:layout_marginBottom="25dp"
             android:text="@string/submit"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/cardview_mothersmaiden"
-            app:layout_constraintStart_toStartOf="@+id/cardview_howdidyouhear"
-            app:layout_constraintTop_toBottomOf="@id/cardview_mothersmaiden" />
+            app:layout_constraintEnd_toEndOf="@id/cardview_three"
+            app:layout_constraintStart_toStartOf="@+id/cardview_one"
+            app:layout_constraintTop_toBottomOf="@id/cardview_three" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

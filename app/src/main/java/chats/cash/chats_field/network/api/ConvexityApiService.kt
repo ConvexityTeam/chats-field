@@ -207,11 +207,23 @@ interface ConvexityApiService {
         @Header("Authorization") authorization: String
     ): Response<CampaignSurveyResponse>
 
+    @GET("beneficiaries/survey/{campaign_id}")
+    suspend fun getCampaignSurvey2(
+        @Path("campaign_id") campaignId: Int,
+        @Header("Authorization") authorization: String
+    ): CampaignSurveyResponse
+
     @GET("organisations/{organisation_id}/campaign_form")
     suspend fun getAllCampaignForms(
         @Path("organisation_id") organisationId: Int,
         @Header("Authorization") authorization: String
     ): Response<AllCampaignFormResponse>
+
+    @GET("organisations/{organisation_id}/campaign_form")
+    suspend fun getAllCampaignForms2(
+        @Path("organisation_id") organisationId: Int,
+        @Header("Authorization") authorization: String
+    ): AllCampaignFormResponse
 
     @GET("organisation/{organisation_id}/beneficiaries")
     suspend fun getBeneficiariesByOrganisation(

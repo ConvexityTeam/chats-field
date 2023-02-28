@@ -7,13 +7,13 @@ data class CampaignSurveyResponse(
     @SerializedName("code")
     val code: Int,
     @SerializedName("data")
-    val `data`: Data,
+    val campaignSurveyResponseData: CampaignSurveyResponseData,
     @SerializedName("message")
     val message: String,
     @SerializedName("status")
     val status: String
 ) {
-    data class Data(
+    data class CampaignSurveyResponseData(
         @SerializedName("beneficiaryId")
         val beneficiaryId: Int,
         @SerializedName("campaignId")

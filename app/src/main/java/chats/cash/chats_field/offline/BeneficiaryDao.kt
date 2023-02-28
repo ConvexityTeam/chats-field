@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy.Companion.REPLACE
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.campaignform.CampaignForm
 import chats.cash.chats_field.network.response.organization.campaign.Campaign
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BeneficiaryDao {
@@ -32,6 +33,9 @@ interface BeneficiaryDao {
 
     @Query("SELECT * FROM campaign")
     fun getCampaigns() : LiveData<List<Campaign>>
+
+    @Query("SELECT * FROM allCampaignForm")
+    fun getAllCampaignForms() : Flow<List<CampaignForm>>
 
     @Query("SELECT * FROM modelCampaign WHERE type is :type")
     fun geAllLiveCampaigns(type: String): LiveData<List<ModelCampaign>>

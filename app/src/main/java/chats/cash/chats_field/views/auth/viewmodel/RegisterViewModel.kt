@@ -10,6 +10,7 @@ import chats.cash.chats_field.model.NFCModel
 import chats.cash.chats_field.network.NetworkRepository
 import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.network.body.login.LoginBody
+import chats.cash.chats_field.network.repository.BeneficiaryRepository
 import chats.cash.chats_field.network.response.NfcUpdateResponse
 import chats.cash.chats_field.network.response.RegisterResponse
 import chats.cash.chats_field.network.response.UserDetailsResponse
@@ -30,6 +31,7 @@ import java.io.File
 
 class RegisterViewModel(
     private val repository: NetworkRepository,
+    private val beneficiaryRepository: BeneficiaryRepository,
     offlineRepository: OfflineRepository,
 ) : ViewModel() {
     val getCampaigns = offlineRepository.getAllCampaigns(type = "campaign")
@@ -54,20 +56,24 @@ class RegisterViewModel(
 
     init {
         viewModelScope.launch {
-            val questions =  repository.getCampaignSurveyQuestions(113)
+            val questions =  beneficiaryRepository.getCampaignSurvey(113)
             questions.collect {
                 Timber.v(it.toString())
                 if(it is NetworkResponse.Success){
-                    Timber.v(it.body.data.toString())
+                    Timber.v(it.toString())
                 }
             }
 
-            val allForms =  repository.getAllCampaignsForms()
-            allForms.collect {
-                Timber.v(it.toString())
-                if(it is NetworkResponse.Success){
-                    Timber.v(it.body.data.toString())
-                }
+            getAllCampaignForms()
+        }
+    }
+
+    fun getAllCampaignForms() = viewModelScope.launch{
+        val allForms =  beneficiaryRepository.getAllCampaignForms()
+        allForms.collect {
+            Timber.v(it.toString())
+            if(it is NetworkResponse.Success){
+                Timber.v(it.body.toString())
             }
         }
     }
@@ -227,7 +233,7 @@ class RegisterViewModel(
     fun getAllCampaigns() {
         organizations.value = ApiResponse.Loading()
         viewModelScope.launch {
-            val data = repository.getAllCampaigns()
+            val data = beneficiaryRepository.getAllCampaigns()
             organizations.postValue(organizations.value)
             Timber.v("All data: $data")
         }

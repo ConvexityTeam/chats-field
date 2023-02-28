@@ -78,7 +78,7 @@ class NetworkRepository(
         return try {
             val compressed = Compressor.compress(context, profile_pic)
 
-            val mBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), compressed)
+            val mBody = compressed.asRequestBody("multipart/form-data".toMediaTypeOrNull())
 
             val image = MultipartBody.Part.createFormData(
                 "profile_pic",

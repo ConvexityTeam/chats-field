@@ -1,21 +1,14 @@
 package chats.cash.chats_field.views.auth.ui
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
@@ -23,8 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentNfcScanBinding
 import chats.cash.chats_field.utils.*
-import chats.cash.chats_field.utils.ChatsFieldConstants.EXTRA_DEVICE_ADDRESS
-import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_NFC_RESULT_LISTENER
 import chats.cash.chats_field.utils.ChatsFieldConstants.NFC_BUNDLE_KEY
 import chats.cash.chats_field.utils.dialogs.AlertDialog
 import chats.cash.chats_field.utils.dialogs.getErrorDialog
@@ -33,9 +24,7 @@ import chats.cash.chats_field.utils.nfc.NfcManager
 import chats.cash.chats_field.views.auth.dialog.DeviceSelectorDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.fragment_nfc_scan.*
 import kotlinx.coroutines.*
-import okhttp3.internal.and
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 import java.util.*
@@ -113,9 +102,9 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         isOffline = requireArguments().getBoolean("isOffline")
         if (isOffline) {
-            offlineText.show()
+            binding.offlineText.show()
         } else {
-            offlineText.hide()
+            binding.offlineText.hide()
         }
         //setUpData()
         NfcManager = NfcManager(requireActivity())

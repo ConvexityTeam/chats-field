@@ -17,7 +17,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import chats.cash.chats_field.R
+import chats.cash.chats_field.databinding.FragmentFingerPrintScannerBinding
 import chats.cash.chats_field.utils.ChatsFieldCommands
 import chats.cash.chats_field.utils.ChatsFieldConstants
 import chats.cash.chats_field.utils.ChatsFieldConstants.CMD_GETIMAGE
@@ -33,7 +33,6 @@ import chats.cash.chats_field.utils.ChatsFieldConstants.PERMISSIONS_STORAGE
 import chats.cash.chats_field.utils.ChatsFieldConstants.REQUEST_ENABLE_BT
 import chats.cash.chats_field.utils.ChatsFieldConstants.REQUEST_PERMISSION_CODE
 import chats.cash.chats_field.views.auth.dialog.DeviceSelectorDialog
-import kotlinx.android.synthetic.main.fragment_finger_print_scanner.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.internal.and
 import timber.log.Timber
@@ -49,12 +48,7 @@ class FingerPrintScannerFragment : Fragment() {
     //default image size
     val IMG_WIDTH = 256
     val IMG_HEIGHT = 288
-    val IMG_SIZE = IMG_WIDTH * IMG_HEIGHT
-    val WSQBUFSIZE = 200000
 
-    //other image size
-    val IMG200 = 200
-    val IMG288 = 288
     val IMG360 = 360
 
 
@@ -94,19 +88,12 @@ class FingerPrintScannerFragment : Fragment() {
     var mCardData = ByteArray(4096)
     var mCardSize = 0
 
-    var mBat = ByteArray(2) // data of battery status
 
     var mUpImage = ByteArray(73728) // image data
 
     var mUpImageSize = 0
     var mUpImageCount = 0
 
-
-    var mRefCoord = ByteArray(512)
-    var mMatCoord = ByteArray(512)
-
-    var mIsoData = ByteArray(378)
-    private val lowHighByte: Byte = 0
     private var imgSize = 0
 
     private var userId = 0
@@ -116,24 +103,24 @@ class FingerPrintScannerFragment : Fragment() {
         //checking the permission
 
         //checking the permission
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            if (ActivityCompat.checkSelfPermission(requireContext(),
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS_STORAGE,
-                    REQUEST_PERMISSION_CODE)
-            }
+        if (ActivityCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS_STORAGE,
+                REQUEST_PERMISSION_CODE)
         }
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     }
 
+    private lateinit var binding:FragmentFingerPrintScannerBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_finger_print_scanner, container, false)
+        binding = FragmentFingerPrintScannerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -196,13 +183,13 @@ class FingerPrintScannerFragment : Fragment() {
 
         mOutStringBuffer = StringBuffer("")
 
-        captureBtn.setOnClickListener {
+        binding.captureBtn.setOnClickListener {
             imgSize = IMG360
             mUpImageSize = 0
             SendCommand(CMD_GETIMAGE, null, 0)
         }
 
-        selectDevice.setOnClickListener {
+        binding.selectDevice.setOnClickListener {
             openDeviceSelector()
         }
     }
@@ -211,8 +198,8 @@ class FingerPrintScannerFragment : Fragment() {
         if (mIsWork) return
         val sendsize = 9 + size
         val sendbuf = ByteArray(sendsize)
-        sendbuf[0] = 'F'.toByte()
-        sendbuf[1] = 'T'.toByte()
+        sendbuf[0] = 'F'.code.toByte()
+        sendbuf[1] = 'T'.code.toByte()
         sendbuf[2] = 0
         sendbuf[3] = 0
         sendbuf[4] = cmdid
@@ -277,7 +264,7 @@ class FingerPrintScannerFragment : Fragment() {
             ChatsFieldConstants.CMD_GETBAT -> {
 
             }
-            ChatsFieldConstants.CMD_GETIMAGE -> {
+            CMD_GETIMAGE -> {
                 mUpImageSize = 0
             }
             ChatsFieldConstants.CMD_GETCHAR -> {
@@ -339,7 +326,7 @@ class FingerPrintScannerFragment : Fragment() {
     }
 
     private fun ReceiveCommand(databuf: ByteArray, datasize: Int) {
-        if (mDeviceCmd == ChatsFieldConstants.CMD_GETIMAGE) { //receiving the image data from the device
+        if (mDeviceCmd == CMD_GETIMAGE) { //receiving the image data from the device
             if (imgSize == ChatsFieldConstants.IMG200) {   //image size with 152*200
                 memcpy(mUpImage, mUpImageSize, databuf, 0, datasize)
                 mUpImageSize = mUpImageSize + datasize
@@ -358,7 +345,7 @@ class FingerPrintScannerFragment : Fragment() {
                         val image = BitmapFactory.decodeByteArray(bmpdata, 0, bmpdata.size)
                         saveJPGimage(image)
                         Log.d(ChatsFieldConstants.TAG, "bmpdata.length:" + bmpdata.size)
-                        fingerprintImage.setImageBitmap(image)
+                        binding.fingerprintImage.setImageBitmap(image)
                     }
                     mUpImageSize = 0
                     mUpImageCount = mUpImageCount + 1
@@ -382,7 +369,7 @@ class FingerPrintScannerFragment : Fragment() {
                     if(bmpdata!=null){
                         val image = BitmapFactory.decodeByteArray(bmpdata, 0, bmpdata.size)
                         saveJPGimage(image)
-                        fingerprintImage.setImageBitmap(image)
+                        binding.fingerprintImage.setImageBitmap(image)
                     }
 
                     val inpdata = ByteArray(73728)
@@ -414,7 +401,7 @@ class FingerPrintScannerFragment : Fragment() {
                     if(bmpdata !=null){
                         val image = BitmapFactory.decodeByteArray(bmpdata, 0, bmpdata.size)
                         saveJPGimage(image)
-                        fingerprintImage.setImageBitmap(image)
+                        binding.fingerprintImage.setImageBitmap(image)
                     }
 
                     val inpdata = ByteArray(92160)
@@ -458,7 +445,7 @@ class FingerPrintScannerFragment : Fragment() {
                 timeOutStop()
 
                 //parsing the mCmdData
-                if (mCmdData[0] == 'F'.toByte() && mCmdData[1] == 'T'.toByte()) {
+                if (mCmdData[0] == 'F'.code.toByte() && mCmdData[1] == 'T'.code.toByte()) {
                     when (mCmdData[4]) {
                         ChatsFieldConstants.CMD_PASSWORD -> {
                         }
@@ -742,7 +729,7 @@ class FingerPrintScannerFragment : Fragment() {
     private fun openDeviceSelector() {
         val bottomSheetDialogFragment = DeviceSelectorDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = true
-        bottomSheetDialogFragment.setTargetFragment(this, ChatsFieldConstants.CONNECTION_CODE)
+        bottomSheetDialogFragment.setTargetFragment(this, CONNECTION_CODE)
         bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),"BottomSheetDialog")
     }
 

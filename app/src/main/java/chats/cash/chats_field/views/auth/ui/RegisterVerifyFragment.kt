@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
+import chats.cash.chats_field.databinding.FragmentRegisterVerifyBinding
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.network.body.LocationBody
 import chats.cash.chats_field.offline.Beneficiary
@@ -22,7 +23,6 @@ import chats.cash.chats_field.views.core.showSnackbarWithAction
 import chats.cash.chats_field.views.core.showSuccessSnackbar
 import com.google.gson.Gson
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
-import kotlinx.android.synthetic.main.fragment_register_verify.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -57,15 +57,14 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
 
-    private var encryptedEmail: String? = null
-
-    private var userId = 0
+    private lateinit var binding:FragmentRegisterVerifyBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register_verify, container, false)
+        binding = FragmentRegisterVerifyBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,50 +83,50 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         gender = args.gender
         date = args.date
         pin = args.pin
-        back_btn.setOnClickListener {
+        binding.backBtn.setOnClickListener {
             findNavController().navigateUp()
         }
-        check_image.hide()
+        binding.checkImage.hide()
         if (mViewModel.specialCase) {
-            verifyPrintCard.hide()
+            binding.verifyPrintCard.hide()
         }
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
         if (mViewModel.profileImage != null) {
             profileImage = mViewModel.profileImage
-            check_image.show()
+            binding.checkImage.show()
         } else {
-            check_image.hide()
+            binding.checkImage.hide()
         }
 
         if (mViewModel.allFinger != null) {
             allFingers = mViewModel.allFinger
-            check_print.show()
+            binding.checkPrint.show()
         } else {
-            check_print.hide()
+            binding.checkPrint.hide()
         }
 
         if (mViewModel.allFinger != null) {
-            check_print.show()
+            binding.checkPrint.show()
         } else {
-            check_print.hide()
+            binding.checkPrint.hide()
         }
 
         if (mViewModel.specialCase) {
             if (profileImage != null) {
-                completedImageIcon.setImageResource(R.drawable.ic_check)
+               binding.completedImageIcon.setImageResource(R.drawable.ic_check)
             } else {
-                completedImageIcon.setImageResource(R.drawable.ic_uncheck)
+               binding.completedImageIcon.setImageResource(R.drawable.ic_uncheck)
             }
         } else {
             if (allFingers != null && profileImage != null) {
-                completedImageIcon.setImageResource(R.drawable.ic_check)
+               binding.completedImageIcon.setImageResource(R.drawable.ic_check)
             } else {
-                completedImageIcon.setImageResource(R.drawable.ic_uncheck)
+               binding.completedImageIcon.setImageResource(R.drawable.ic_uncheck)
             }
         }
 
 
-        registerVerifyBtn.setOnClickListener {
+        binding.registerVerifyBtn.setOnClickListener {
             if (mViewModel.specialCase) {
                 if (profileImage != null) {
                     if (internetAvailabilityChecker.currentInternetAvailabilityStatus.not()) {
@@ -158,10 +157,10 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
 
 
-        verifyPrintCard.setOnClickListener {
+        binding.verifyPrintCard.setOnClickListener {
             findNavController().safeNavigate(RegisterVerifyFragmentDirections.toRegisterPrintFragment())
         }
-        pictureCard.setOnClickListener {
+        binding.pictureCard.setOnClickListener {
             findNavController().safeNavigate(RegisterVerifyFragmentDirections.toRegisterImageFragment())
         }
 
@@ -173,8 +172,8 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         registerViewModel.onboardUser.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Loading -> {
-                    verifyProgress.show()
-                    registerVerifyBtn.isEnabled = false
+                    binding.verifyProgress.show()
+                    binding. registerVerifyBtn.isEnabled = false
                 }
                 is ApiResponse.Success -> {
 
@@ -189,8 +188,8 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                         encrypt?.let { it1 -> openNFCCardScanner(false, it1) }
                     }
 
-                    verifyProgress.hide()
-                    registerVerifyBtn.isEnabled = true
+                    binding.verifyProgress.hide()
+                    binding.registerVerifyBtn.isEnabled = true
                 }
                 is ApiResponse.Failure -> {
                     showSnackbarWithAction(
@@ -199,8 +198,8 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     ) {
                         findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
                     }
-                    verifyProgress.hide()
-                    registerVerifyBtn.isEnabled = false
+                    binding. verifyProgress.hide()
+                    binding.registerVerifyBtn.isEnabled = false
                 }
             }
         }
@@ -255,6 +254,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         beneficiary!!.type = BENEFICIARY_TYPE
         beneficiary!!.firstName = firstName
         beneficiary!!.lastName = lastname
+        beneficiary!!.campaignId = campaign.id.toString()
         beneficiary!!.email = email
         beneficiary!!.phone = phone
         beneficiary!!.password = password
@@ -267,6 +267,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         beneficiary!!.isSpecialCase = mViewModel.specialCase
         beneficiary!!.nin = mViewModel.nin
         beneficiary!!.pin = pin
+        beneficiary!!.id = organizationId
         if (!mViewModel.specialCase) {
             beneficiary!!.leftThumb =
                 writeBitmapToFile(requireContext(), allFingers!![0]).absolutePath

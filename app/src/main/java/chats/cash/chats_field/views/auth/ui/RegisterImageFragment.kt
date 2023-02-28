@@ -21,7 +21,6 @@ import chats.cash.chats_field.utils.ChatsFieldConstants.REQUIRED_PERMISSIONS
 import chats.cash.chats_field.utils.safeNavigate
 import chats.cash.chats_field.utils.toast
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
-import kotlinx.android.synthetic.main.fragment_register_image.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
@@ -49,8 +48,8 @@ class RegisterImageFragment : Fragment() {
         if (viewModel.profileImage != null) {
             Glide.with(requireContext())
                 .load(File(viewModel.profileImage!!))
-                .into(registerImageView)
-            registerImageNextBtn.setOnClickListener {
+                .into(binding.registerImageView)
+            binding.registerImageNextBtn.setOnClickListener {
                 findNavController().navigateUp()
             }
         }

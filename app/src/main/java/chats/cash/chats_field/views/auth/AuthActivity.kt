@@ -251,7 +251,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
 
         if (beneficiary.isSpecialCase) {
             mainViewModel.onboardSpecialUser(
-                beneficiary.id.toString(),
+                preferenceUtil.getNGOId() .toString(),
                 firstName = mFirstName,
                 lastName = mLastName,
                 email = mEmail,
@@ -271,7 +271,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             )
         } else {
             mainViewModel.onboardUser(
-                beneficiary.id.toString(),
+                preferenceUtil.getNGOId().toString(),
                 firstName = mFirstName,
                 lastName = mLastName,
                 email = mEmail,
@@ -346,5 +346,13 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
+    }
+
+    fun hidePendingUpload() {
+        binding.pendingUploadTextView.hide()
+    }
+
+    fun showPendingUpload() {
+        binding.pendingUploadTextView.show()
     }
 }

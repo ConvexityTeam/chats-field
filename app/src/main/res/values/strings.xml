@@ -109,4 +109,7 @@
     <string name="please_tell_your_age">Please tell us your age bracket</string>
     <string name="click_here_to_start_scanning">Click here to start scanning</string>
     <string name="text_user_onboarded_success">Beneficiary Onboarded Successfully</string>
+    <string name="an_unknown_error_occured">An unknown error occurred</string>
+    <string name="please_select_an_option">Please select an option</string>
+    <string name="enter_a_value">Enter a value</string>
 </resources>

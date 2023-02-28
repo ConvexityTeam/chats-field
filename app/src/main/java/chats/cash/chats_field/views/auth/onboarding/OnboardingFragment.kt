@@ -16,16 +16,17 @@ import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_LOGIN_RESULT_KEY
 import chats.cash.chats_field.utils.ChatsFieldConstants.LOGIN_BUNDLE_KEY
 import chats.cash.chats_field.utils.ChatsFieldConstants.REQUEST_CODE_PERMISSIONS
+import chats.cash.chats_field.views.MainActivity
+import chats.cash.chats_field.views.auth.AuthActivity
 import chats.cash.chats_field.views.auth.adapter.OnBoarding
 import chats.cash.chats_field.views.auth.adapter.OnboardingAdapter
 import chats.cash.chats_field.views.auth.login.LoginDialog
-import chats.cash.chats_field.views.auth.ui.ImageCaptureFragment
-import chats.cash.chats_field.views.auth.ui.RegisterImageFragmentDirections
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.activity_auth.*
+import kotlinx.coroutines.InternalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@OptIn(InternalCoroutinesApi::class)
 class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private var _binding: FragmentOnboardingBinding? = null
@@ -47,7 +48,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentOnboardingBinding.bind(view)
 
-        requireActivity().pendingUploadTextView.show()
+        (requireActivity() as AuthActivity).showPendingUpload()
         val onboardings = arrayListOf<OnBoarding>()
         onboardings.add(OnBoarding(getString(R.string.onb_title_1),
             getString(R.string.onb_desc_1),
@@ -94,9 +95,10 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         binding.logoutBtn.hide()
     }
 
+    @OptIn(InternalCoroutinesApi::class)
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().pendingUploadTextView.hide()
+        (requireActivity() as AuthActivity) .hidePendingUpload()
         _binding = null
     }
 
