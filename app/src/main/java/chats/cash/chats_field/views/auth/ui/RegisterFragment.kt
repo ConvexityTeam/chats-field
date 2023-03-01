@@ -6,6 +6,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -87,15 +89,15 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             val specialAdapter =
                 ArrayAdapter(requireContext(), android.R.layout.simple_selectable_list_item, listOf("No", "Yes"))
             registerSpecialCaseEdit.setAdapter(specialAdapter)
-            registerNINLayout.hide()
+
             txtNin.hide()
             registerSpecialCaseEdit.setOnItemClickListener { _, _, position, _ ->
                 if (position == 0) {
-                    registerNINLayout.hide()
-                    txtNin.hide()
+                    ninGroup.hide()
                 } else {
-                    registerNINLayout.show()
-                    txtNin.show()
+                   if( ccp.selectedCountryEnglishName.equals(NIGERIA,true)){
+                       ninGroup.show()
+                   }
                 }
             }
 
@@ -373,6 +375,27 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 isNumberValid = isValid
                 Timber.v(fullNumber)
             }
+            binding.registerPhoneEdit.addTextChangedListener(object : TextWatcher{
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int,
+                ) {
+
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    if(s?.startsWith("0")==true){
+                        s.replace(0,1,"")
+                    }
+                }
+
+            })
         }
 
 

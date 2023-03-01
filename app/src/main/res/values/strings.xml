@@ -11,7 +11,7 @@
     <string name="last_name">Last Name</string>
     <string name="email">Email (Optional)</string>
     <string name="example_example_com">example@example.com</string>
-    <string name="_081000xxxxx">081000XXXXX</string>
+    <string name="_081000xxxxx">e.g 81000XXXXX</string>
     <string name="phone">Phone Number</string>
     <string name="otp_verification">OTP Verification</string>
     <string name="identity_verification">Identity Verification</string>
@@ -113,4 +113,5 @@
     <string name="an_unknown_error_occured">An unknown error occurred</string>
     <string name="please_select_an_option">Please select an option</string>
     <string name="enter_a_value">Enter a value</string>
+    <string name="enter_phone_number">enter phone number</string>
 </resources>
