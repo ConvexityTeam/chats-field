@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -23,13 +24,15 @@ import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.Utils.toCountryCode
 import chats.cash.chats_field.views.auth.login.LoginDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
+import com.hbb20.CountryCodePicker
+import com.hbb20.CountryCodePicker.OnCountryChangeListener
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.util.*
+
 
 @InternalCoroutinesApi
 class RegisterFragment : Fragment(R.layout.fragment_register) {
@@ -43,6 +46,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     private val viewModel by sharedViewModel<RegisterViewModel>()
     private val myCalendar: Calendar = Calendar.getInstance()
     private var campaign: ModelCampaign? = null
+
+    private var isNumberValid = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,6 +124,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             registerNextButton.setOnClickListener {
                 checkInputs()
             }
+
+            addCCpListeners()
         }
     }
 
@@ -183,9 +190,10 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 return@with
             }
         }
-        if (registerPhoneEdit.isValid() && registerPhoneEdit.text.toString().isValidPhoneNo()) {
+        if (registerPhoneEdit.isValid() && registerPhoneEdit.text.toString().isValidPhoneNo() && isNumberValid) {
             registerPhoneLayout.error = ""
-            phone = registerPhoneEdit.text.toString()
+//            phone = registerPhoneEdit.text.toString()
+            phone = binding.ccp.fullNumber
         } else {
             registerPhoneLayout.error = "Phone number is required"
             return
@@ -347,8 +355,33 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         }
     }
 
+    fun addCCpListeners(){
+        binding.ccp.apply{
+            setOnCountryChangeListener(OnCountryChangeListener {
+                val country = binding.ccp.selectedCountryEnglishName
+                if(country.equals(NIGERIA,true)){
+                    binding.ninGroup.show()
+                }
+                else{
+                    binding.ninGroup.hide()
+                }
+            })
+
+            registerCarrierNumberEditText(binding.registerPhoneEdit)
+
+            setPhoneNumberValidityChangeListener {isValid ->
+                isNumberValid = isValid
+                Timber.v(fullNumber)
+            }
+        }
+
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+
+const val NIGERIA = "NIGERIA"
