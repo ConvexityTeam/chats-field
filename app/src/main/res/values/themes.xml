@@ -73,6 +73,7 @@
 
     <style name="TextAppearance.TextMedium" parent="TextAppearance.TextRegular">
         <item name="android:fontFamily">@font/gilroy_medium</item>
+
     </style>
 
     <style name="TextInputLayout.FormEditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">

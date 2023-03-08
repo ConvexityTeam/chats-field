@@ -56,15 +56,8 @@ class RegisterViewModel(
 
     init {
         viewModelScope.launch {
-            val questions =  beneficiaryRepository.getCampaignSurvey(113)
-            questions.collect {
-                Timber.v(it.toString())
-                if(it is NetworkResponse.Success){
-                    Timber.v(it.toString())
-                }
-            }
-
             getAllCampaignForms()
+            getAllCampaigns2()
         }
     }
 
@@ -72,6 +65,16 @@ class RegisterViewModel(
         val allForms =  beneficiaryRepository.getAllCampaignForms()
         allForms.collect {
             Timber.v(it.toString())
+            if(it is NetworkResponse.Success){
+                Timber.v(it.body.toString())
+            }
+        }
+    }
+
+    fun getAllCampaigns2() = viewModelScope.launch{
+        val allCampaigns =  beneficiaryRepository.getAllCampaigns()
+        allCampaigns.collect {
+
             if(it is NetworkResponse.Success){
                 Timber.v(it.body.toString())
             }

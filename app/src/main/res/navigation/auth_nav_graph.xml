@@ -341,6 +341,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/to_dataConsentFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:destination="@id/dataConsentFragment" />
     </fragment>
     <fragment
         android:id="@+id/existingBeneficiaryFragment"
@@ -422,5 +429,14 @@
         <argument
             android:name="pin"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/dataConsentFragment"
+        tools:layout="@layout/fragment_data_consent"
+        android:name="chats.cash.chats_field.views.consent.DataConsentFragment"
+        android:label="DataConsentFragment" >
+        <action
+            android:id="@+id/action_dataConsentFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
     </fragment>
 </navigation>

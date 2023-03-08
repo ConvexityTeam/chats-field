@@ -114,4 +114,10 @@
     <string name="please_select_an_option">Please select an option</string>
     <string name="enter_a_value">Enter a value</string>
     <string name="enter_phone_number">enter phone number</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="data_consent_form">Our data privacy policy describes how we collect, use, and protect your personal information when you use our app. By accepting our policy, you acknowledge that you have read and understood its contents, and you agree to the collection, use, and sharing of your personal information as described our policy <a href="https://chats.cash/privacy-policy">Read Here</a>. Please take the time to review our policy carefully before accepting it. If you have any questions or concerns about our data privacy policy, please don\'t hesitate to contact us using the contact information provided in the <a href="https://chats.cash/privacy-policy">policy</a>. According to the Nigerian Data Protection Regulation (NDPR) framework, we are required to obtain your consent to our <a href="https://chats.cash/privacy-policy">data privacy policy.</a> </string>
+    <string name="after_reviewing_the_privacy_policy_i_hereby_confirm_that_i_have_read_and_understood_the_terms_and_conditions_outlined_in_the_policy_and_i_consent_to_its_provisions">After reviewing the privacy policy, I hereby confirm that I have read and understood the terms and conditions outlined in the policy, and I consent to its provisions.</string>
+    <string name="user_consent_agreement">USER CONSENT AGREEMENT</string>
+    <string name="invalid_phone_number">Invalid Phone number</string>
 </resources>

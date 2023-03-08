@@ -24,6 +24,7 @@ class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
 
     @WorkerThread
     suspend fun insertAllCampaign(campaigns: List<ModelCampaign>){
+        beneficiaryDao?.deleteModelCampaigns()
         beneficiaryDao?.insertAllCampaigns(campaigns)
     }
     @WorkerThread

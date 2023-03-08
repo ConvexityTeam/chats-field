@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
@@ -51,10 +52,10 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     private lateinit var date: String
     private lateinit var pin: String
     private var organizationId: Int = 0
-    private val mViewModel by sharedViewModel<RegisterViewModel>()
+    private val mViewModel by activityViewModels<RegisterViewModel>()
     private var beneficiary: Beneficiary? = null
-    private val registerViewModel by viewModel<RegisterViewModel>()
-    private val offlineViewModel by viewModel<OfflineViewModel>()
+    private val registerViewModel by activityViewModels<RegisterViewModel>()
+    private val offlineViewModel by activityViewModels<OfflineViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
 
     private lateinit var binding:FragmentRegisterVerifyBinding

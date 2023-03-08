@@ -1,6 +1,5 @@
 package chats.cash.chats_field.network.repository
 
-import android.content.Context
 import chats.cash.chats_field.CoroutineRule
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.campaignform.CampaignForm
@@ -9,10 +8,7 @@ import chats.cash.chats_field.network.api.interfaces.BeneficiaryInterface
 import chats.cash.chats_field.network.repository.fakes.FakeBeneficiaryRepository
 import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before

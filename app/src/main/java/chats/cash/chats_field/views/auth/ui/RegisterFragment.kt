@@ -192,12 +192,14 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 return@with
             }
         }
-        if (registerPhoneEdit.isValid() && registerPhoneEdit.text.toString().isValidPhoneNo() && isNumberValid) {
-            registerPhoneLayout.error = ""
+        if ( isNumberValid) {
+            phoneError.error = ""
+            phoneError.hide()
 //            phone = registerPhoneEdit.text.toString()
             phone = binding.ccp.fullNumber
         } else {
-            registerPhoneLayout.error = "Phone number is required"
+            phoneError.error = "Phone number is required"
+            phoneError.show()
             return
         }
         if (inputPinEdit.isValid() && inputPinEdit.text.toString().isValidPin()) {
