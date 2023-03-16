@@ -2,12 +2,13 @@ package chats.cash.chats_field.utils.camera
 
 import android.content.Context
 import android.util.Log
-import android.view.ScaleGestureDetector
+import android.view.Surface.ROTATION_0
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.google.mlkit.vision.face.Face
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -15,7 +16,9 @@ import java.util.concurrent.Executors
     private val context: Context,
     private val finderView: PreviewView,
     private val lifecycleOwner: LifecycleOwner,
-    private val graphicOverlay: GraphicOverlay
+    private val graphicOverlay: GraphicOverlay,
+    val screenAspectRatio: Int,
+    val onFaceDetected:(List<Face>,ImageCapture?) ->Unit
 ) {
 
     private var preview: Preview? = null
@@ -26,6 +29,7 @@ import java.util.concurrent.Executors
     private var cameraProvider: ProcessCameraProvider? = null
 
     private var imageAnalyzer: ImageAnalysis? = null
+    private var imageCapture: ImageCapture? = null
 
 
     init {
@@ -43,7 +47,15 @@ import java.util.concurrent.Executors
                 cameraProvider = cameraProviderFuture.get()
                 preview = Preview.Builder()
                     .build()
-
+                imageCapture = ImageCapture.Builder()
+                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                    // We request aspect ratio but no resolution to match preview config, but letting
+                    // CameraX optimize for whatever specific resolution best fits our use cases
+                    .setTargetAspectRatio(screenAspectRatio)
+                    // Set initial target rotation, we will have to call this again if rotation changes
+                    // during the lifecycle of this use case
+                    .setTargetRotation(preview?.targetRotation?:ROTATION_0)
+                    .build()
                 imageAnalyzer = ImageAnalysis.Builder()
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
@@ -62,7 +74,9 @@ import java.util.concurrent.Executors
     }
 
     private fun selectAnalyzer(): ImageAnalysis.Analyzer {
-        return FaceContourDetectionProcessor(graphicOverlay)
+        return FaceContourDetectionProcessor(graphicOverlay){
+            onFaceDetected(it,imageCapture)
+        }
     }
 
     private fun setCameraConfig(
@@ -75,7 +89,8 @@ import java.util.concurrent.Executors
                 lifecycleOwner,
                 cameraSelector,
                 preview,
-                imageAnalyzer
+                imageAnalyzer,
+                imageCapture
             )
             preview?.setSurfaceProvider(
                 finderView.surfaceProvider

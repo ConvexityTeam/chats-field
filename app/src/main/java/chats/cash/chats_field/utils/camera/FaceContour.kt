@@ -3,27 +3,37 @@ package chats.cash.chats_field.utils.camera
 import android.graphics.Rect
 import android.util.Log
 import androidx.camera.core.ExperimentalGetImage
+import chats.cash.chats_field.utils.camera.BaseImageAnalyzer
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
+import timber.log.Timber
 import java.io.IOException
 
-@ExperimentalGetImage class FaceContourDetectionProcessor(private val view: GraphicOverlay) :
+@ExperimentalGetImage class FaceContourDetectionProcessor(private val view: GraphicOverlay,val  onDetected: (List<Face>) -> Unit) :
     BaseImageAnalyzer<List<Face>>() {
 
     private val realTimeOpts = FaceDetectorOptions.Builder()
-        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
+        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+        .setContourMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
         .build()
 
-    private val detector = FaceDetection.getClient(realTimeOpts)
+
+    private val highAccuracyOpts: FaceDetectorOptions = FaceDetectorOptions.Builder()
+        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+        .build()
+
+    private val detector = FaceDetection.getClient(highAccuracyOpts)
 
     override val graphicOverlay: GraphicOverlay
         get() = view
 
     override fun detectInImage(image: InputImage): Task<List<Face>> {
+
         return detector.process(image)
     }
 
@@ -31,7 +41,7 @@ import java.io.IOException
         try {
             detector.close()
         } catch (e: IOException) {
-            Log.e(TAG, "Exception thrown while trying to close Face Detector: $e")
+            Timber.e("Exception thrown while trying to close Face Detector: " + e)
         }
     }
 
@@ -41,15 +51,17 @@ import java.io.IOException
         rect: Rect
     ) {
         graphicOverlay.clear()
+        Timber.d(results.size.toString())
         results.forEach {
             val faceGraphic = FaceContourGraphic(graphicOverlay, it, rect)
             graphicOverlay.add(faceGraphic)
         }
+        onDetected(results)
         graphicOverlay.postInvalidate()
     }
 
     override fun onFailure(e: Exception) {
-        Log.w(TAG, "Face Detector failed.$e")
+        Timber.tag(TAG).w("Face Detector failed." + e)
     }
 
     companion object {

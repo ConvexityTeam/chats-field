@@ -2,9 +2,9 @@ package chats.cash.chats_field.utils.camera
 
 import android.annotation.SuppressLint
 import android.graphics.Rect
-import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
+import android.graphics.RectF
+import androidx.camera.core.*
+import chats.cash.chats_field.utils.camera.GraphicOverlay
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 
@@ -12,12 +12,17 @@ import com.google.mlkit.vision.common.InputImage
 
     abstract val graphicOverlay: GraphicOverlay
 
+
     @SuppressLint("UnsafeExperimentalUsageError")
     override fun analyze(imageProxy: ImageProxy) {
+
+
         val mediaImage = imageProxy.image
+
         mediaImage?.let {
             detectInImage(InputImage.fromMediaImage(it, imageProxy.imageInfo.rotationDegrees))
                 .addOnSuccessListener { results ->
+
                     onSuccess(
                         results,
                         graphicOverlay,
@@ -44,4 +49,17 @@ import com.google.mlkit.vision.common.InputImage
 
     protected abstract fun onFailure(e: Exception)
 
+}
+
+@SuppressLint("RestrictedApi")
+fun MeteringPoint.calculateRelativeCoordinate(cropRect: Rect): RectF {
+    val x = x - cropRect.left
+    val y = y - cropRect.top
+    val width = cropRect.width()
+    val height = cropRect.height()
+
+    val newX = x / width
+    val newY = y / height
+
+    return RectF(newX, newY, newX, newY)
 }
