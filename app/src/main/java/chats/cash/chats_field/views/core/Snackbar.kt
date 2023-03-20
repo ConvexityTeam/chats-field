@@ -35,7 +35,7 @@ color: Int? =null,onClick: () -> Unit,){
 
 fun showSuccessSnackbar(text: Int, root: View,
                         color: Int? = ContextCompat.getColor(root.context, R.color.colorPrimary),){
-    val snackbar = Snackbar.make(root,root.context.getString(text), Snackbar.LENGTH_INDEFINITE)
+    val snackbar = Snackbar.make(root,root.context.getString(text), Snackbar.LENGTH_SHORT)
 
     color?.let {
         snackbar.setBackgroundTint(it)
@@ -44,7 +44,7 @@ fun showSuccessSnackbar(text: Int, root: View,
 }
 fun showSuccessSnackbar(text: String, root: View,
                         color: Int? = ContextCompat.getColor(root.context, R.color.colorPrimary),){
-    val snackbar = Snackbar.make(root,text, Snackbar.LENGTH_INDEFINITE)
+    val snackbar = Snackbar.make(root,text, Snackbar.LENGTH_SHORT)
 
     color?.let {
         snackbar.setBackgroundTint(it)

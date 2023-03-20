@@ -120,4 +120,13 @@
     <string name="after_reviewing_the_privacy_policy_i_hereby_confirm_that_i_have_read_and_understood_the_terms_and_conditions_outlined_in_the_policy_and_i_consent_to_its_provisions">After reviewing the privacy policy, I hereby confirm that I have read and understood the terms and conditions outlined in the policy, and I consent to its provisions.</string>
     <string name="user_consent_agreement">USER CONSENT AGREEMENT</string>
     <string name="invalid_phone_number">Invalid Phone number</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="preview_image">preview image</string>
+    <string name="retake">Retake</string>
+    <string name="select_image">Select Image</string>
+    <string name="flip_camera">flip camera</string>
+    <string name="make_sure_your_face_is_in_the_circle">Make sure your face is in the circle</string>
+    <string name="photo_capture_failed">Photo capture failed</string>
+    <string name="image_saved">Image saved</string>
+    <string name="blink_eyes">Now blink your eyes</string>
 </resources>
