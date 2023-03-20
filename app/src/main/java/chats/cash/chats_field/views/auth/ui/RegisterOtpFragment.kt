@@ -8,17 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import chats.cash.chats_field.R
-import kotlinx.android.synthetic.main.fragment_register_otp.*
+import chats.cash.chats_field.databinding.FragmentRegisterOtpBinding
+
 
 class RegisterOtpFragment : Fragment() {
 
+    private lateinit var binding:FragmentRegisterOtpBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register_otp, container, false)
+        binding = FragmentRegisterOtpBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -29,10 +32,10 @@ class RegisterOtpFragment : Fragment() {
                 // TODO Auto-generated method stub
                 val text = editable.toString()
                 when (v.id) {
-                    R.id.otp1 -> if (text.length == 1) otp2.requestFocus()
-                    R.id.otp2 -> if (text.length == 1) otp3.requestFocus() else if (text.isEmpty()) otp1.requestFocus()
-                    R.id.otp3 -> if (text.length == 1) otp4.requestFocus() else if (text.isEmpty()) otp2.requestFocus()
-                    R.id.otp4 -> if (text.isEmpty()) otp3.requestFocus()
+                    R.id.otp1 -> if (text.length == 1) binding.otp2.requestFocus()
+                    R.id.otp2 -> if (text.length == 1) binding.otp3.requestFocus() else if (text.isEmpty()) binding.otp1.requestFocus()
+                    R.id.otp3 -> if (text.length == 1) binding.otp4.requestFocus() else if (text.isEmpty()) binding.otp2.requestFocus()
+                    R.id.otp4 -> if (text.isEmpty()) binding.otp3.requestFocus()
                 }
             }
 
@@ -46,12 +49,12 @@ class RegisterOtpFragment : Fragment() {
 
         }
 
-        otp1.addTextChangedListener(OTPTextWatcher(otp1));
-        otp2.addTextChangedListener(OTPTextWatcher(otp2));
-        otp3.addTextChangedListener(OTPTextWatcher(otp3));
-        otp4.addTextChangedListener(OTPTextWatcher(otp4));
+        binding.otp1.addTextChangedListener(OTPTextWatcher(binding.otp1));
+        binding.otp2.addTextChangedListener(OTPTextWatcher(binding.otp2));
+        binding.otp3.addTextChangedListener(OTPTextWatcher(binding.otp3));
+        binding.otp4.addTextChangedListener(OTPTextWatcher(binding.otp4));
 
-        registerOtpVerifyButton.setOnClickListener {
+        binding.registerOtpVerifyButton.setOnClickListener {
 //            findNavController().navigate(RegisterOtpFragmentDirections.actionRegisterOtpFragmentToRegisterVerifyFragment())
         }
 

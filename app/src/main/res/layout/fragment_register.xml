@@ -319,40 +319,79 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/registerEmailLayout" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registerPhoneLayout"
-            style="@style/TextInputLayout.FormEditText"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/phoneLayout"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="10dp"
             android:layout_marginEnd="16dp"
+            android:gravity="center_horizontal"
+            android:background="@drawable/outline_shape"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView6">
+            app:layout_constraintTop_toBottomOf="@id/textView6"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/registerPhoneEdit"
-                style="@style/TextInputEditText.Padding"
-                android:layout_width="match_parent"
+            <com.hbb20.CountryCodePicker
+                android:id="@+id/ccp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/_081000xxxxx"
-                android:inputType="phone"
-                android:maxLength="15" />
-        </com.google.android.material.textfield.TextInputLayout>
+                app:ccp_defaultNameCode="ng"
+                app:ccp_autoDetectCountry="true"
+                android:gravity="center"
+                app:ccpDialog_searchEditTextTint="@color/colorPrimary"
+                app:ccpDialog_backgroundColor="@color/white"
+                app:ccp_showNameCode="false"
+                android:layout_gravity="center"
+                app:ccp_defaultPhoneCode="234"
+                app:ccp_internationalFormattingOnly="true"
+                app:ccp_textSize="13sp"
+                app:ccp_arrowSize="15sp"
+                />
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/registerPhoneEdit"
+                    android:textStyle="normal"
+                    style="@style/TextAppearance.TextRegular"
+                    android:background="#0017CE89"
+                    android:inputType="phone"
+                    android:maxLines="1"
+                    android:hint="@string/_081000xxxxx"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/phone_error"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/invalid_phone_number"
+            android:visibility="gone"
+            android:textColor="@color/design_default_color_error"
+            style="@style/TextAppearance.TextRegular"
+            app:layout_constraintEnd_toEndOf="@+id/registerGenderLayout"
+            app:layout_constraintStart_toStartOf="@+id/phoneLayout"
+            app:layout_constraintTop_toBottomOf="@id/phoneLayout" />
+
 
         <TextView
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="16dp"
             android:text="@string/text_date_of_birth"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/registerPhoneLayout" />
+            app:layout_constraintTop_toBottomOf="@id/phone_error" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registerDateLayout"
@@ -422,13 +461,24 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:text="@string/text_nin_abbrev"
+            android:text="@string/text_nin"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/registerSpecialCaseLayout"
             tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/ninGroup"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            android:layout_marginEnd="411dp"
+            app:constraint_referenced_ids="txt_nin,registerNINLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registerNINLayout"
@@ -521,8 +571,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="@string/next"
-            app:layout_constraintEnd_toEndOf="@id/registerPhoneLayout"
-            app:layout_constraintStart_toStartOf="@id/registerPhoneLayout"
+            app:layout_constraintEnd_toEndOf="@id/phoneLayout"
+            app:layout_constraintStart_toStartOf="@id/phoneLayout"
             app:layout_constraintTop_toBottomOf="@id/inputPinLayout" />
 
         <TextView

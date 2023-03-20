@@ -38,7 +38,7 @@ class BeneficiaryTypeFragment : Fragment(R.layout.fragment_beneficiary_type) {
                 openLogin()
                 return@setOnClickListener
             }
-            findNavController().safeNavigate(BeneficiaryTypeFragmentDirections.toRegisterFragment())
+            findNavController().safeNavigate(R.id.to_dataConsentFragment)
         }
         existingBeneficiaryButton.setOnClickListener {
             if (preferenceUtil.getNGOId() == 0) {

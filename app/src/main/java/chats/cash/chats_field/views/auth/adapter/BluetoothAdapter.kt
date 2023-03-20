@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import chats.cash.chats_field.R
+import chats.cash.chats_field.databinding.ItemBluetoothDeviceBinding
 import chats.cash.chats_field.model.ConnectedDevice
-import kotlinx.android.synthetic.main.item_bluetooth_device.view.*
 
 
 /*
@@ -21,17 +21,17 @@ on 17/07/2020.
 class BluetoothDeviceAdapter(val clickListener: BluetoothClickListener) :
     ListAdapter<ConnectedDevice, BluetoothDeviceAdapter.MyViewHolder>(BluetoothDiffCallback()) {
 
-    class MyViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
+    class MyViewHolder(val binding : ItemBluetoothDeviceBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(
             item: ConnectedDevice,
             clickListener: BluetoothClickListener
         ) {
-            itemView.setOnClickListener {
+            binding.root.setOnClickListener {
                 clickListener.onClick(item)
             }
-            itemView.item_device_name.text = item.deviceName
-            itemView.item_mac_address.text = item.deviceAddress
+            binding.itemDeviceName.text = item.deviceName
+            binding.itemMacAddress.text = item.deviceAddress
         }
     }
 
@@ -42,8 +42,8 @@ class BluetoothDeviceAdapter(val clickListener: BluetoothClickListener) :
 
     private fun from(parent: ViewGroup) : MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(R.layout.item_bluetooth_device,parent,false)
-        return MyViewHolder(view)
+        val binding = ItemBluetoothDeviceBinding.inflate(layoutInflater,parent,false)
+        return MyViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {

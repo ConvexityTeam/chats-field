@@ -1,6 +1,7 @@
 package chats.cash.chats_field.network.api
 
 import chats.cash.chats_field.model.NFCModel
+import chats.cash.chats_field.model.campaignform.AllCampaignFormResponse
 import chats.cash.chats_field.network.body.login.LoginBody
 import chats.cash.chats_field.network.response.BaseResponse
 import chats.cash.chats_field.network.response.NfcUpdateResponse
@@ -8,6 +9,7 @@ import chats.cash.chats_field.network.response.RegisterResponse
 import chats.cash.chats_field.network.response.UserDetailsResponse
 import chats.cash.chats_field.network.response.beneficiary_onboarding.Beneficiary
 import chats.cash.chats_field.network.response.campaign.CampaignByOrganizationModel
+import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
 import chats.cash.chats_field.network.response.campaign.GetAllCampaignsResponse
 import chats.cash.chats_field.network.response.forgot.ForgotBody
 import chats.cash.chats_field.network.response.forgot.ForgotPasswordResponse
@@ -124,31 +126,31 @@ interface ConvexityApiService {
     @GET("ngos")
     fun getNGOs(): Deferred<OrganizationResponse>
 
-    @Deprecated(level = DeprecationLevel.WARNING, message = "Replaced with Coroutine-supported methods")
-    @POST("auth/field-login")
-    fun loginNGO(@Body loginBody: LoginBody): Deferred<LoginResponse>
 
     @POST("auth/field-login")
-    suspend fun loginNgo(@Body loginBody: LoginBody): BaseResponse<Data>
+    suspend fun loginNGO(@Body loginBody: LoginBody): LoginResponse
+
+    @POST("auth/field-login")
+    suspend fun loginNgo(@Body loginBody: LoginBody): Data
 
     @POST("users/reset-password")
-    fun sendForgotMail(@Body forgotBody: ForgotBody): Deferred<ForgotPasswordResponse>
+    suspend fun sendForgotMail(@Body forgotBody: ForgotBody): ForgotPasswordResponse
 
     @PUT("users/nfc_update")
-    fun postNfcDetails(
+    suspend fun postNfcDetails(
         @Body nfcModel: NFCModel,
         @Header("Authorization") authorization: String
-    ): Deferred<NfcUpdateResponse>
+    ): NfcUpdateResponse
 
     @GET("campaigns/all/")
-    fun getCampaigns(@Header("Authorization") authorization: String): Deferred<CampaignResponse>
+    suspend fun getCampaigns(@Header("Authorization") authorization: String): CampaignResponse
 
     @GET("campaigns/organisation/{id}")
     fun getCampaignsByOrganization(
         @Path("id") id: String,
         @Query("type") type: String = "cash-for-work",
         @Header("Authorization") authorization: String
-    ): Deferred<CampaignByOrganizationModel>
+    ): CampaignByOrganizationModel
 
     @GET("cash-for-work/tasks/{id}")
     fun getTasks(
@@ -199,6 +201,29 @@ interface ConvexityApiService {
         @Query("type") type: String?,
         @Header("Authorization") authorization: String
     ): GetAllCampaignsResponse
+    @GET("beneficiaries/survey/{campaign_id}")
+    suspend fun getCampaignSurvey(
+        @Path("campaign_id") campaignId: Int,
+        @Header("Authorization") authorization: String
+    ): Response<CampaignSurveyResponse>
+
+    @GET("beneficiaries/survey/{campaign_id}")
+    suspend fun getCampaignSurvey2(
+        @Path("campaign_id") campaignId: Int,
+        @Header("Authorization") authorization: String
+    ): CampaignSurveyResponse
+
+    @GET("organisations/{organisation_id}/campaign_form")
+    suspend fun getAllCampaignForms(
+        @Path("organisation_id") organisationId: Int,
+        @Header("Authorization") authorization: String
+    ): Response<AllCampaignFormResponse>
+
+    @GET("organisations/{organisation_id}/campaign_form")
+    suspend fun getAllCampaignForms2(
+        @Path("organisation_id") organisationId: Int,
+        @Header("Authorization") authorization: String
+    ): AllCampaignFormResponse
 
     @GET("organisation/{organisation_id}/beneficiaries")
     suspend fun getBeneficiariesByOrganisation(

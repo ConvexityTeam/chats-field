@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import chats.cash.chats_field.R
-import kotlinx.android.synthetic.main.onboarding_item_layout.view.*
+import chats.cash.chats_field.databinding.OnboardingItemLayoutBinding
 
 /*
 Created by
@@ -21,11 +21,11 @@ on 17/07/2020.
 class OnboardingAdapter :
     ListAdapter<OnBoarding, OnboardingAdapter.MyViewHolder>(OnBoardingDiffCallback()) {
 
-    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class MyViewHolder(val binding: OnboardingItemLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: OnBoarding) = with(itemView) {
-            itemView.onbDesc.text = item.desc
-            itemView.onbTitle.text = item.title
-            itemView.onboardingImageView.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
+            binding.onbDesc.text = item.desc
+            binding.onbTitle.text = item.title
+            binding.onboardingImageView.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
                 item.image,
                 context.theme)
             )
@@ -38,8 +38,8 @@ class OnboardingAdapter :
 
     private fun from(parent: ViewGroup): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(R.layout.onboarding_item_layout, parent, false)
-        return MyViewHolder(view)
+        val binding = OnboardingItemLayoutBinding.inflate(layoutInflater,parent,false)
+        return MyViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {

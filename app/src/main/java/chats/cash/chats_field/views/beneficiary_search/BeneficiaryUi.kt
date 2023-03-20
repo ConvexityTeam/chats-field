@@ -1,7 +1,7 @@
 package chats.cash.chats_field.views.beneficiary_search
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class BeneficiaryUi(

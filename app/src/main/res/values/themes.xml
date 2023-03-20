@@ -73,18 +73,20 @@
 
     <style name="TextAppearance.TextMedium" parent="TextAppearance.TextRegular">
         <item name="android:fontFamily">@font/gilroy_medium</item>
+
     </style>
 
     <style name="TextInputLayout.FormEditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textAppearance">@style/TextAppearance.TextRegular</item>
         <item name="errorEnabled">true</item>
         <item name="boxStrokeWidth">1dp</item>
-        <item name="android:layout_gravity">top</item>
+        <item name="android:layout_gravity">center</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/sm_radius</item>
         <item name="boxCornerRadiusTopStart">@dimen/sm_radius</item>
         <item name="boxCornerRadiusTopEnd">@dimen/sm_radius</item>
         <item name="boxCornerRadiusBottomStart">@dimen/sm_radius</item>
         <item name="android:insetTop">0dp</item>
+        <item name="indicatorInset">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="hintEnabled">false</item>
         <item name="hintTextColor">@color/lightGrey</item>

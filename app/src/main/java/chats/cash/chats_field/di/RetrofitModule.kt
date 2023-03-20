@@ -1,5 +1,7 @@
 package chats.cash.chats_field.di
 
+import chats.cash.chats_field.network.datasource.RetrofitDataSource
+import chats.cash.chats_field.network.repository.BeneficiaryRepository
 import chats.cash.chats_field.utils.ChatsFieldConstants
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -46,4 +48,7 @@ val retrofitModule = module {
     single { HttpLoggingInterceptor().also { it.level = HttpLoggingInterceptor.Level.BODY } }
     single { CoroutineCallAdapterFactory() }
     single { provideRetrofit(get(), get(), get()) }
+
+    single { RetrofitDataSource(get(),get(),get())}
+    single{ BeneficiaryRepository(get(), get()) }
 }

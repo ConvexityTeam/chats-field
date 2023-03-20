@@ -8,6 +8,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Patterns
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.IdRes
@@ -110,7 +111,7 @@ fun Date.convertDateTimeToString(): String {
 }
 
 fun String?.isValidPhoneNo(): Boolean {
-    return this != null && this.length == 11
+    return this != null
 }
 
 fun String?.isValidPin(): Boolean {
@@ -118,6 +119,8 @@ fun String?.isValidPin(): Boolean {
 }
 
 fun TextInputEditText.isValid(): Boolean {
+    return !this.text.isNullOrBlank()
+}fun EditText.isValid(): Boolean {
     return !this.text.isNullOrBlank()
 }
 

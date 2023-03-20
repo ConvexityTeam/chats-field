@@ -9,6 +9,7 @@ import chats.cash.chats_field.network.body.login.LoginBody
 import chats.cash.chats_field.network.response.login.Data
 import chats.cash.chats_field.utils.ApiResponse
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class LoginViewModel(private val repository: NetworkRepository) : ViewModel() {
 
@@ -25,6 +26,8 @@ class LoginViewModel(private val repository: NetworkRepository) : ViewModel() {
             }
         }
     }
+
+
 
     sealed class LoginState {
         object Loading : LoginState()
