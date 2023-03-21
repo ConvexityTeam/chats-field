@@ -68,7 +68,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         viewModel.nfc = null
         viewModel.allFinger = null
         viewModel.profileImage = null
-        viewModel.getAllCampaigns()
 
         binding.run {
             backBtn.setOnClickListener {
@@ -195,8 +194,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         if ( isNumberValid) {
             phoneError.error = ""
             phoneError.hide()
-//            phone = registerPhoneEdit.text.toString()
             phone = binding.ccp.fullNumber
+            Timber.v(phone)
         } else {
             phoneError.error = "Phone number is required"
             phoneError.show()
@@ -298,6 +297,22 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 }
                 else{
                     viewModel.getAllCampaignForms()
+                    findNavController().safeNavigate(
+                        RegisterFragmentDirections.toRegisterVerifyFragment(
+                            firstName = firstName,
+                            lastName = lastName,
+                            email = email,
+                            phone = phone,
+                            password = password,
+                            latitude =  preferenceUtil.getLatLong().first.toString(),
+                            longitude = preferenceUtil.getLatLong().second.toString(),
+                            organizationId = organizationId,
+                            gender = gender,
+                            date = date,
+                            pin = pin,
+                            campaign = campaign!!,
+                        )
+                    )
                 }
 
             }

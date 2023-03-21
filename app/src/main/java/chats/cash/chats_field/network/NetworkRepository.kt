@@ -55,7 +55,6 @@ class NetworkRepository(
     private val preferenceUtil: PreferenceUtil,
 ) {
 
-    private val sessionManager: SessionManager = SessionManager(context)
     suspend fun onboardUser(
         organizationId: String,
         firstName: RequestBody,
@@ -564,8 +563,9 @@ sealed class NetworkResponse<out T>(){
 
     data class Success<out T>(val body: T, val _message: String="SUCCESS"):NetworkResponse<T>()
     data class Error<out T>(val _message: String, val e:Throwable):NetworkResponse<T>()
-    data class SimpleError<out T>(val _message: String, ):NetworkResponse<T>()
+    data class SimpleError<out T>(val _message: String,val code:Int=0 ):NetworkResponse<T>()
 
      class Loading<out T>():NetworkResponse<T>()
+    class Offline<out T>():NetworkResponse<T>()
 
 }

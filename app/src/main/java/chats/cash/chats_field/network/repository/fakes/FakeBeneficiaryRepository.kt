@@ -8,6 +8,8 @@ import chats.cash.chats_field.network.api.interfaces.BeneficiaryInterface
 import chats.cash.chats_field.network.datasource.RetrofitDataSource
 import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
 import chats.cash.chats_field.network.response.campaign.GetAllCampaignsResponse
+import chats.cash.chats_field.network.response.vendor.VendorOnboardingResponse
+import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineRepository
 import chats.cash.chats_field.utils.PreferenceUtil
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +43,20 @@ class FakeBeneficiaryRepository():BeneficiaryInterface {
 
     override suspend fun getAllCampaignForms(): Flow<NetworkResponse<List<CampaignForm>>> = flow {
         emit( NetworkResponse.Success(allCampaignSurvey))
+    }
+
+    override suspend fun OnboardBeneficiary(
+        beneficiary: Beneficiary,
+        isOnline: Boolean,
+    ): Flow<NetworkResponse<String>> =flow{
+
+    }
+
+    override suspend fun OnboardVendor(
+        beneficiary: Beneficiary,
+        isOnline: Boolean,
+    ): Flow<NetworkResponse<VendorOnboardingResponse.VendorResponseData>> = flow {
+
     }
 
 }

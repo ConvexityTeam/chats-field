@@ -8,37 +8,37 @@ import chats.cash.chats_field.network.response.organization.campaign.Campaign
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 
-class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
+class OfflineRepository(private val beneficiaryDao: BeneficiaryDao) {
 
     @WorkerThread
     suspend fun insert(beneficiary : Beneficiary){
-        beneficiaryDao?.insertBeneficiary(beneficiary)
+        beneficiaryDao.insertBeneficiary(beneficiary)
     }
 
     @WorkerThread
     suspend fun insertCampaign(campaign : List<Campaign>){
-        beneficiaryDao?.insertCampaigns(campaign)
+        beneficiaryDao.insertCampaigns(campaign)
     }
 
     @WorkerThread
     suspend fun insertAllCampaign(campaigns: List<ModelCampaign>){
-        beneficiaryDao?.deleteModelCampaigns()
-        beneficiaryDao?.insertAllCampaigns(campaigns)
+        beneficiaryDao.deleteModelCampaigns()
+        beneficiaryDao.insertAllCampaigns(campaigns)
     }
     @WorkerThread
     suspend fun insertAllCampaignForms(campaigns: List<CampaignForm>){
-        beneficiaryDao?.insertAllCampaignsForms(campaigns)
+        beneficiaryDao.insertAllCampaignsForms(campaigns)
     }
 
     @WorkerThread
     suspend fun insertAllCashForWork(campaigns: List<ModelCampaign>) {
-        beneficiaryDao?.insertAllCashForWork(campaigns)
+        beneficiaryDao.insertAllCashForWork(campaigns)
     }
 
 
     @WorkerThread
     suspend fun delete(beneficiary : Beneficiary){
-        beneficiaryDao?.deleteBeneficiary(beneficiary)
+        beneficiaryDao.deleteBeneficiary(beneficiary)
     }
 
 

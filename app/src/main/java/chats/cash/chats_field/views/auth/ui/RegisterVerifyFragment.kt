@@ -8,11 +8,14 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentRegisterVerifyBinding
 import chats.cash.chats_field.model.ModelCampaign
+import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.network.body.LocationBody
+import chats.cash.chats_field.network.repository.OFFLINE_RESPONSE
 import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
@@ -24,8 +27,12 @@ import chats.cash.chats_field.views.core.showSnackbarWithAction
 import chats.cash.chats_field.views.core.showSuccessSnackbar
 import com.google.gson.Gson
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
+import id.zelory.compressor.Compressor
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -129,28 +136,20 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
 
         binding.registerVerifyBtn.setOnClickListener {
+
             if (mViewModel.specialCase) {
                 if (profileImage != null) {
-                    if (internetAvailabilityChecker.currentInternetAvailabilityStatus.not()) {
-
+                    binding.registerVerifyBtn.isEnabled=false
+                    binding.verifyProgress.show()
                         postOnboardData()
-
-                    } else {
-                        postOnboardData()
-                    }
                 } else {
                     showToast("All fields are required")
                 }
             } else {
                 if (allFingers != null && profileImage != null) {
-                    if (!internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-                        if (registerViewModel.nfc == null) {
-
-                            postOnboardData()
-                        }
-                    } else {
-                        postOnboardData()
-                    }
+                    binding.registerVerifyBtn.isEnabled=false
+                    binding.verifyProgress.show()
+                    postOnboardData()
                 } else {
                     showToast("All fields are required")
                 }
@@ -170,28 +169,28 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
     }
 
-    private fun setObservers() {
-        registerViewModel.onboardUser.observe(viewLifecycleOwner) {
+    private fun setObservers() =lifecycleScope.launch{
+        registerViewModel.onboardBeneficiaryResponse.collect {
             when (it) {
-                is ApiResponse.Loading -> {
+                is NetworkResponse.Loading -> {
                     binding.verifyProgress.show()
                     binding. registerVerifyBtn.isEnabled = false
                 }
-                is ApiResponse.Success -> {
-
-                    campaign.ck8?.let {
-                        val encrypt = AES256Encrypt(it).encrypt(email)
-                        Timber.d(encrypt.toString())
-                        Timber.d(AES256Encrypt(it).decrypt(encrypt).toString())
-                        encrypt?.let { it1 -> openNFCCardScanner(false, it1) }
-                    }
-
+                is NetworkResponse.Success -> {
+                    binding.registerVerifyBtn.isEnabled=true
                     binding.verifyProgress.hide()
-                    binding.registerVerifyBtn.isEnabled = true
+                    val data = it.body
+
+                        campaign.ck8?.let {
+                            val encrypt = AES256Encrypt(it).encrypt(email)
+                            Timber.d(encrypt.toString())
+                            Timber.d(AES256Encrypt(it).decrypt(encrypt).toString())
+                            encrypt?.let { it1 -> openNFCCardScanner(false, it1) }
+                        }
                 }
-                is ApiResponse.Failure -> {
+                is NetworkResponse.SimpleError -> {
                     showSnackbarWithAction(
-                        it.message, this.requireView(), R.string.dismiss,
+                        it._message, binding.root, R.string.dismiss,
                         ContextCompat.getColor(requireContext(), R.color.design_default_color_error)
                     ) {
                         findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
@@ -199,35 +198,61 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     binding. verifyProgress.hide()
                     binding.registerVerifyBtn.isEnabled = false
                 }
+                is NetworkResponse.Error -> {
+                    showSnackbarWithAction(
+                        it.e.message?:"Error", binding.root, R.string.dismiss,
+                        ContextCompat.getColor(requireContext(), R.color.design_default_color_error)
+                    ) {
+                        findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
+                    }
+                    binding. verifyProgress.hide()
+                    binding.registerVerifyBtn.isEnabled = false
+                }
+                is NetworkResponse.Offline -> {
+                    campaign.ck8?.let {
+                        val encrypt = AES256Encrypt(it).encrypt(email)
+                        Timber.d(encrypt.toString())
+                        Timber.d(AES256Encrypt(it).decrypt(encrypt).toString())
+                        offlineViewModel.insert(beneficiary!!)
+                        showSnackbarWithAction(
+                            R.string.no_internet, binding.root, R.string.dismiss,
+                            ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+                        ) {
+                            encrypt?.let { it1 ->
+                                openNFCCardScanner(true, it1)
+                            }
+
+                        }
+                    }
+                }
             }
         }
 
 
     }
 
-    private fun postOnboardData() {
-        val mFirstName = firstName.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mLastName = lastname.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mEmail = email.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mLatitude = lat.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mLongitude = long.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mPhone = phone.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mPassword = password.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mNfc = nfc!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mStatus = 5.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mGender =
-            gender.lowercase(Locale.ROOT).toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mDate = date.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mOrganizationId =
-            organizationId.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mProfilePic = File(profileImage!!)
-        val locationBody =
-            LocationBody(coordinates = listOf(long.toDouble(), lat.toDouble()), country = "Nigeria")
-        val location = Gson().toJson(locationBody)
-        val mLocation = location.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mCampaign = mViewModel.campaign.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mNin = mViewModel.nin
-        val mPin = pin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+    private fun postOnboardData() =lifecycleScope.launch{
+        val profilePic =  async {  return@async Compressor.compress(requireContext(), File(profileImage!!)).path}
+        beneficiary = Beneficiary(
+            id = organizationId,
+            firstName = firstName,
+            lastName = lastname,
+            email = email,
+            phone = phone,
+            longitude = long.toDouble(),
+            latitude = lat.toDouble(),
+            password = password,
+            nfc = nfc!!,
+            profilePic =profilePic.await(),
+            gender = gender,
+            date = date,
+            campaignId = campaign.id.toString(),
+            pin = pin,
+            nin = mViewModel.nin,
+            isSpecialCase = mViewModel.specialCase,
+            type = BENEFICIARY_TYPE
+
+        )
 
         val mFingers = ArrayList<File>()
 
@@ -240,7 +265,12 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         }
         val prints = ArrayList<MultipartBody.Part>()
         mFingers.forEachIndexed { _, f ->
-            val mBody = ProgressRequestBody(f, "image/jpg", this)
+            val mBody = ProgressRequestBody(f, "image/jpg", object:ImageUploadCallback{
+                override fun onProgressUpdate(percentage: Int) {
+
+                }
+
+            })
             val finger = MultipartBody.Part.createFormData(
                 "fingerprints",
                 f.absolutePath.substringAfterLast("/"),
@@ -248,24 +278,6 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
             )
             prints.add(finger)
         }
-        beneficiary = Beneficiary()
-        beneficiary!!.type = BENEFICIARY_TYPE
-        beneficiary!!.firstName = firstName
-        beneficiary!!.lastName = lastname
-        beneficiary!!.campaignId = campaign.id.toString()
-        beneficiary!!.email = email
-        beneficiary!!.phone = phone
-        beneficiary!!.password = password
-        beneficiary!!.gender = gender.lowercase()
-        beneficiary!!.date = date
-        beneficiary!!.latitude = lat.toDouble()
-        beneficiary!!.longitude = long.toDouble()
-        beneficiary!!.nfc = nfc!!
-        beneficiary!!.profilePic = profileImage!!
-        beneficiary!!.isSpecialCase = mViewModel.specialCase
-        beneficiary!!.nin = mViewModel.nin
-        beneficiary!!.pin = pin
-        beneficiary!!.id = organizationId
         if (!mViewModel.specialCase) {
             beneficiary!!.leftThumb =
                 writeBitmapToFile(requireContext(), allFingers!![0]).absolutePath
@@ -281,66 +293,12 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                 writeBitmapToFile(requireContext(), allFingers!![5]).absolutePath
         }
 
-        if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-            if (mViewModel.specialCase) {
-                registerViewModel.onboardSpecialUser(
-                    organizationId.toString(),
-                    firstName = mFirstName,
-                    lastName = mLastName,
-                    email = mEmail,
-                    phone = mPhone,
-                    password = mPassword,
-                    lat = mLatitude,
-                    long = mLongitude,
-                    nfc = mNfc,
-                    status = mStatus,
-                    profile_pic = mProfilePic,
-                    mGender = mGender,
-                    mDate = mDate,
-                    location = mLocation,
-                    campaign = mCampaign,
-                    nin = mNin,
-                    pin = mPin
-                )
-            } else {
-                registerViewModel.onboardUser(
-                    organizationId.toString(),
-                    firstName = mFirstName,
-                    lastName = mLastName,
-                    email = mEmail,
-                    phone = mPhone,
-                    password = mPassword,
-                    lat = mLatitude,
-                    long = mLongitude,
-                    nfc = mNfc,
-                    status = mStatus,
-                    profile_pic = mProfilePic,
-                    prints = prints,
-                    mGender = mGender,
-                    mDate = mDate,
-                    location = mLocation,
-                    campaign = mCampaign,
-                    pin = mPin
-                )
-            }
-        } else {
 
-            campaign.ck8?.let {
-                val encrypt = AES256Encrypt(it).encrypt(email)
-                Timber.d(encrypt.toString())
-                Timber.d(AES256Encrypt(it).decrypt(encrypt).toString())
-                offlineViewModel.insert(beneficiary!!)
-                showSnackbarWithAction(
-                    R.string.no_internet, this.requireView(), R.string.dismiss,
-                    ContextCompat.getColor(requireContext(), R.color.colorPrimary)
-                ) {
-                    encrypt?.let { it1 ->
-                        openNFCCardScanner(true, it1)
-                    }
+        registerViewModel.onboardBeneficiary(
+            beneficiary!!,internetAvailabilityChecker.currentInternetAvailabilityStatus,
+        )
 
-                }
-            }
-        }
+
     }
 
     override fun onProgressUpdate(percentage: Int) {

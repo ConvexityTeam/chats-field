@@ -54,7 +54,7 @@ fun showSuccessSnackbar(text: String, root: View,
 
 fun showErrorSnackbar(text: Int, root: View,
                         color: Int? = ContextCompat.getColor(root.context, R.color.design_default_color_error),){
-    val snackbar = Snackbar.make(root,root.context.getString(text), Snackbar.LENGTH_INDEFINITE)
+    val snackbar = Snackbar.make(root,root.context.getString(text), Snackbar.LENGTH_SHORT)
 
     color?.let {
         snackbar.setBackgroundTint(it)

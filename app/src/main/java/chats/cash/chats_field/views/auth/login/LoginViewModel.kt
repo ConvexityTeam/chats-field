@@ -10,6 +10,7 @@ import chats.cash.chats_field.network.repository.BeneficiaryRepository
 import chats.cash.chats_field.network.response.login.Data
 import chats.cash.chats_field.utils.ApiResponse
 import chats.cash.chats_field.utils.PreferenceUtil
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -31,8 +32,15 @@ class LoginViewModel(private val repository: NetworkRepository,
                     preferenceUtil.setNGO(data.user.associatedOrganisations.first().OrganisationId, "")
                     preferenceUtil.setNGOToken("Bearer " + data.token)
                     _uiState.postValue(LoginState.Success(data))
-                    beneficiaryRepository.getAllCampaigns()
-                    beneficiaryRepository.getAllCampaignForms()
+                    viewModelScope.launch {
+                        delay(1000)
+                        val task = viewModelScope.launch {
+                            beneficiaryRepository.getAllCampaigns()
+                        }.join()
+                        val task2 = viewModelScope.launch {
+                            beneficiaryRepository.getAllCampaignForms()
+                        }.join()
+                    }
                 }
             }
         }

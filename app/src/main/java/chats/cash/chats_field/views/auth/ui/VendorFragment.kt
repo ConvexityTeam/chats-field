@@ -4,9 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.navigateUp
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentVendorBinding
+import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
@@ -15,8 +19,13 @@ import chats.cash.chats_field.utils.Utils.toCountryCode
 import chats.cash.chats_field.views.auth.login.LoginDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import chats.cash.chats_field.views.base.BaseFragment
+import chats.cash.chats_field.views.core.showSnackbarWithAction
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -64,22 +73,39 @@ class VendorFragment : BaseFragment() {
     }
 
     private fun setObservers() {
-        registerViewModel.vendorOnboardingState.observe(viewLifecycleOwner) {
-            when (it) {
-                is RegisterViewModel.VendorOnboardingState.Error -> {
-                    binding.vendorProgress.hide()
-                    showToast(it.errorMessage)
-                    binding.vendorNextButton.isEnabled = true
-                }
-                RegisterViewModel.VendorOnboardingState.Loading -> {
-                    binding.vendorProgress.show()
-                    binding.vendorNextButton.isEnabled = false
-                }
-                RegisterViewModel.VendorOnboardingState.Success -> {
-                    binding.vendorProgress.hide()
-                    binding.vendorNextButton.isEnabled = true
-                    showToast("Success")
-                    findNavController().navigateUp()
+        lifecycleScope.launch(Dispatchers.Main) {
+            registerViewModel.onboardVendorResponse.cancellable().collect {
+                when (it) {
+
+                    is NetworkResponse.Error -> {
+                        binding.vendorProgress.hide()
+                        showToast(it._message)
+                        binding.vendorNextButton.isEnabled = true
+                    }
+                    is NetworkResponse.Loading -> {
+                        binding.vendorProgress.show()
+                        binding.vendorNextButton.isEnabled = false
+                    }
+                    is NetworkResponse.Offline -> {
+                        showSnackbarWithAction(
+                            R.string.no_internet, binding.root, R.string.dismiss,
+                            ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+                        ) {
+                            findNavController().navigateUp()
+
+                        }
+                    }
+                    is NetworkResponse.SimpleError -> {
+                        binding.vendorProgress.hide()
+                        showToast(it._message)
+                        binding.vendorNextButton.isEnabled = true
+                    }
+                    is NetworkResponse.Success -> {
+                        binding.vendorProgress.hide()
+                        binding.vendorNextButton.isEnabled = true
+                        showToast("Success")
+                        findNavController().navigateUp()
+                    }
                 }
             }
         }
@@ -156,32 +182,17 @@ class VendorFragment : BaseFragment() {
         beneficiary.phone = phone.toCountryCode()
         beneficiary.password = password
         beneficiary.pin = pin
+        beneficiary.latitude =preferenceUtil.getLatLong().first
+        beneficiary.longitude =preferenceUtil.getLatLong().second
         beneficiary.bvn = bvn
         beneficiary.firstName = firstName
         beneficiary.lastName = lastName
-//        beneficiary.organizationId = PrefUtils.getNGOId()
         beneficiary.type = VENDOR_TYPE
         beneficiary.address = address
         beneficiary.country = country
         beneficiary.state = state
 
-        if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-            registerViewModel.vendorOnboarding(
-                businessName = businessName,
-                email = email,
-                phone = phone.toCountryCode(),
-                firstName = firstName,
-                lastName = lastName,
-                address = address,
-                country = country,
-                state = state,
-                coordinates = listOf(preferenceUtil.getLatLong().first, preferenceUtil.getLatLong().second)
-            )
-        } else {
-            offlineViewModel.insert(beneficiary)
-            showToast(getString(R.string.no_internet))
-            findNavController().navigateUp()
-        }
+       registerViewModel.vendorOnboarding(beneficiary,internetAvailabilityChecker.currentInternetAvailabilityStatus)
     }
 
     private fun openLogin(isCancelable: Boolean = true) {
