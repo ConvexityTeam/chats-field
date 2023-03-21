@@ -34,7 +34,6 @@ class RegisterViewModel(
     private val beneficiaryRepository: BeneficiaryRepository,
     offlineRepository: OfflineRepository,
 ) : ViewModel() {
-    val getCampaigns = offlineRepository.getAllCampaigns(type = "campaign")
     var allFinger: ArrayList<Bitmap>? = null
     var profileImage: String? = null
     var nfc: String? = null
@@ -72,13 +71,7 @@ class RegisterViewModel(
     }
 
     fun getAllCampaigns2() = viewModelScope.launch{
-        val allCampaigns =  beneficiaryRepository.getAllCampaigns()
-        allCampaigns.collect {
-
-            if(it is NetworkResponse.Success){
-                Timber.v(it.body.toString())
-            }
-        }
+       beneficiaryRepository.getAllCampaigns()
     }
 
     var specialCase = false

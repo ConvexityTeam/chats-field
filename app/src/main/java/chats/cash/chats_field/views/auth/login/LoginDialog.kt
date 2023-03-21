@@ -90,9 +90,6 @@ class LoginDialog : BottomSheetDialogFragment() {
                     loginButton.isInvisible = true
                 }
                 is LoginViewModel.LoginState.Success -> {
-                    val data = it.result
-                    preferenceUtil.setNGO(data.user.associatedOrganisations.first().OrganisationId, "")
-                    preferenceUtil.setNGOToken("Bearer " + data.token)
                     setFragmentResult(FRAGMENT_LOGIN_RESULT_KEY, bundleOf(LOGIN_BUNDLE_KEY to true))
                     dismiss()
                     showToast("Login successful")

@@ -25,6 +25,7 @@ import chats.cash.chats_field.views.core.showSuccessSnackbar
 import com.google.gson.Gson
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -182,10 +183,6 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                         val encrypt = AES256Encrypt(it).encrypt(email)
                         Timber.d(encrypt.toString())
                         Timber.d(AES256Encrypt(it).decrypt(encrypt).toString())
-                        showSuccessSnackbar(
-                            R.string.text_user_onboarded_success,
-                            this.requireView()
-                        )
                         encrypt?.let { it1 -> openNFCCardScanner(false, it1) }
                     }
 
@@ -356,7 +353,12 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         bottomSheetDialogFragment.isCancelable = false
         this.setFragmentResultListener(NFC_REQUEST_KEY) { string, bundle ->
             findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
-            Timber.v("On Result")
+            if(!isOffline){
+                showSuccessSnackbar(
+                    R.string.text_user_onboarded_success,
+                    binding.root
+                )
+            }
         }
         bottomSheetDialogFragment.show(
             parentFragmentManager.beginTransaction(),

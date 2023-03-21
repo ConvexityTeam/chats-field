@@ -5,9 +5,7 @@ import androidx.lifecycle.LiveData
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.campaignform.CampaignForm
 import chats.cash.chats_field.network.response.organization.campaign.Campaign
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 
 class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
@@ -61,12 +59,11 @@ class OfflineRepository(private val beneficiaryDao: BeneficiaryDao?) {
         return beneficiaryDao!!.getAllCampaignForms()
     }
 
-    suspend fun deleteAllTables() {
-        coroutineScope {
+    suspend fun deleteAllTables()= CoroutineScope(Dispatchers.IO).launch {
             val del1Def = async { beneficiaryDao?.deleteCampaigns() }
             val del2Def = async { beneficiaryDao?.deleteModelCampaigns() }
             val del3Def = async { beneficiaryDao?.deleteBeneficiaries() }
             listOf(del1Def, del2Def, del3Def).awaitAll()
-        }
+
     }
 }
