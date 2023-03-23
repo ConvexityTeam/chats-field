@@ -4,7 +4,10 @@ import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.campaignform.AllCampaignFormResponse
 import chats.cash.chats_field.model.campaignform.CampaignForm
 import chats.cash.chats_field.network.NetworkResponse
+import chats.cash.chats_field.network.response.RegisterResponse
 import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
+import chats.cash.chats_field.network.response.vendor.VendorOnboardingResponse
+import chats.cash.chats_field.offline.Beneficiary
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -41,4 +44,30 @@ interface BeneficiaryInterface {
      */
     suspend fun getAllCampaignForms(
     ): Flow<NetworkResponse<List<CampaignForm>>>
+
+    /**
+     * onboards a new beneficiary to the database
+     * @param beneficiary the beneficiary to be onboarded, this checks if its a special case or not
+     * and class the appropriate endpoint
+     * @return Flow<NetworkResponse<String>> which can be collected and observe for
+     * loading, success or failure, the returned string is the new user id
+     */
+    suspend fun OnboardBeneficiary(
+        beneficiary: Beneficiary,
+        isOnline:Boolean
+    ): Flow<NetworkResponse<String>>
+
+    /**
+     * onboards a new beneficiary to the database
+     * @param beneficiary the beneficiary to be onboarded, this checks if its a special case or not
+     * and class the appropriate endpoint
+     * @return Flow<NetworkResponse<String>> which can be collected and observe for
+     * loading, success or failure, the returned string is the new user id
+     */
+    suspend fun OnboardVendor(
+        beneficiary: Beneficiary,
+        isOnline:Boolean
+    ): Flow<NetworkResponse<VendorOnboardingResponse.VendorResponseData>>
+
+
 }

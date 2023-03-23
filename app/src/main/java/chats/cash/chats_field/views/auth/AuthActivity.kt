@@ -8,53 +8,57 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.ActivityAuthBinding
-import chats.cash.chats_field.network.body.LocationBody
+import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
+import chats.cash.chats_field.utils.ChatsFieldConstants.BENEFICIARY_TYPE
 import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
 import chats.cash.chats_field.utils.Utils.checkAppPermission
 import chats.cash.chats_field.utils.location.LocationManager
 import chats.cash.chats_field.utils.permissions.POST_NOTIFICATION_PERMISSION_REQUEST_CODE
 import chats.cash.chats_field.utils.permissions.RequestNotificationPermission
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
+import chats.cash.chats_field.views.core.showErrorSnackbar
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.gson.Gson
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import com.treebo.internetavailabilitychecker.InternetConnectivityListener
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.collect
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import java.io.File
+import java.io.FileNotFoundException
+import kotlin.coroutines.resume
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @InternalCoroutinesApi
 class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback {
 
-    private lateinit var binding: ActivityAuthBinding
+    private  var _binding: ActivityAuthBinding?=null
+    private  val binding: ActivityAuthBinding
+        get() = _binding!!
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private val mainViewModel by viewModel<RegisterViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
-    private var currentBeneficiary = Beneficiary()
     private val preferenceUtil: PreferenceUtil by inject()
 
     private val cancellationTokenSource by lazy { CancellationTokenSource() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAuthBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        _binding = ActivityAuthBinding.inflate(layoutInflater)
+        setContentView(_binding!!.root)
 
         this.checkAppPermission()
 
@@ -73,50 +77,12 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
 
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
         if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-            startUpload()
-        }
-        internetAvailabilityChecker.addInternetConnectivityListener(this)
-        mainViewModel.onboardUser.observe(this) {
-            when (it) {
-                is ApiResponse.Loading -> {
-                    if (binding.pendingUploadTextView.isVisible) {
-                        binding.pendingProgress.show()
-                    }
-                }
-                is ApiResponse.Success -> {
-                    binding.pendingProgress.hide()
-                    try {
-                        File(currentBeneficiary.leftLittle).delete()
-                        File(currentBeneficiary.leftIndex).delete()
-                        File(currentBeneficiary.leftThumb).delete()
-                        File(currentBeneficiary.rightLittle).delete()
-                        File(currentBeneficiary.rightIndex).delete()
-                        File(currentBeneficiary.rightThumb).delete()
-                        File(currentBeneficiary.profilePic).delete()
-                    } catch (t: Throwable) {
-
-                    }
-                    offlineViewModel.delete(beneficiary = currentBeneficiary)
-                }
-                is ApiResponse.Failure -> {
-                    binding.pendingProgress.hide()
-                    if (it.code == 400) {
-                        try {
-                            File(currentBeneficiary.leftLittle).delete()
-                            File(currentBeneficiary.leftIndex).delete()
-                            File(currentBeneficiary.leftThumb).delete()
-                            File(currentBeneficiary.rightLittle).delete()
-                            File(currentBeneficiary.rightIndex).delete()
-                            File(currentBeneficiary.rightThumb).delete()
-                            File(currentBeneficiary.profilePic).delete()
-                        } catch (t: Throwable) {
-
-                        }
-                        offlineViewModel.delete(beneficiary = currentBeneficiary)
-                    }
-                }
+            lifecycleScope.launch {
+                startUpload()
             }
         }
+        internetAvailabilityChecker.addInternetConnectivityListener(this)
+
 
         offlineViewModel.getBeneficiaries.observe(this) {
             val count = it.count()
@@ -124,7 +90,9 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             if (count > 0) {
                 binding.pendingUploadTextView.setOnClickListener {
                     if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-                        startUpload()
+                        lifecycleScope.launch {
+                            startUpload()
+                        }
                     } else {
                         this.toast("Internet not available.")
                     }
@@ -140,7 +108,6 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     override fun onInternetConnectivityChanged(isConnected: Boolean) {
         if (isConnected) {
             Timber.v("Internet connectivity available")
-            startUpload()
         }
     }
 
@@ -172,142 +139,119 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         }
     }
 
-    private fun startUpload() {
-        offlineViewModel.getBeneficiaries.observe(this) {
-            if (it.isNotEmpty()) {
-                Timber.v("List is not empty")
-                if (currentBeneficiary != it.first()) {
-                    Timber.v("Initial = $currentBeneficiary")
-                    currentBeneficiary = it.first()
-                    Timber.v("Current = $currentBeneficiary")
-                    if (currentBeneficiary.type == VENDOR_TYPE) {
-                        registerVendor(currentBeneficiary)
-                    } else {
-                        postOnboardData(beneficiary = currentBeneficiary)
+
+    private suspend fun uploadBeneficiaryAsync(beneficiary: Beneficiary):Boolean=suspendCancellableCoroutine { continuation ->
+        mainViewModel.onboardBeneficiary(beneficiary,internetAvailabilityChecker.currentInternetAvailabilityStatus)
+        try {
+            CoroutineScope(Dispatchers.Main).launch {
+                mainViewModel.onboardBeneficiaryResponse.cancellable().collect {
+                    handleUploadResponse(it,beneficiary,continuation,this)
+
+                }
+            }
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+        }
+
+    }
+
+        private var uploading=false
+    private var index = 0
+
+    private suspend fun uploadUser(beneficiary: Beneficiary) {
+        Timber.v("index $index")
+        when (beneficiary.type) {
+            VENDOR_TYPE -> {
+                registerVendor(beneficiary)
+                index += 1
+            }
+            BENEFICIARY_TYPE -> {
+                uploadBeneficiaryAsync(beneficiary)
+                index += 1
+            }
+        }
+
+    }
+    private suspend fun startUpload() {
+        offlineViewModel.getBeneficiaries.observe(this) {list ->
+            if(!uploading) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    uploading = true
+                    while(index <=(list.size-1)){
+                            val beneficiary = list[index]
+                            uploadUser(beneficiary)
                     }
-                } else {
-                    if (currentBeneficiary.type == VENDOR_TYPE) {
-                        registerVendor(currentBeneficiary)
-                    } else {
-                        postOnboardData(beneficiary = currentBeneficiary)
-                    }
+                    uploading = false
                 }
             }
         }
     }
 
-    private fun postOnboardData(beneficiary: Beneficiary) {
-        val mFirstName =
-            beneficiary.firstName.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mLastName =
-            beneficiary.lastName.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mEmail = beneficiary.email.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mLatitude =
-            beneficiary.latitude.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mLongitude = beneficiary.longitude.toString()
-            .toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mPhone = beneficiary.phone.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mPassword =
-            beneficiary.password.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mNfc = beneficiary.nfc.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mStatus = 0.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mGender = beneficiary.gender.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mDate = beneficiary.date.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-//        val mOrganizationId = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),beneficiary.id.toString())
-        val mProfilePic = beneficiary.profilePic.toFile()
-        val profilePicBody = ProgressRequestBody(beneficiary.profilePic.toFile(), "image/jpg", this)
 
-        val locationBody =
-            LocationBody(coordinates = listOf(beneficiary.longitude, beneficiary.latitude),
-                country = "Nigeria")
-        val location = Gson().toJson(locationBody)
-        val mLocation = location.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mCampaign =
-            beneficiary.campaignId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mNin = beneficiary.nin
-        val mPin =
-            beneficiary.pin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mFingers = ArrayList<File>()
-        if (!beneficiary.isSpecialCase) {
-            mFingers.add(beneficiary.leftThumb.toFile())
-            mFingers.add(beneficiary.leftIndex.toFile())
-            mFingers.add(beneficiary.leftLittle.toFile())
-            mFingers.add(beneficiary.rightThumb.toFile())
-            mFingers.add(beneficiary.rightIndex.toFile())
-            mFingers.add(beneficiary.rightLittle.toFile())
+
+    private suspend fun registerVendor(beneficiary: Beneficiary):Boolean=suspendCancellableCoroutine { continuation ->
+        mainViewModel.vendorOnboarding(beneficiary,
+            internetAvailabilityChecker.currentInternetAvailabilityStatus
+        )
+        try {
+            CoroutineScope(Dispatchers.Main).launch {
+                mainViewModel.onboardVendorResponse.cancellable().collect {
+                    handleUploadResponse(it,beneficiary,continuation,this)
+                }
+            }
+        }
+        catch (e:Exception){
+            e.printStackTrace()
         }
 
-        val prints = ArrayList<MultipartBody.Part>()
-
-        mFingers.forEachIndexed { _, f ->
-            val mBody = ProgressRequestBody(f, "image/jpg", this)
-            val finger = MultipartBody.Part.createFormData(
-                "fingerprints",
-                f.absolutePath.substringAfterLast("/"),
-                mBody
-            )
-            prints.add(finger)
-        }
-
-        if (beneficiary.isSpecialCase) {
-            mainViewModel.onboardSpecialUser(
-                preferenceUtil.getNGOId() .toString(),
-                firstName = mFirstName,
-                lastName = mLastName,
-                email = mEmail,
-                phone = mPhone,
-                password = mPassword,
-                lat = mLatitude,
-                long = mLongitude,
-                nfc = mNfc,
-                status = mStatus,
-                profile_pic = mProfilePic,
-                mGender = mGender,
-                mDate = mDate,
-                location = mLocation,
-                campaign = mCampaign,
-                pin = mPin,
-                nin = mNin
-            )
-        } else {
-            mainViewModel.onboardUser(
-                preferenceUtil.getNGOId().toString(),
-                firstName = mFirstName,
-                lastName = mLastName,
-                email = mEmail,
-                phone = mPhone,
-                password = mPassword,
-                lat = mLatitude,
-                long = mLongitude,
-                nfc = mNfc,
-                status = mStatus,
-                profile_pic = mProfilePic,
-                prints = prints,
-                mGender = mGender,
-                mDate = mDate,
-                location = mLocation,
-                campaign = mCampaign,
-                pin = mPin
-            )
-        }
     }
 
-    private fun registerVendor(currentBeneficiary: Beneficiary) {
-        mainViewModel.vendorOnboarding(
-            businessName = currentBeneficiary.storeName,
-            email = currentBeneficiary.email,
-            phone = currentBeneficiary.phone,
-//            password = currentBeneficiary.password,
-//            pin = currentBeneficiary.pin.toString(),
-//            bvn = currentBeneficiary.bvn,
-            firstName = currentBeneficiary.firstName,
-            lastName = currentBeneficiary.lastName,
-            address = currentBeneficiary.address,
-            country = currentBeneficiary.country,
-            state = currentBeneficiary.state,
-            coordinates = listOf(preferenceUtil.getLatLong().first,
-                preferenceUtil.getLatLong().second)
-        )
+    private fun handleUploadResponse(it:NetworkResponse<Any>,beneficiary: Beneficiary,
+                                             continuation:CancellableContinuation<Boolean>,
+                                             job:CoroutineScope){
+        Timber.v("upoading $beneficiary $it")
+        binding.pendingProgress.hide()
+        if (it is NetworkResponse.Success) {
+            Timber.v("success")
+            offlineViewModel.delete(beneficiary)
+            continuation.resume(true)
+            job.cancel()
+        } else if (it is NetworkResponse.Error) {
+            showErrorSnackbar(R.string.upload_failed, binding.root)
+            Timber.v((it)._message)
+            if (it._message.contains("400")) {
+                Timber.v("deleting")
+                offlineViewModel.delete(beneficiary)
+            }
+            if (it.e is FileNotFoundException) {
+                offlineViewModel.delete(beneficiary)
+                showErrorSnackbar(R.string.file_deleted, binding.root)
+            }
+            continuation.resume(false)
+            job.cancel()
+        } else if (it is NetworkResponse.SimpleError) {
+            showErrorSnackbar(R.string.upload_failed, binding.root)
+            Timber.v((it)._message)
+            if (it._message.contains("400")) {
+                Timber.v("deleting")
+                offlineViewModel.delete(beneficiary)
+            } else {
+                when (it.code) {
+                    in 400..499 -> {
+                        Timber.v("deleting")
+                        offlineViewModel.delete(beneficiary)
+                    }
+                }
+            }
+            continuation.resume(false)
+            job.cancel()
+        } else {
+            if (binding.pendingUploadTextView.isVisible) {
+                binding.pendingProgress.show()
+            }
+        }
+
     }
 
     override fun onProgressUpdate(percentage: Int) {
@@ -349,10 +293,14 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     }
 
     fun hidePendingUpload() {
-        binding.pendingUploadTextView.hide()
+        _binding?.let {
+            binding.pendingUploadTextView.hide()
+        }
     }
 
     fun showPendingUpload() {
-        binding.pendingUploadTextView.show()
+        _binding?.let {
+            binding.pendingUploadTextView.show()
+        }
     }
 }

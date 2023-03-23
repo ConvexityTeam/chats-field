@@ -129,4 +129,6 @@
     <string name="photo_capture_failed">Photo capture failed</string>
     <string name="image_saved">Image saved</string>
     <string name="blink_eyes">Now blink your eyes</string>
+    <string name="file_deleted">A required file wasn\'t found or has been deleted, please reonboard the beneficiary</string>
+    <string name="upload_failed">Upload Failed</string>
 </resources>

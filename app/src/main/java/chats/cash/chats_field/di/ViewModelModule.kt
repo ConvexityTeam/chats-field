@@ -15,7 +15,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel {
-        RegisterViewModel(get(), get(), get())
+        RegisterViewModel(get(), get())
     }
     viewModel {
         OfflineViewModel(get(),get())
@@ -30,6 +30,6 @@ val viewModelModule = module {
             campaignId = campaignId)
     }
     viewModel { TaskDetailsViewModel(repository = get()) }
-    viewModel { LoginViewModel(repository = get()) }
+    viewModel { LoginViewModel(repository = get(),get(), get()) }
     viewModel { OnboardingViewModel(repository = get()) }
 }

@@ -1,15 +1,17 @@
 package chats.cash.chats_field.offline
 
+import android.graphics.Bitmap
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
 
 @Entity(tableName = "beneficiary")
 data class Beneficiary(
-    @PrimaryKey(autoGenerate = true)
     var id : Int = 0,
     var firstName : String = "",
     var lastName :String = "",
+    @PrimaryKey(autoGenerate = false)
     var email : String = "",
     var phone : String = "",
     var address: String = "",
@@ -35,5 +37,7 @@ data class Beneficiary(
     var pin : String = "",
     var nin : String = "",
     var isSpecialCase : Boolean = false,
-    var type : Int = VENDOR_TYPE
+    var type : Int = VENDOR_TYPE,
+    @Ignore
+    var allFingers:ArrayList<Bitmap>?=null
 )

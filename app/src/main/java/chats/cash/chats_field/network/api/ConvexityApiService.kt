@@ -3,10 +3,7 @@ package chats.cash.chats_field.network.api
 import chats.cash.chats_field.model.NFCModel
 import chats.cash.chats_field.model.campaignform.AllCampaignFormResponse
 import chats.cash.chats_field.network.body.login.LoginBody
-import chats.cash.chats_field.network.response.BaseResponse
-import chats.cash.chats_field.network.response.NfcUpdateResponse
-import chats.cash.chats_field.network.response.RegisterResponse
-import chats.cash.chats_field.network.response.UserDetailsResponse
+import chats.cash.chats_field.network.response.*
 import chats.cash.chats_field.network.response.beneficiary_onboarding.Beneficiary
 import chats.cash.chats_field.network.response.campaign.CampaignByOrganizationModel
 import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
@@ -20,6 +17,7 @@ import chats.cash.chats_field.network.response.organization.campaign.CampaignRes
 import chats.cash.chats_field.network.response.progress.PostCompletionBody
 import chats.cash.chats_field.network.response.progress.SubmitProgressModel
 import chats.cash.chats_field.network.response.tasks.GetTasksModel
+import chats.cash.chats_field.network.response.vendor.VendorOnboardingResponse
 import chats.cash.chats_field.views.beneficiary_onboarding.model.AddBeneficiaryResponse
 import chats.cash.chats_field.views.cashForWork.model.TaskDetailsResponse
 import kotlinx.coroutines.Deferred
@@ -53,6 +51,30 @@ interface ConvexityApiService {
         @Part("pin") pin: RequestBody,
         @Header("Authorization") authorization: String
     ): Deferred<RegisterResponse>
+
+
+    @Multipart
+    @POST("ngos/{organisation_id}/beneficiaries")
+    fun onboardBeneficiary(
+        @Path("organisation_id") organisationId: String,
+        @Part("first_name") firstName: RequestBody,
+        @Part("last_name") lastName: RequestBody,
+        @Part("email") email: RequestBody,
+        @Part("phone") phone: RequestBody,
+        @Part("password") password: RequestBody,
+        @Part("latitude") lat: RequestBody,
+        @Part("longitude") long: RequestBody,
+        @Part("location") location: RequestBody,
+        @Part("nfc") nfc: RequestBody,
+        @Part("role") status: RequestBody,
+        @Part profile_pic: MultipartBody.Part,
+        @Part prints: ArrayList<MultipartBody.Part>,
+        @Part("gender") gender: RequestBody,
+        @Part("dob") date: RequestBody,
+        @Part("campaign") campaign: RequestBody,
+        @Part("pin") pin: RequestBody,
+        @Header("Authorization") authorization: String
+    ): RegisterResponse
 
     @Multipart
     @Deprecated("")
@@ -99,10 +121,11 @@ interface ConvexityApiService {
         @Part("campaign") campaign: RequestBody,
         @Part("pin") pin: RequestBody,
         @Header("Authorization") authorization: String
-    ): Response<RegisterResponse>
+    ): RegisterResponse
 
     @POST("organisations/{organisation_id}/vendors")
     @FormUrlEncoded
+    @Deprecated("this is wrong, as it resturns Any instead of returning ", replaceWith =  ReplaceWith("VendorOnboarding2"))
     suspend fun vendorOnboarding(
         @Path("organisation_id") organisationId: Int,
         @Field("first_name") firstName: String,
@@ -116,6 +139,22 @@ interface ConvexityApiService {
         @Field("location") location: String,
         @Header("Authorization") authorization: String
     ): BaseResponse<Any>
+
+    @POST("organisations/{organisation_id}/vendors")
+    @FormUrlEncoded
+    suspend fun vendorOnboarding2(
+        @Path("organisation_id") organisationId: Int,
+        @Field("first_name") firstName: String,
+        @Field("last_name") lastName: String,
+        @Field("email") email: String,
+        @Field("store_name") storeName: String,
+        @Field("country") country: String,
+        @Field("address") address: String,
+        @Field("phone") phone: String,
+        @Field("state") state: String,
+        @Field("location") location: String,
+        @Header("Authorization") authorization: String
+    ): VendorOnboardingResponse
 
     @POST("vendors/auth/{userId}")
     fun getUserDetails(
