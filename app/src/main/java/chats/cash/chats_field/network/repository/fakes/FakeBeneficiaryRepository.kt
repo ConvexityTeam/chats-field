@@ -31,9 +31,7 @@ class FakeBeneficiaryRepository():BeneficiaryInterface {
     val allCampaignSurvey = listOf(CampaignForm(1,allCampaigns,"2sec",1,2, emptyList(),"","2sec"))
 
     override suspend fun getAllCampaigns(): Flow<NetworkResponse<List<ModelCampaign>>> = flow{
-
             emit(NetworkResponse.Success(allCampaigns))
-
     }
 
 
