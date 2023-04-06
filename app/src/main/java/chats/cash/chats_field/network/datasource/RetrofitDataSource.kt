@@ -31,67 +31,76 @@ import java.util.*
 
 class RetrofitDataSource(
     private val api: ConvexityApiService,
-    private val preferenceUtil: PreferenceUtil,
-    private val uiText: UiText
-):BeneficiaryInterface {
-
-    private val unknownError =  uiText.getStringResource(R.string.an_unknown_error_occured)
+    private val unknownError: String,
+) : BeneficiaryInterface {
 
 
     override suspend fun getAllCampaigns(
-    ): Flow<NetworkResponse<List<ModelCampaign>>> =flow{
+        id: Int,
+        token: String,
+    ): Flow<NetworkResponse<List<ModelCampaign>>> = flow {
 
-        val response = api.getAllCampaigns(preferenceUtil.getNGOId().also { Timber.v(it.toString()) },
+        val response = api.getAllCampaigns(
+            id,
             null,
-            authorization = preferenceUtil.getNGOToken())
+            authorization = token
+        )
 
-        if(response.code.toString().startsWith("2")){
+        if (response.code.toString().startsWith("2")) {
             emit(NetworkResponse.Success(response.data))
-        }
-        else{
-            emit(NetworkResponse.SimpleError(response.message?:unknownError))
+        } else {
+            emit(NetworkResponse.SimpleError(response.message ?: unknownError))
         }
 
     }.catch {
-        emit(NetworkResponse.Error(it.message?:unknownError,it))
+        emit(NetworkResponse.Error(it.message ?: unknownError, it))
     }.onStart {
         emit(NetworkResponse.Loading())
     }
 
 
-    override suspend fun getCampaignSurvey(campaignId: Int): Flow<NetworkResponse<CampaignSurveyResponse.CampaignSurveyResponseData>> = flow {
+    override suspend fun getCampaignSurvey(
+        campaignId: Int,
+        ngoToken: String,
+    ): Flow<NetworkResponse<CampaignSurveyResponse.CampaignSurveyResponseData>> =
+        flow {
 
-        val response = api.getCampaignSurvey2(campaignId,
-            authorization = preferenceUtil.getNGOToken())
+            val response = api.getCampaignSurvey2(
+                campaignId,
+                authorization = ngoToken
+            )
 
-        if(response.code.toString().startsWith("2")){
-            emit(NetworkResponse.Success(response.campaignSurveyResponseData))
+            if (response.code.toString().startsWith("2")) {
+                emit(NetworkResponse.Success(response.campaignSurveyResponseData))
+            } else {
+                emit(NetworkResponse.SimpleError(response.message ?: unknownError))
+            }
+
+        }.catch {
+            emit(NetworkResponse.Error(it.message ?: unknownError, it))
+        }.onStart {
+            emit(NetworkResponse.Loading())
         }
-        else{
-            emit(NetworkResponse.SimpleError(response.message?:unknownError))
-        }
-
-    }.catch {
-        emit(NetworkResponse.Error(it.message?:unknownError,it))
-    }.onStart {
-        emit(NetworkResponse.Loading())
-    }
 
 
-    override suspend fun getAllCampaignForms(): Flow<NetworkResponse<List<CampaignForm>>> = flow {
-        val response =  api.getAllCampaignForms2(preferenceUtil.getNGOId(),
-            authorization = preferenceUtil.getNGOToken())
+    override suspend fun getAllCampaignForms(
+        ngoId: Int,
+        ngoToken: String,
+    ): Flow<NetworkResponse<List<CampaignForm>>> = flow {
+        val response = api.getAllCampaignForms2(
+            ngoId,
+            authorization = ngoToken
+        )
 
-        if(response.code.toString().startsWith("2")){
+        if (response.code.toString().startsWith("2")) {
             emit(NetworkResponse.Success(response.data))
-        }
-        else{
-            emit(NetworkResponse.SimpleError(response.message?:unknownError))
+        } else {
+            emit(NetworkResponse.SimpleError(response.message ?: unknownError))
         }
 
 
     }.catch {
-        emit(NetworkResponse.Error(it.message?:unknownError,it))
+        emit(NetworkResponse.Error(it.message ?: unknownError, it))
     }.onStart {
         emit(NetworkResponse.Loading())
     }
@@ -99,10 +108,12 @@ class RetrofitDataSource(
     override suspend fun OnboardBeneficiary(
         beneficiary: Beneficiary,
         isOnline: Boolean,
-    ): Flow<NetworkResponse<String>> =flow<NetworkResponse<String>> {
+        ngoId: Int, ngoToken: String,
+    ): Flow<NetworkResponse<String>> = flow<NetworkResponse<String>> {
         Timber.v(beneficiary.toString())
         beneficiary.apply {
-            val mFirstName = firstName.trim().toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val mFirstName =
+                firstName.trim().toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val mLastName = lastName.trim().toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val mEmail = email.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val mLatitude =
@@ -150,7 +161,7 @@ class RetrofitDataSource(
                 mFingers.add(beneficiary.rightIndex.toFile())
                 mFingers.add(beneficiary.rightLittle.toFile())
                 mFingers.forEachIndexed { _, f ->
-                    val imageBody = ProgressRequestBody(f, "image/jpg",  object:
+                    val imageBody = ProgressRequestBody(f, "image/jpg", object :
                         ImageUploadCallback {
                         override fun onProgressUpdate(percentage: Int) {
 
@@ -167,57 +178,55 @@ class RetrofitDataSource(
             }
 
 
-
-            val response = if(isSpecialCase){
+            val response = if (isSpecialCase) {
                 api.onboardSpecialBeneficiary(
-                    organisationId =id.toString(),
+                    organisationId = id.toString(),
                     firstName = mFirstName,
-                    lastName =mLastName,
-                    email =mEmail,
-                    phone =mPhone,
-                    password =mPassword,
-                    lat =mLatitude,
-                    long =mLongitude,
-                    location =mLocation,
-                    nfc =mNfc,
-                    status =mStatus,
+                    lastName = mLastName,
+                    email = mEmail,
+                    phone = mPhone,
+                    password = mPassword,
+                    lat = mLatitude,
+                    long = mLongitude,
+                    location = mLocation,
+                    nfc = mNfc,
+                    status = mStatus,
                     nin = mNin.toRequestBody("multipart/form-data".toMediaTypeOrNull()),
-                    profile_pic =image,
-                    gender =mGender,
-                    date =mDate,
-                    campaign =mCampaign,
-                    pin =mPin,
-                    authorization = preferenceUtil.getNGOToken()
+                    profile_pic = image,
+                    gender = mGender,
+                    date = mDate,
+                    campaign = mCampaign,
+                    pin = mPin,
+                    authorization = ngoToken
 
                 )
-            }
-            else{
+            } else {
                 api.onboardBeneficiary(
-                    organisationId =id.toString(),
+                    organisationId = id.toString(),
                     firstName = mFirstName,
-                    lastName =mLastName,
-                    email =mEmail,
-                    phone =mPhone,
-                    password =mPassword,
-                    lat =mLatitude,
-                    long =mLongitude,
-                    location =mLocation,
-                    nfc =mNfc,
-                    status =mStatus,
-                    profile_pic =image,
-                    gender =mGender,
-                    date =mDate,
-                    campaign =mCampaign,
-                    pin =mPin,
+                    lastName = mLastName,
+                    email = mEmail,
+                    phone = mPhone,
+                    password = mPassword,
+                    lat = mLatitude,
+                    long = mLongitude,
+                    location = mLocation,
+                    nfc = mNfc,
+                    status = mStatus,
+                    profile_pic = image,
+                    gender = mGender,
+                    date = mDate,
+                    campaign = mCampaign,
+                    pin = mPin,
                     prints = prints,
-                    authorization = preferenceUtil.getNGOToken()
+                    authorization = ngoToken
 
                 )
             }
 
-            if(response.code.toString().startsWith("2")){
+            if (response.code.toString().startsWith("2")) {
                 emit(NetworkResponse.Success(response.data))
-                if(!beneficiary.isSpecialCase){
+                if (!beneficiary.isSpecialCase) {
                     try {
                         File(beneficiary.leftLittle).delete()
                         File(beneficiary.leftIndex).delete()
@@ -226,24 +235,20 @@ class RetrofitDataSource(
                         File(beneficiary.rightIndex).delete()
                         File(beneficiary.rightThumb).delete()
                         File(beneficiary.profilePic).delete()
-                    }
-                    catch (e:Exception){
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
-            }
-            else if(response.code==401){
-                preferenceUtil.clearPreference()
+            } else if (response.code == 401) {
                 emit(NetworkResponse.SimpleError(response.message, code = response.code))
-            }
-            else{
+            } else {
                 Timber.v(response.toString())
                 emit(NetworkResponse.SimpleError(response.message, code = response.code))
             }
         }
     }.catch {
         Timber.v(it.toString())
-        emit(NetworkResponse.Error(it.message?:unknownError,it))
+        emit(NetworkResponse.Error(it.message ?: unknownError, it))
     }.onStart {
         emit(NetworkResponse.Loading())
     }
@@ -251,42 +256,46 @@ class RetrofitDataSource(
     override suspend fun OnboardVendor(
         beneficiary: Beneficiary,
         isOnline: Boolean,
-    ): Flow<NetworkResponse<VendorOnboardingResponse.VendorResponseData>>
-    =flow<NetworkResponse<VendorOnboardingResponse.VendorResponseData>> {
-        if (isOnline) {
-            beneficiary.apply {
-                val response = api.vendorOnboarding2(
-                    organisationId = preferenceUtil.getNGOId(),
-                    email = email,
-                    firstName = firstName.trim(),
-                    lastName = lastName.trim(),
-                    address = address.trim(),
-                    country = country.trim(),
-                    phone = phone.trim(),
-                    storeName = storeName,
-                    state = state.trim(),
-                    location = Gson().toJson(LocationBody(listOf(longitude, latitude), country)),
-                    authorization = preferenceUtil.getNGOToken()
-                )
+        ngoId: Int, ngoToken: String,
+    ): Flow<NetworkResponse<VendorOnboardingResponse.VendorResponseData>> =
+        flow<NetworkResponse<VendorOnboardingResponse.VendorResponseData>> {
+            if (isOnline) {
+                beneficiary.apply {
+                    val response = api.vendorOnboarding2(
+                        organisationId = ngoId,
+                        email = email,
+                        firstName = firstName.trim(),
+                        lastName = lastName.trim(),
+                        address = address.trim(),
+                        country = country.trim(),
+                        phone = phone.trim(),
+                        storeName = storeName,
+                        state = state.trim(),
+                        location = Gson().toJson(
+                            LocationBody(
+                                listOf(longitude, latitude),
+                                country
+                            )
+                        ),
+                        authorization = ngoToken
+                    )
 
-                if (response.code.toString().startsWith("2")) {
-                    emit(NetworkResponse.Success(response.response))
-                } else if (response.code == 401) {
-                    preferenceUtil.clearPreference()
-                    emit(NetworkResponse.SimpleError(response.message, code = response.code))
-                } else {
-                    emit(NetworkResponse.SimpleError(response.message, code = response.code))
+                    if (response.code.toString().startsWith("2")) {
+                        emit(NetworkResponse.Success(response.response))
+                    } else if (response.code == 401) {
+                        emit(NetworkResponse.SimpleError(response.message, code = response.code))
+                    } else {
+                        emit(NetworkResponse.SimpleError(response.message, code = response.code))
+                    }
                 }
+            } else {
+                emit(NetworkResponse.SimpleError("No internet connection"))
             }
+        }.catch {
+            emit(NetworkResponse.Error(it.message ?: unknownError, it))
+        }.onStart {
+            emit(NetworkResponse.Loading())
         }
-        else{
-            emit(NetworkResponse.SimpleError("No internet connection"))
-        }
-    }.catch {
-        emit(NetworkResponse.Error(it.message?:unknownError,it))
-    }.onStart {
-        emit(NetworkResponse.Loading())
-    }
 
 
 }

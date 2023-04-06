@@ -13,7 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface BeneficiaryInterface {
+interface BeneficiaryRepositoryInterface {
 
     /**
      * get all the campaigns for the organization that is signed in to the user
@@ -21,7 +21,6 @@ interface BeneficiaryInterface {
      * loading, success or failure
      */
     suspend fun getAllCampaigns(
-        id: Int, token: String,
     ): Flow<NetworkResponse<List<ModelCampaign>>>
 
     /**
@@ -31,7 +30,7 @@ interface BeneficiaryInterface {
      * loading, success or failure
      */
     suspend fun getCampaignSurvey(
-        campaignId: Int, ngoToken: String,
+        campaignId: Int,
     ): Flow<NetworkResponse<CampaignSurveyResponse.CampaignSurveyResponseData>>
 
 
@@ -43,7 +42,6 @@ interface BeneficiaryInterface {
      * loading, success or failure
      */
     suspend fun getAllCampaignForms(
-        ngoId: Int, ngoToken: String,
     ): Flow<NetworkResponse<List<CampaignForm>>>
 
     /**
@@ -56,7 +54,6 @@ interface BeneficiaryInterface {
     suspend fun OnboardBeneficiary(
         beneficiary: Beneficiary,
         isOnline: Boolean,
-        ngoId: Int, ngoToken: String,
     ): Flow<NetworkResponse<String>>
 
     /**
@@ -69,7 +66,6 @@ interface BeneficiaryInterface {
     suspend fun OnboardVendor(
         beneficiary: Beneficiary,
         isOnline: Boolean,
-        ngoId: Int, ngoToken: String,
     ): Flow<NetworkResponse<VendorOnboardingResponse.VendorResponseData>>
 
 

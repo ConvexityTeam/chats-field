@@ -5,6 +5,7 @@ import chats.cash.chats_field.model.campaignform.AllCampaignFormResponse
 import chats.cash.chats_field.model.campaignform.CampaignForm
 import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.network.api.interfaces.BeneficiaryInterface
+import chats.cash.chats_field.network.api.interfaces.BeneficiaryRepositoryInterface
 import chats.cash.chats_field.network.datasource.RetrofitDataSource
 import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
 import chats.cash.chats_field.network.response.campaign.GetAllCampaignsResponse
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.onEach
 import retrofit2.Response
 import timber.log.Timber
 
-class FakeBeneficiaryRepository():BeneficiaryInterface {
+class FakeBeneficiaryRepository():BeneficiaryRepositoryInterface {
 
     val allCampaigns = listOf(ModelCampaign(1,2,null,null,null,null,null,null,null,null,
     null,null,null,null,null,"1sec"),
