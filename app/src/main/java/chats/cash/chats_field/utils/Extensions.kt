@@ -120,7 +120,9 @@ fun String?.isValidPin(): Boolean {
 
 fun TextInputEditText.isValid(): Boolean {
     return !this.text.isNullOrBlank()
-}fun EditText.isValid(): Boolean {
+}
+
+fun EditText.isValid(): Boolean {
     return !this.text.isNullOrBlank()
 }
 
@@ -233,7 +235,7 @@ fun TextView.makeLinks(vararg links: Pair<String, View.OnClickListener>) {
             }
         }
         startIndexOfLink = this.text.toString().indexOf(link.first, startIndexOfLink + 1)
-      if(startIndexOfLink == -1) continue // todo if you want to verify your texts contains links text
+        if (startIndexOfLink == -1) continue
         spannableString.setSpan(
             clickableSpan, startIndexOfLink, startIndexOfLink + link.first.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -245,7 +247,8 @@ fun TextView.makeLinks(vararg links: Pair<String, View.OnClickListener>) {
 }
 
 fun NavController.safeNavigate(destination: NavDirections) {
-    currentDestination?.getAction(destination.actionId)?.run { navigate(destination) }?: run{Timber.v("destination does not exist")}
+    currentDestination?.getAction(destination.actionId)?.run { navigate(destination) }
+        ?: run { Timber.v("destination does not exist") }
 }
 
 fun NavController.safeNavigate(@IdRes destination: Int) {
