@@ -17,11 +17,14 @@ class OverlayView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
 
+
     private val paint: Paint = Paint()
     private var holePaint: Paint = Paint()
     private var bitmap: Bitmap? = null
     private var layer: Canvas? = null
-    private var border: Paint = Paint()
+    private var border: Paint = Paint().also {
+        it.pathEffect = DashPathEffect(floatArrayOf(5f, 10f, 15f, 20f), 0f)
+    }
 
     //position of hole
     var holePosition: OverlayPosition = OverlayPosition(0.0f, 0.0f, 0.0f)
@@ -36,12 +39,21 @@ class OverlayView @JvmOverloads constructor(
         if (bitmap == null) {
             configureBitmap()
         }
+        val ovalWidth = width/1.5f // twice the width of the circle
+        val ovalHeight = height/2.1f // twice the height of the circle
 
-      //  draw background
+        // Calculate the position of the center of the oval
+        val centerX = (width-ovalWidth) / 2f
+        val centerY = (180f)
+
+        // draw hole
+        //  layer?.drawCircle((width / 2).toFloat(), (height / 3).toFloat(), 450f, border)
+        //  layer?.drawCircle((width / 2).toFloat(), (height / 3).toFloat(), 450f, holePaint.apply { alpha = 0 })
+
+        //  draw background
         layer?.drawRect(0.0f, 0.0f, width.toFloat(), height.toFloat(), paint)
-        //draw hole
-        layer?.drawCircle((width / 2).toFloat(), (height / 3).toFloat(), 450f, border)
-        layer?.drawCircle((width / 2).toFloat(), (height / 3).toFloat(), 450f, holePaint.apply { alpha = 0 })
+        layer?.drawOval(centerX , centerY, centerX + ovalWidth, centerY + ovalHeight, border)
+        layer?.drawOval(centerX , centerY, centerX + ovalWidth, centerY + ovalHeight,  holePaint.apply { alpha = 0 })
         //draw bitmap
         canvas.drawBitmap(bitmap!!, 0.0f, 0.0f, paint);
     }

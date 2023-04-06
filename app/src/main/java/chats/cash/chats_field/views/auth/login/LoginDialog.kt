@@ -63,10 +63,10 @@ class LoginDialog : BottomSheetDialogFragment() {
         setupObservers()
 
         binding.terms.makeLinks(
-            "Terms and Conditions" to View.OnClickListener {
+            getString(R.string.terms_and_conditions) to View.OnClickListener {
                 openLink(TERMS_OF_USE)
             },
-            "Privacy Policy" to View.OnClickListener {
+            getString(R.string.privacy_policy) to View.OnClickListener {
                 openLink(PRIVACY_POLICY)
             }
         )

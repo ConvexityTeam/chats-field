@@ -5,6 +5,7 @@ import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.campaignform.CampaignForm
 import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.network.api.interfaces.BeneficiaryInterface
+import chats.cash.chats_field.network.api.interfaces.BeneficiaryRepositoryInterface
 import chats.cash.chats_field.network.repository.fakes.FakeBeneficiaryRepository
 import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +20,7 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class BeneficiaryRepositoryTest {
 
-    lateinit var fakeBeneficiaryRepository: BeneficiaryInterface
+    lateinit var fakeBeneficiaryRepository: BeneficiaryRepositoryInterface
 
     @ExperimentalCoroutinesApi
     @get:Rule

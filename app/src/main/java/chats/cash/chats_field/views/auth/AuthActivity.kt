@@ -1,15 +1,17 @@
 package chats.cash.chats_field.views.auth
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.asLiveData
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.ActivityAuthBinding
 import chats.cash.chats_field.network.NetworkResponse
@@ -18,22 +20,23 @@ import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.BENEFICIARY_TYPE
 import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
-import chats.cash.chats_field.utils.Utils.checkAppPermission
+import chats.cash.chats_field.utils.dialogs.AlertDialog
 import chats.cash.chats_field.utils.location.LocationManager
 import chats.cash.chats_field.utils.permissions.POST_NOTIFICATION_PERMISSION_REQUEST_CODE
 import chats.cash.chats_field.utils.permissions.RequestNotificationPermission
+import chats.cash.chats_field.views.auth.ui.NFC_REQUEST_KEY
+import chats.cash.chats_field.views.auth.ui.NfcScanFragment
+import chats.cash.chats_field.views.auth.ui.RegisterVerifyFragmentDirections
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
+import chats.cash.chats_field.views.core.dialogs.getPermissionDialogs
+import chats.cash.chats_field.views.core.permissions.*
 import chats.cash.chats_field.views.core.showErrorSnackbar
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
+import chats.cash.chats_field.views.core.showSuccessSnackbar
 import com.google.android.gms.tasks.CancellationTokenSource
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import com.treebo.internetavailabilitychecker.InternetConnectivityListener
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.cancellable
-import kotlinx.coroutines.flow.collect
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -41,14 +44,14 @@ import java.io.FileNotFoundException
 import kotlin.coroutines.resume
 
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @InternalCoroutinesApi
-class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback {
+class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback, PermissionResultReceiver {
 
     private  var _binding: ActivityAuthBinding?=null
     private  val binding: ActivityAuthBinding
         get() = _binding!!
     private val offlineViewModel by viewModel<OfflineViewModel>()
+    val permissionManager: PermissionManager = PermissionManager(this,this)
     private val mainViewModel by viewModel<RegisterViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
     private val preferenceUtil: PreferenceUtil by inject()
@@ -59,14 +62,10 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         super.onCreate(savedInstanceState)
         _binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(_binding!!.root)
-
-        this.checkAppPermission()
-
+        permissionListener()
         RequestNotificationPermission(this).onCreate()
-
         val locationManager = LocationManager(this)
         lifecycleScope.launch {
-
             locationManager.getLastKnownLocationAsync().await()?.let {
                 preferenceUtil.setLatLong(
                     latitude = it.latitude,
@@ -111,6 +110,34 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
+            if(!permissionsList.contains(WRITE_STORAGE_PERMISSION) || !permissionsList.contains(
+                    READ_STORAGE_PERMISSION) ) {
+                permissionsList.addAll(listOf(WRITE_STORAGE_PERMISSION,READ_STORAGE_PERMISSION))
+            }
+        }
+        if(!alertDialog.isShowing && !cameraRationale.isShowing){
+            permissionManager.checkPermissions(permissionsList)
+        }
+    }
+private val permissionsList= mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
+    private fun permissionListener(){
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
+            if(permissionsList.contains(WRITE_STORAGE_PERMISSION) || !permissionsList.contains(
+                    READ_STORAGE_PERMISSION)) {
+                permissionsList.addAll(listOf(WRITE_STORAGE_PERMISSION,READ_STORAGE_PERMISSION))
+            }
+        }
+        navController.addOnDestinationChangedListener{_,_,_ ->
+            permissionManager.checkPermissions(permissionsList)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         internetAvailabilityChecker.removeAllInternetConnectivityChangeListeners()
@@ -127,11 +154,9 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         when (requestCode) {
             POST_NOTIFICATION_PERMISSION_REQUEST_CODE -> {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED
+                if (grantResults.isEmpty() &&
+                    grantResults[0] != PackageManager.PERMISSION_GRANTED
                 ) {
-
-                } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
                 }
                 return
@@ -156,21 +181,26 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
 
     }
 
-        private var uploading=false
+    private var uploading=false
     private var index = 0
 
-    private suspend fun uploadUser(beneficiary: Beneficiary) {
+    private suspend fun uploadUser(beneficiary: Beneficiary, list: List<Beneficiary>) {
         Timber.v("index $index")
         when (beneficiary.type) {
             VENDOR_TYPE -> {
                 registerVendor(beneficiary)
-                index += 1
+
             }
             BENEFICIARY_TYPE -> {
                 uploadBeneficiaryAsync(beneficiary)
-                index += 1
             }
         }
+        if(index==(list.size-1)){
+            showSuccessSnackbar(R.string.text_user_onboarded_success,binding.root)
+        }
+
+        index += 1
+
 
     }
     private suspend fun startUpload() {
@@ -179,8 +209,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                 CoroutineScope(Dispatchers.IO).launch {
                     uploading = true
                     while(index <=(list.size-1)){
-                            val beneficiary = list[index]
-                            uploadUser(beneficiary)
+                        val beneficiary = list[index]
+                        uploadUser(beneficiary, list)
                     }
                     uploading = false
                 }
@@ -208,8 +238,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     }
 
     private fun handleUploadResponse(it:NetworkResponse<Any>,beneficiary: Beneficiary,
-                                             continuation:CancellableContinuation<Boolean>,
-                                             job:CoroutineScope){
+                                     continuation:CancellableContinuation<Boolean>,
+                                     job:CoroutineScope){
         Timber.v("upoading $beneficiary $it")
         binding.pendingProgress.hide()
         if (it is NetworkResponse.Success) {
@@ -258,35 +288,6 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         Timber.v(percentage.toString())
     }
 
-    private fun setupLocationProviderClient(context: Context) {
-        try {
-            val fusedLocationClient: FusedLocationProviderClient =
-                LocationServices.getFusedLocationProviderClient(context)
-            fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY,
-                cancellationTokenSource.token)
-                .addOnSuccessListener { location: Location? ->
-                    if (location != null) {
-                        preferenceUtil.setLatLong(
-                            latitude = location.latitude,
-                            longitude = location.longitude
-                        )
-                    } else {
-                        toast("Location is turned off on this device")
-                    }
-                }.addOnFailureListener {
-                    toast(it.localizedMessage)
-                    FirebaseCrashlytics.getInstance().recordException(it)
-            }
-        } catch (e: SecurityException) {
-            toast(e.localizedMessage)
-            Timber.e(e)
-            FirebaseCrashlytics.getInstance().recordException(e)
-        } catch (t: Throwable) {
-            Timber.e(t)
-            FirebaseCrashlytics.getInstance().recordException(t)
-        }
-    }
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -303,4 +304,70 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
             binding.pendingUploadTextView.show()
         }
     }
+
+    override fun onGranted() {
+
+    }
+
+    override fun notGranted(permission: String) {
+        if(permissionManager.shouldShowRationale(permission)){
+            showRationale(permission)
+        }
+        else {
+             if(!checkPermission(CAMERA_PERMISSION) && !checkPermission(FINE_LOCATION) && !checkPermission(
+                    READ_STORAGE_PERMISSION)) {
+                permissionManager.getPermissions(listOf(CAMERA_PERMISSION, FINE_LOCATION, COARSE_LOCATION, READ_STORAGE_PERMISSION))
+            }
+            else if(permission == FINE_LOCATION){
+                permissionManager.getPermissions(listOf(FINE_LOCATION, COARSE_LOCATION))
+            }
+            else {
+                permissionManager.getPermission(permission)
+            }
+        }
+    }
+    private val alertDialog by lazy {
+        AlertDialog(this,
+            "Permission denied",
+            "Permission was denied permanently, please grant us permission",
+            onNegativeClicked = {
+                finish()
+            },
+            onPostiveClicked = {
+                openAppSystemSettings()
+            }).create()
+    }
+        override fun onDenied(permission: String) {
+            if (!alertDialog.isShowing) {
+                alertDialog.show()
+                Timber.v(permission)
+            }
+        }
+
+
+    private val cameraRationale by lazy {
+        getPermissionDialogs(desc = R.string.camera_permission_desc,
+            icon = R.drawable.camera_permission_icon, onDismiss = {
+                finish()
+            }) {
+            permissionManager.getPermission(CAMERA_PERMISSION)
+        }
+    }
+    override fun showRationale(permission: String) {
+        when (permission) {
+            CAMERA_PERMISSION -> {
+                if(!cameraRationale.isShowing){
+                    cameraRationale.show()
+                }
+            }
+            READ_STORAGE_PERMISSION -> {
+
+            }
+
+            WRITE_STORAGE_PERMISSION -> {
+
+            }
+        }
+    }
+
 }

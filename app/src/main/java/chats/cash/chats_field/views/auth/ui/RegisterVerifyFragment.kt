@@ -326,4 +326,5 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     }
 }
 
+
 const val NFC_REQUEST_KEY = "7080"

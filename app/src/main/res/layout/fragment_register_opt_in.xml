@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="130dp"
                     android:lineSpacingExtra="5sp"
-                    android:text="@string/how_did_you_hear_about_this_campaign"
+                    android:text=""
                     android:textAppearance="@style/TextAppearance.TextSemiBold" />
 
                 <Space
@@ -97,7 +97,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="false"
-                    android:text="@string/tv"
+                    android:text=""
                     android:textAppearance="@style/TextAppearance.TextRegular"
                     app:buttonTint="@color/button_color" />
 
@@ -106,7 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="false"
-                    android:text="@string/twitter"
+                    android:text=""
                     android:textAppearance="@style/TextAppearance.TextRegular"
                     app:buttonTint="@color/button_color" />
 
@@ -141,7 +141,7 @@
                     android:layout_width="wrap_content"
                     android:id="@+id/question_two_title"
                     android:layout_height="wrap_content"
-                    android:text="@string/what_is_your_age_bracket"
+                    android:text=""
                     android:textAppearance="@style/TextAppearance.TextSemiBold" />
 
                 <Space
@@ -157,7 +157,7 @@
                         android:id="@+id/question_two_option_one"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/_12_17"
+                        android:text=""
                         android:textAppearance="@style/TextAppearance.TextRegular"
                         app:buttonTint="@color/button_color" />
 
@@ -165,7 +165,7 @@
                         android:id="@+id/question_two_option_two"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/_18_28"
+                        android:text=""
                         android:textAppearance="@style/TextAppearance.TextRegular"
                         app:buttonTint="@color/button_color" />
 

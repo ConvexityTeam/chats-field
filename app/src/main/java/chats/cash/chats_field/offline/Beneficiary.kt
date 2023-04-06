@@ -6,12 +6,11 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
 
-@Entity(tableName = "beneficiary")
+@Entity(tableName = "beneficiary", primaryKeys = ["firstName","lastName"])
 data class Beneficiary(
     var id : Int = 0,
     var firstName : String = "",
     var lastName :String = "",
-    @PrimaryKey(autoGenerate = false)
     var email : String = "",
     var phone : String = "",
     var address: String = "",
