@@ -3,11 +3,12 @@ package chats.cash.chats_field.network.api
 import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.network.datasource.RetrofitDataSource
 import chats.cash.chats_field.network.response.campaign.GetAllCampaignsResponse
-import chats.cash.chats_field.views.core.strings.UiText
 import com.google.gson.Gson
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
@@ -32,7 +33,6 @@ class ConvexityApiTest {
 
     lateinit var mockWebServer:MockWebServer
     lateinit var convexityApiService: ConvexityApiService
-    lateinit var retrofitDataSource: RetrofitDataSource
 
     @Before
     fun setUp() {
@@ -50,17 +50,61 @@ class ConvexityApiTest {
             .addConverterFactory(GsonConverterFactory.create(Gson()))
             .client(client)
             .build().create(ConvexityApiService::class.java)
-        retrofitDataSource = RetrofitDataSource(convexityApiService, "Unknown error")
     }
 
 
 
     @Test
-    fun testSomething() = runTest {
+    fun assertFirstEmittionIsLoading() = runTest {
         val mockResponse  = MockResponse()
         mockResponse
             .setResponseCode(HttpURLConnection.HTTP_OK)
-        val responseObj = Gson().fromJson("""{
+        val responseObj = Gson().fromJson(dummyRes,GetAllCampaignsResponse::class.java)
+        mockResponse.setBody(Gson().toJson(responseObj))
+        mockWebServer.enqueue(mockResponse)
+
+        val response = RetrofitDataSource(convexityApiService,"error").getAllCampaigns(3,"")
+
+        println(response.toString())
+        Assert.assertTrue(response.first() is NetworkResponse.Loading )
+    }
+
+    @Test
+    fun assertLastEmittionIsSuccess() = runTest {
+        val mockResponse  = MockResponse()
+        mockResponse
+            .setResponseCode(HttpURLConnection.HTTP_OK)
+        val responseObj = Gson().fromJson(dummyRes,GetAllCampaignsResponse::class.java)
+        mockResponse.setBody(Gson().toJson(responseObj))
+        mockWebServer.enqueue(mockResponse)
+
+        val response = RetrofitDataSource(convexityApiService,"error").getAllCampaigns(3,"")
+
+        println(response.toString())
+        Assert.assertTrue(response.last() is NetworkResponse.Success )
+    }
+
+    @Test
+    fun assertSuccessValueIsCorrect() = runTest {
+        val mockResponse  = MockResponse()
+        mockResponse
+            .setResponseCode(HttpURLConnection.HTTP_OK)
+        val responseObj = Gson().fromJson(dummyRes,GetAllCampaignsResponse::class.java)
+        mockResponse.setBody(Gson().toJson(responseObj))
+        mockWebServer.enqueue(mockResponse)
+
+        val response = RetrofitDataSource(convexityApiService,"error").getAllCampaigns(3,"")
+
+        Assert.assertEquals((response.last() as NetworkResponse.Success).body,responseObj.data )
+    }
+
+    @After
+    fun afterTest() {
+        mockWebServer.shutdown()
+    }
+}
+
+const val dummyRes = """{
     "code": 200,
     "status": "success",
     "message": "Campaign retrieved",
@@ -152,19 +196,4 @@ class ConvexityApiTest {
             "ck8": "U+6MtbbCt)vBfY5by@mlxBb"
         }
     ]
-}""",GetAllCampaignsResponse::class.java)
-        mockResponse.setBody(Gson().toJson(responseObj))
-        mockWebServer.enqueue(mockResponse)
-
-        val response = retrofitDataSource.getAllCampaigns(3,"")
-        mockWebServer.takeRequest()
-
-        println(response.toString())
-        Assert.assertTrue(response.first() is NetworkResponse.Loading)
-    }
-
-    @After
-    fun afterTest() {
-        mockWebServer.shutdown()
-    }
-}
+}"""
