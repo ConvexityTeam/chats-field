@@ -13,7 +13,7 @@ import chats.cash.chats_field.network.response.organization.campaign.Campaign
 import com.google.gson.Gson
 
 @Database(entities = [Beneficiary::class, Campaign::class, ModelCampaign::class, CampaignForm::class],
-    version = 11,
+    version = 12,
     exportSchema = false)
 @TypeConverters(AllCampaignTypeConverter::class)
 abstract class BeneficiaryDatabase : RoomDatabase() {

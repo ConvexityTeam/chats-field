@@ -1,5 +1,6 @@
 package chats.cash.chats_field.views.auth.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -17,6 +18,7 @@ import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.core.net.toFile
 import androidx.lifecycle.Lifecycle
@@ -27,8 +29,14 @@ import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentImageCaptureBinding
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.camera.CameraManager
+import chats.cash.chats_field.utils.dialogs.AlertDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import chats.cash.chats_field.views.base.BaseFragment
+import chats.cash.chats_field.views.core.dialogs.getPermissionDialogs
+import chats.cash.chats_field.views.core.permissions.CAMERA_PERMISSION
+import chats.cash.chats_field.views.core.permissions.PermissionManager
+import chats.cash.chats_field.views.core.permissions.PermissionResultReceiver
+import chats.cash.chats_field.views.core.permissions.openAppSystemSettings
 import chats.cash.chats_field.views.core.showErrorSnackbar
 import chats.cash.chats_field.views.core.showSuccessSnackbar
 import com.bumptech.glide.Glide
@@ -70,7 +78,6 @@ import kotlin.math.sqrt
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
-
     private val viewModel by sharedViewModel<RegisterViewModel>()
 
 
@@ -78,15 +85,15 @@ import kotlin.math.sqrt
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentImageCaptureBinding.inflate(inflater,container,false)
-        return binding?.root
+
+        return binding.root
     }
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // Initialize our background executor
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -164,7 +171,7 @@ import kotlin.math.sqrt
     override fun onResume() {
         super.onResume()
         createCameraManager()
-    }
+       }
     private fun createCameraManager() {
 
         binding.apply {
@@ -305,26 +312,6 @@ import kotlin.math.sqrt
     }
 
 
-
-    /**
-     * Inflate camera controls and update the UI manually upon config changes to avoid removing
-     * and re-adding the view finder from the view hierarchy; this provides a seamless rotation
-     * transition on devices that support it.
-     *
-     * NOTE: The flag is supported starting in Android 8 but there still is a small flash on the
-     * screen for devices that run Android 9 or below.
-     */
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-    }
 
 
     private fun observeCameraState(cameraInfo: CameraInfo) {
@@ -595,6 +582,8 @@ private fun showCamera() = with(binding) {
                 mediaDir else appContext.filesDir
         }
     }
+
+
 }
 
  fun ImageView.loadGlide(photoFile: File) {

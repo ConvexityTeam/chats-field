@@ -106,10 +106,12 @@ class RetrofitDataSource(
             val mLastName = lastName.trim().toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val mEmail = email.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val mLatitude =
-                latitude.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
+                latitude.toString().trim().toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val mLongitude =
-                longitude.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
-            val mPhone = phone.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+                longitude.toString().trim().toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val mPhone = phone.trim().also {
+                Timber.v(it)
+            }.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val mPassword = password.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val mNfc = nfc.toRequestBody("multipart/form-data".toMediaTypeOrNull())
             val mStatus = 5.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
@@ -235,10 +237,12 @@ class RetrofitDataSource(
                 emit(NetworkResponse.SimpleError(response.message, code = response.code))
             }
             else{
+                Timber.v(response.toString())
                 emit(NetworkResponse.SimpleError(response.message, code = response.code))
             }
         }
     }.catch {
+        Timber.v(it.toString())
         emit(NetworkResponse.Error(it.message?:unknownError,it))
     }.onStart {
         emit(NetworkResponse.Loading())

@@ -20,13 +20,16 @@ import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentCashForWorkImageBinding
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.location.LocationManager
+import chats.cash.chats_field.views.auth.AuthActivity
 import chats.cash.chats_field.views.auth.adapter.PrintPagerAdapter
 import chats.cash.chats_field.views.core.showSnackbarWithAction
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
+@OptIn(InternalCoroutinesApi::class)
 class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image) {
 
     private var _binding: FragmentCashForWorkImageBinding? = null

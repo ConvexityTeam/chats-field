@@ -26,6 +26,9 @@ import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.Utils.toCountryCode
 import chats.cash.chats_field.views.auth.login.LoginDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
+import chats.cash.chats_field.views.core.permissions.COARSE_LOCATION
+import chats.cash.chats_field.views.core.permissions.FINE_LOCATION
+import chats.cash.chats_field.views.core.permissions.checkPermission
 import com.hbb20.CountryCodePicker
 import com.hbb20.CountryCodePicker.OnCountryChangeListener
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -113,10 +116,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             registerDateEdit.setOnClickListener {
                 openCalendar()
             }
-            if (ActivityCompat.checkSelfPermission(requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            if (!requireContext().checkPermission(FINE_LOCATION) && !requireContext().checkPermission(
+                    COARSE_LOCATION)
             ) {
                 findNavController().navigateUp()
                 showToast("Location permission is required.")
@@ -264,7 +265,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                             firstName = firstName,
                             lastName = lastName,
                             email = email,
-                            phone = phone.toCountryCode(),
+                            phone = phone,
                             password = password,
                             latitude = preferenceUtil.getLatLong().first.toString(),
                             longitude = preferenceUtil.getLatLong().second.toString(),
@@ -379,10 +380,14 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             setOnCountryChangeListener(OnCountryChangeListener {
                 val country = binding.ccp.selectedCountryEnglishName
                 if(country.equals(NIGERIA,true)){
-                    binding.ninGroup.show()
+                    if(binding.registerSpecialCaseEdit.text.toString() == "Yes") {
+                        binding.ninGroup.show()
+                    }
                 }
                 else{
-                    binding.ninGroup.hide()
+                    if(binding.registerSpecialCaseEdit.text.toString() == "Yes") {
+                        binding.ninGroup.hide()
+                    }
                 }
             })
 

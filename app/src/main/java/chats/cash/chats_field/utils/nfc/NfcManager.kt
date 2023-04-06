@@ -92,12 +92,12 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
                     val authB: Boolean = nfcA.authenticateSectorWithKeyB(2, MifareClassic.KEY_DEFAULT)
 
                     if(authB) {
-
+                        Timber.v("writing $userEmail")
                         //create an empty byte array to write data
                         val bWrite = ByteArray(16)
 
                         //if email is less than 16, we can write to only one sector (8) and clear sector 9
-                        if(userEmail!!.length<16) {
+                        if(userEmail!!.length<=16) {
 
                             //get the email and convert it to byte array with UTF8 encoding
                             val dataToSend: ByteArray =
@@ -112,9 +112,15 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
                                 "".toByteArray(StandardCharsets.UTF_8)
                             System.arraycopy(dataToSend2, 0, bWrite2, 0, dataToSend2.size)
 
+                            val bWrite3 = ByteArray(16)
+                            val dataToSend3: ByteArray =
+                                "".toByteArray(StandardCharsets.UTF_8)
+                            System.arraycopy(dataToSend3, 0, bWrite2, 0, dataToSend3.size)
+
                             //writing to blocks
                             nfcA.writeBlock(8, bWrite)
                             nfcA.writeBlock(9,bWrite2)
+                            nfcA.writeBlock(10,bWrite3)
 
                         }
 
@@ -123,10 +129,13 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
 
                             //create another empty byte arrays
                             val bWrite2 = ByteArray(16)
+                            //create another empty byte arrays
+                            val bWrite3 = ByteArray(16)
 
                             //split the string into two parts, from 0 ,15 and 15 to length, e.g Simonnnnnnn = simonnnn , nnnnn
                             val first = userEmail!!.substring(0,15)
-                            val second = userEmail!!.substring(15,userEmail!!.length)
+                            val second = userEmail!!.substring(15,if(userEmail!!.length>32) 31 else userEmail!!.length)
+                            val third = if(userEmail!!.length>32) userEmail!!.substring(32,userEmail!!.length) else ""
 
                             //convert string to byte arrays
                             val dataToSend: ByteArray =
@@ -137,9 +146,16 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
                                 second.toByteArray(StandardCharsets.UTF_8)
                             System.arraycopy(dataToSend2, 0, bWrite2, 0, dataToSend2.size)
 
+                            val dataToSend3: ByteArray =
+                                third.toByteArray(StandardCharsets.UTF_8)
+                            System.arraycopy(dataToSend3, 0, bWrite3, 0, dataToSend3.size)
+
                             //write ths trings
                             nfcA.writeBlock(8, bWrite)
                             nfcA.writeBlock(9, bWrite2)
+                            if(userEmail!!.length>=32) {
+                                nfcA.writeBlock(10, bWrite3)
+                            }
                         }
 
                         nfcA.close()
@@ -150,14 +166,17 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
                     }
                 } else {
                     onError()
+                    Timber.v("null")
                 }
             }
             if (tag == null) {
+                Timber.v("tag is null")
                 onError()
             }
 
         } catch (e: Exception) {
             onError()
+            Timber.v(e)
             e.printStackTrace()
         }
     }
@@ -193,16 +212,21 @@ class NfcManager(val context:FragmentActivity): NfcAdapter.ReaderCallback {
                         //reading block 9
                         val bRead2: ByteArray = nfcA.readBlock(9)
 
+                        //reading block 10
+                        val bRead3: ByteArray = nfcA.readBlock(10)
+
                         //convert the byte array to string using UTF_*
                         val str = String(bRead, StandardCharsets.UTF_8)
                         val str2 =  if(bRead2.isEmpty()) "" else String(bRead2, StandardCharsets.UTF_8)
+                        val str3 =  if(bRead3.isEmpty()) "" else String(bRead3, StandardCharsets.UTF_8)
+                        Timber.v(str3)
 
                         //combining the two strings, and replace the other blocks which are empty (?) with empty strings ""
-                        val combinedString = (str+str2).replace("?","")
+                        val combinedString = (str+str2+str3).replace("?","")
 
                         //close the tag
                         nfcA.close()
-
+                        Timber.v("read from tag $combinedString")
                         //return success
                         onSuccess(combinedString)
                     }
