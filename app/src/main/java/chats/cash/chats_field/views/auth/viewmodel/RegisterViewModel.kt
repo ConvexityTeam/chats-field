@@ -57,35 +57,37 @@ class RegisterViewModel(
         }
     }
 
-    fun getAllCampaignForms() = viewModelScope.launch{
-        val allForms =  beneficiaryRepository.getAllCampaignForms()
+    fun getAllCampaignForms() = viewModelScope.launch {
+        val allForms = beneficiaryRepository.getAllCampaignForms()
         allForms.collect {
             Timber.v(it.toString())
-            if(it is NetworkResponse.Success){
+            if (it is NetworkResponse.Success) {
                 Timber.v(it.body.toString())
             }
         }
     }
 
-     suspend fun getAllCampaigns2() = viewModelScope.launch{
-       beneficiaryRepository.getAllCampaigns().collect{
-           Timber.v(it.toString())
-       }
+    suspend fun getAllCampaigns2() = viewModelScope.launch {
+        beneficiaryRepository.getAllCampaigns().collect {
+            Timber.v(it.toString())
+        }
     }
 
     var specialCase = false
     var nin = ""
     var campaign: String = "1"
 
-    private val _onboardVendorResponse = Channel<NetworkResponse<VendorOnboardingResponse.VendorResponseData>>()
+    private val _onboardVendorResponse =
+        Channel<NetworkResponse<VendorOnboardingResponse.VendorResponseData>>()
     val onboardVendorResponse: Flow<NetworkResponse<VendorOnboardingResponse.VendorResponseData>>
         get() = _onboardVendorResponse.receiveAsFlow()
-    fun vendorOnboarding(
-       beneficiary: Beneficiary,
-       isOnline:Boolean
-    ) =viewModelScope.launch{
 
-        beneficiaryRepository.OnboardVendor(beneficiary,isOnline).collect{
+    fun vendorOnboarding(
+        beneficiary: Beneficiary,
+        isOnline: Boolean,
+    ) = viewModelScope.launch {
+
+        beneficiaryRepository.OnboardVendor(beneficiary, isOnline).collect {
             _onboardVendorResponse.send(it)
         }
     }
@@ -142,15 +144,17 @@ class RegisterViewModel(
     }
 
     private val _onboardBeneficiaryResponse = Channel<NetworkResponse<String>>()
-     val onboardBeneficiaryResponse: Flow<NetworkResponse<String>>
+    val onboardBeneficiaryResponse: Flow<NetworkResponse<String>>
         get() = _onboardBeneficiaryResponse.receiveAsFlow()
+
     fun onboardBeneficiary(
         beneficiary: Beneficiary,
         currentInternetAvailabilityStatus: Boolean,
-    ) =viewModelScope.launch{
-        beneficiaryRepository.OnboardBeneficiary(beneficiary,currentInternetAvailabilityStatus).collect{
-            _onboardBeneficiaryResponse.send(it)
-        }
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        beneficiaryRepository.OnboardBeneficiary(beneficiary, currentInternetAvailabilityStatus)
+            .collect {
+                _onboardBeneficiaryResponse.send(it)
+            }
     }
 
     sealed class VendorOnboardingState {

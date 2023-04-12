@@ -63,6 +63,22 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         }
     }
 
+    val adapter by lazy {
+        ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_selectable_list_item,
+            listOf("Male", "Female")
+        )
+    }
+
+    val specialAdapter by lazy {
+        ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_selectable_list_item,
+            listOf("No", "Yes")
+        )
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentRegisterBinding.bind(view)
@@ -82,17 +98,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             registerCampaignLayout.setEndIconOnClickListener {
                 findNavController().safeNavigate(RegisterFragmentDirections.toCampaignDialog())
             }
-            val adapter =
-                ArrayAdapter(requireContext(), android.R.layout.simple_selectable_list_item, listOf("Male", "Female"))
+
             registerGenderEdit.setAdapter(adapter)
 
             observeLoginDone()
 
-            val specialAdapter =
-                ArrayAdapter(requireContext(), android.R.layout.simple_selectable_list_item, listOf("No", "Yes"))
             registerSpecialCaseEdit.setAdapter(specialAdapter)
 
-            txtNin.hide()
             registerSpecialCaseEdit.setOnItemClickListener { _, _, position, _ ->
                 if (position == 0) {
                     ninGroup.hide()
@@ -116,13 +128,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             registerDateEdit.setOnClickListener {
                 openCalendar()
             }
-            if (!requireContext().checkPermission(FINE_LOCATION) && !requireContext().checkPermission(
-                    COARSE_LOCATION)
-            ) {
-                findNavController().navigateUp()
-                showToast("Location permission is required.")
-                return
-            }
+
             registerNextButton.setOnClickListener {
                 checkInputs()
             }
@@ -145,13 +151,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     }
 
     private fun changeLoggedInText() = with(binding) {
-        loggedInText.text = "Logged In "
-        changeAccountText.text = "Change Account? "
+        loggedInText.text = getString(R.string.logged_in)
+        changeAccountText.text =getString(R.string.change_account)
     }
 
     private fun changeLoggedOutText() = with(binding) {
-        loggedInText.text = "Not Logged In? "
-        changeAccountText.text = "Log In"
+        loggedInText.text = getString(R.string.not_logged_in)
+        changeAccountText.text = getString(R.string.log_in)
     }
 
     private fun checkInputs() = with(binding) {

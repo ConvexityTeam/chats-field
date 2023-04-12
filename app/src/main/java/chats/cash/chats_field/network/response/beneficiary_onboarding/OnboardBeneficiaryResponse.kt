@@ -7,7 +7,7 @@ data class OnboardBeneficiaryResponse(
     @SerializedName("code")
     val code: Int,
     @SerializedName("data")
-    val `data`: String,
+    val beneficiaryID: Int,
     @SerializedName("message")
     val message: String,
     @SerializedName("status")

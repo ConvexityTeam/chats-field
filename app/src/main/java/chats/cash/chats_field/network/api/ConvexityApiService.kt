@@ -3,6 +3,7 @@ package chats.cash.chats_field.network.api
 import chats.cash.chats_field.model.NFCModel
 import chats.cash.chats_field.model.campaignform.AllCampaignFormResponse
 import chats.cash.chats_field.network.body.login.LoginBody
+import chats.cash.chats_field.network.body.survey.SubmitSurveyAnswerBody
 import chats.cash.chats_field.network.response.*
 import chats.cash.chats_field.network.response.beneficiary_onboarding.Beneficiary
 import chats.cash.chats_field.network.response.campaign.CampaignByOrganizationModel
@@ -49,7 +50,7 @@ interface ConvexityApiService {
         @Part("dob") date: RequestBody,
         @Part("campaign") campaign: RequestBody,
         @Part("pin") pin: RequestBody,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): Deferred<RegisterResponse>
 
 
@@ -73,7 +74,7 @@ interface ConvexityApiService {
         @Part("dob") date: RequestBody,
         @Part("campaign") campaign: RequestBody,
         @Part("pin") pin: RequestBody,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): RegisterResponse
 
     @Multipart
@@ -97,7 +98,7 @@ interface ConvexityApiService {
         @Part("dob") date: RequestBody,
         @Part("campaign") campaign: RequestBody,
         @Part("pin") pin: RequestBody,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): Deferred<RegisterResponse>
 
     @Multipart
@@ -120,12 +121,15 @@ interface ConvexityApiService {
         @Part("dob") date: RequestBody,
         @Part("campaign") campaign: RequestBody,
         @Part("pin") pin: RequestBody,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): RegisterResponse
 
     @POST("organisations/{organisation_id}/vendors")
     @FormUrlEncoded
-    @Deprecated("this is wrong, as it resturns Any instead of returning ", replaceWith =  ReplaceWith("VendorOnboarding2"))
+    @Deprecated(
+        "this is wrong, as it resturns Any instead of returning ",
+        replaceWith = ReplaceWith("VendorOnboarding2")
+    )
     suspend fun vendorOnboarding(
         @Path("organisation_id") organisationId: Int,
         @Field("first_name") firstName: String,
@@ -137,7 +141,7 @@ interface ConvexityApiService {
         @Field("phone") phone: String,
         @Field("state") state: String,
         @Field("location") location: String,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): BaseResponse<Any>
 
     @POST("organisations/{organisation_id}/vendors")
@@ -153,13 +157,13 @@ interface ConvexityApiService {
         @Field("phone") phone: String,
         @Field("state") state: String,
         @Field("location") location: String,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): VendorOnboardingResponse
 
     @POST("vendors/auth/{userId}")
     fun getUserDetails(
         @Path("userId") userId: String,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): Deferred<UserDetailsResponse>
 
     @GET("ngos")
@@ -178,7 +182,7 @@ interface ConvexityApiService {
     @PUT("users/nfc_update")
     suspend fun postNfcDetails(
         @Body nfcModel: NFCModel,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): NfcUpdateResponse
 
     @GET("campaigns/all/")
@@ -188,13 +192,13 @@ interface ConvexityApiService {
     fun getCampaignsByOrganization(
         @Path("id") id: String,
         @Query("type") type: String = "cash-for-work",
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): CampaignByOrganizationModel
 
     @GET("cash-for-work/tasks/{id}")
     fun getTasks(
         @Path("id") campaignId: String,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): Deferred<GetTasksModel>
 
     /*@GET("cash-for-work/task/{taskId}")
@@ -206,7 +210,7 @@ interface ConvexityApiService {
     @GET("tasks/cash-for-work/task/{taskId}")
     suspend fun getTasksDetails(
         @Path("taskId") taskId: String,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): BaseResponse<TaskDetailsResponse>
 
     @POST("cash-for-work/task/submit-progress")
@@ -216,7 +220,7 @@ interface ConvexityApiService {
         @Part("userId") userId: RequestBody,
         @Part("description") description: RequestBody,
         @Part images: ArrayList<MultipartBody.Part>,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): Deferred<SubmitProgressModel>
 
     @POST("cash-for-work/task/agent-evidence/{beneficiaryId}")
@@ -225,10 +229,10 @@ interface ConvexityApiService {
         @Path("beneficiaryId") beneficiaryId: Int,
         @Part("TaskAssignmentId") taskAssignmentId: RequestBody,
         @Part("comment") description: RequestBody,
-        @Part("location") location:RequestBody,
+        @Part("location") location: RequestBody,
         @Part("type") type: RequestBody,
         @Part uploads: ArrayList<MultipartBody.Part>,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): BaseResponse<Any>
 
     @POST("cash-for-work/task/progress/confirm")
@@ -238,36 +242,37 @@ interface ConvexityApiService {
     suspend fun getAllCampaigns(
         @Path("id") id: Int,
         @Query("type") type: String?,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): GetAllCampaignsResponse
+
     @GET("beneficiaries/survey/{campaign_id}")
     suspend fun getCampaignSurvey(
         @Path("campaign_id") campaignId: Int,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): Response<CampaignSurveyResponse>
 
     @GET("beneficiaries/survey/{campaign_id}")
     suspend fun getCampaignSurvey2(
         @Path("campaign_id") campaignId: Int,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): CampaignSurveyResponse
 
     @GET("organisations/{organisation_id}/campaign_form")
     suspend fun getAllCampaignForms(
         @Path("organisation_id") organisationId: Int,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): Response<AllCampaignFormResponse>
 
     @GET("organisations/{organisation_id}/campaign_form")
     suspend fun getAllCampaignForms2(
         @Path("organisation_id") organisationId: Int,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): AllCampaignFormResponse
 
     @GET("organisation/{organisation_id}/beneficiaries")
     suspend fun getBeneficiariesByOrganisation(
         @Path("organisation_id") organisationId: Int,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): BaseResponse<List<Beneficiary>>
 
     @GET("organisations/non-org-beneficiary")
@@ -277,20 +282,27 @@ interface ConvexityApiService {
         @Query("email") email: String? = null,
         @Query("nin") nin: String? = null,
         @Query("phone") phone: String? = null,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): BaseResponse<List<Beneficiary>>
 
     @POST("beneficiaries/{beneficiary_id}/campaigns/{campaign_id}/join")
     suspend fun addBeneficiaryToCampaign(
         @Path("beneficiary_id") beneficiaryId: Int,
         @Path("campaign_id") campaignId: Int,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): BaseResponse<AddBeneficiaryResponse>
 
     @GET("organisations/{organisation_id}/campaigns/{campaign_id}/beneficiaries")
     suspend fun getBeneficiariesByCampaign(
         @Path("organisation_id") organisationId: Int,
         @Path("campaign_id") campaignId: Int,
-        @Header("Authorization") authorization: String
+        @Header("Authorization") authorization: String,
     ): BaseResponse<List<Beneficiary>>
+
+    @POST("beneficiaries/field/survey/{campaign_id}")
+    suspend fun answerCampaignSurvey(
+        @Body answer: SubmitSurveyAnswerBody,
+        @Path("campaign_id") campaignId: Int,
+        @Header("Authorization") authorization: String,
+    )
 }

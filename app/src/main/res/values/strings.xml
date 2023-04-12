@@ -73,7 +73,7 @@
     <string name="text_report">Report</string>
     <string name="text_status">Status</string>
     <string name="text_no_worker_found">No worker found</string>
-    <string name="text_pending_uploads">Pending Uploads</string>
+    <string name="text_pending_uploads">%s Pending Uploads</string>
     <string name="text_beneficiary_onboarding">Beneficiary Onboarding</string>
     <string name="text_vendor_onboarding">Vendor Onboarding</string>
     <string name="text_logout_button">Logout button</string>
@@ -137,5 +137,17 @@
     <string name="upload_a_clear_picture_showing_your_face_navoid_group_picture">Upload a clear picture showing your face.\nAvoid group picture.</string>
     <string name="verify_fingerprint">Verify Fingerprint</string>
     <string name="you_will_be_prompted_to_verify_your_nthumb_index_finger_amp_middle_finger">You will be prompted to verify your\nthumb, index finger &amp; middle finger</string>
+    <string name="no_pending_uploads">No pending uploads</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="permission_was_denied_permanently_please_grant_us_permission">Permission was denied permanently, please grant us permission</string>
+    <string name="location_access_was_rejected">Location access was rejected.</string>
+    <string name="logged_in">Logged In</string>
+    <string name="change_account">Change Account?</string>
+    <string name="vendor_information">Vendor Information</string>
+    <string name="business_name">Business Name</string>
+    <string name="chats">CHATS</string>
+    <string name="doe">Doe</string>
+    <string name="_123xxxxxx">123XXXXXX</string>
+    <string name="not_logged_in">"Not Logged In? "</string>
 
 </resources>

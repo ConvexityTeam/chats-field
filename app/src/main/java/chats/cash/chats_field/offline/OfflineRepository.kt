@@ -4,6 +4,7 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.campaignform.CampaignForm
+import chats.cash.chats_field.network.body.survey.SubmitSurveyAnswerBody
 import chats.cash.chats_field.network.response.organization.campaign.Campaign
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -44,25 +45,37 @@ class OfflineRepository(private val beneficiaryDao: BeneficiaryDao) {
 
     @WorkerThread
     suspend fun deleteAllCampaignForms(){
-        beneficiaryDao?.deleteAllCampaignsForms()
+        beneficiaryDao.deleteAllCampaignsForms()
     }
 
     fun getAllBeneficiary() : LiveData<List<Beneficiary>>{
-        return beneficiaryDao!!.getAllBeneficiary()
+        return beneficiaryDao.getAllBeneficiary()
     }
 
     fun getAllCampaigns(type: String) : LiveData<List<ModelCampaign>>{
-        return beneficiaryDao!!.geAllLiveCampaigns(type)
+        return beneficiaryDao.geAllLiveCampaigns(type)
     }
 
     fun getCampaignsForm() : Flow<List<CampaignForm>> {
-        return beneficiaryDao!!.getAllCampaignForms()
+        return beneficiaryDao.getAllCampaignForms()
+    }
+
+    suspend fun getCampaignsAnswer(email:String) : SubmitSurveyAnswerBody? {
+        return beneficiaryDao.getSurveyAnswer(email)
+    }
+
+    suspend fun insertCampaignsAnswer(answer:SubmitSurveyAnswerBody)  {
+        return beneficiaryDao.insertSurveyAnswer(answer)
+    }
+
+    suspend fun deleteCampaignsAnswer(answer:SubmitSurveyAnswerBody)  {
+        return beneficiaryDao.deleteSurveyAnswer(answer)
     }
 
     suspend fun deleteAllTables()= CoroutineScope(Dispatchers.IO).launch {
-            val del1Def = async { beneficiaryDao?.deleteCampaigns() }
-            val del2Def = async { beneficiaryDao?.deleteModelCampaigns() }
-            val del3Def = async { beneficiaryDao?.deleteBeneficiaries() }
+            val del1Def = async { beneficiaryDao.deleteCampaigns() }
+            val del2Def = async { beneficiaryDao.deleteModelCampaigns() }
+            val del3Def = async { beneficiaryDao.deleteBeneficiaries() }
             listOf(del1Def, del2Def, del3Def).awaitAll()
 
     }

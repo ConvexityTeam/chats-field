@@ -66,13 +66,13 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
     private val offlineViewModel by activityViewModels<OfflineViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
 
-    private lateinit var binding:FragmentRegisterVerifyBinding
+    private lateinit var binding: FragmentRegisterVerifyBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentRegisterVerifyBinding.inflate(inflater,container,false)
+        binding = FragmentRegisterVerifyBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -122,15 +122,15 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
         if (mViewModel.specialCase) {
             if (profileImage != null) {
-               binding.completedImageIcon.setImageResource(R.drawable.ic_check)
+                binding.completedImageIcon.setImageResource(R.drawable.ic_check)
             } else {
-               binding.completedImageIcon.setImageResource(R.drawable.ic_uncheck)
+                binding.completedImageIcon.setImageResource(R.drawable.ic_uncheck)
             }
         } else {
             if (allFingers != null && profileImage != null) {
-               binding.completedImageIcon.setImageResource(R.drawable.ic_check)
+                binding.completedImageIcon.setImageResource(R.drawable.ic_check)
             } else {
-               binding.completedImageIcon.setImageResource(R.drawable.ic_uncheck)
+                binding.completedImageIcon.setImageResource(R.drawable.ic_uncheck)
             }
         }
 
@@ -139,15 +139,15 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
             if (mViewModel.specialCase) {
                 if (profileImage != null) {
-                    binding.registerVerifyBtn.isEnabled=false
+                    binding.registerVerifyBtn.isEnabled = false
                     binding.verifyProgress.show()
-                        postOnboardData()
+                    postOnboardData()
                 } else {
                     showToast("All fields are required")
                 }
             } else {
                 if (allFingers != null && profileImage != null) {
-                    binding.registerVerifyBtn.isEnabled=false
+                    binding.registerVerifyBtn.isEnabled = false
                     binding.verifyProgress.show()
                     postOnboardData()
                 } else {
@@ -169,25 +169,30 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
     }
 
-    private fun setObservers() =lifecycleScope.launch{
+    private fun setObservers() = lifecycleScope.launch {
         registerViewModel.onboardBeneficiaryResponse.collect {
             when (it) {
                 is NetworkResponse.Loading -> {
                     binding.verifyProgress.show()
-                    binding. registerVerifyBtn.isEnabled = false
+                    binding.registerVerifyBtn.isEnabled = false
                 }
-                is NetworkResponse.Success -> {
-                    binding.registerVerifyBtn.isEnabled=true
-                    binding.verifyProgress.hide()
-                    val data = it.body
 
-                        campaign.ck8?.let {
-                            val encrypt = AES256Encrypt(it).encrypt(email)
-                            Timber.d(encrypt.toString())
-                            Timber.d(AES256Encrypt(it).decrypt(encrypt).toString())
-                            encrypt?.let { it1 -> openNFCCardScanner(false, it1) }
-                        }
+                is NetworkResponse.Success -> {
+                    binding.registerVerifyBtn.isEnabled = true
+                    binding.verifyProgress.hide()
+
+                    campaign.ck8?.let {
+                        val encrypt = AES256Encrypt(it).encrypt(email)
+                        Timber.d(encrypt.toString())
+                        Timber.d(AES256Encrypt(it).decrypt(encrypt).toString())
+                        encrypt?.let { it1 -> openNFCCardScanner(false, it1) }
+                    }
+                    showSuccessSnackbar(
+                        R.string.text_user_onboarded_success,
+                        binding.root
+                    )
                 }
+
                 is NetworkResponse.SimpleError -> {
                     showSnackbarWithAction(
                         it._message, binding.root, R.string.dismiss,
@@ -195,19 +200,21 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                     ) {
                         findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
                     }
-                    binding. verifyProgress.hide()
+                    binding.verifyProgress.hide()
                     binding.registerVerifyBtn.isEnabled = false
                 }
+
                 is NetworkResponse.Error -> {
                     showSnackbarWithAction(
-                        it.e.message?:"Error", binding.root, R.string.dismiss,
+                        it._message ?: "Error", binding.root, R.string.dismiss,
                         ContextCompat.getColor(requireContext(), R.color.design_default_color_error)
                     ) {
                         findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
                     }
-                    binding. verifyProgress.hide()
+                    binding.verifyProgress.hide()
                     binding.registerVerifyBtn.isEnabled = false
                 }
+
                 is NetworkResponse.Offline -> {
                     campaign.ck8?.let {
                         val encrypt = AES256Encrypt(it).encrypt(email)
@@ -231,8 +238,9 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
     }
 
-    private fun postOnboardData() =lifecycleScope.launch{
-        val profilePic =  async {  return@async Compressor.compress(requireContext(), File(profileImage!!)).path}
+    private fun postOnboardData() = lifecycleScope.launch {
+        val profilePic =
+            async { return@async Compressor.compress(requireContext(), File(profileImage!!)).path }
         beneficiary = Beneficiary(
             id = organizationId,
             firstName = firstName,
@@ -243,7 +251,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
             latitude = lat.toDouble(),
             password = password,
             nfc = nfc!!,
-            profilePic =profilePic.await(),
+            profilePic = profilePic.await(),
             gender = gender,
             date = date,
             campaignId = campaign.id.toString(),
@@ -265,7 +273,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         }
         val prints = ArrayList<MultipartBody.Part>()
         mFingers.forEachIndexed { _, f ->
-            val mBody = ProgressRequestBody(f, "image/jpg", object:ImageUploadCallback{
+            val mBody = ProgressRequestBody(f, "image/jpg", object : ImageUploadCallback {
                 override fun onProgressUpdate(percentage: Int) {
 
                 }
@@ -295,7 +303,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
 
 
         registerViewModel.onboardBeneficiary(
-            beneficiary!!,internetAvailabilityChecker.currentInternetAvailabilityStatus,
+            beneficiary!!, internetAvailabilityChecker.currentInternetAvailabilityStatus,
         )
 
 
@@ -311,7 +319,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
         bottomSheetDialogFragment.isCancelable = false
         this.setFragmentResultListener(NFC_REQUEST_KEY) { string, bundle ->
             findNavController().safeNavigate(RegisterVerifyFragmentDirections.toOnboardingFragment())
-            if(!isOffline){
+            if (!isOffline) {
                 showSuccessSnackbar(
                     R.string.text_user_onboarded_success,
                     binding.root
