@@ -191,6 +191,7 @@ class RegisterVerifyFragment : BaseFragment(), ImageUploadCallback {
                         R.string.text_user_onboarded_success,
                         binding.root
                     )
+                    showToast( getString(R.string.text_user_onboarded_success))
                 }
 
                 is NetworkResponse.SimpleError -> {
