@@ -7,13 +7,16 @@ import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.network.api.ConvexityApiService
 import chats.cash.chats_field.network.api.interfaces.BeneficiaryInterface
 import chats.cash.chats_field.network.body.LocationBody
+import chats.cash.chats_field.network.body.survey.SubmitSurveyAnswerBody
 import chats.cash.chats_field.network.response.RegisterResponse
 import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
 import chats.cash.chats_field.network.response.vendor.VendorOnboardingResponse
 import chats.cash.chats_field.offline.Beneficiary
+import chats.cash.chats_field.utils.ApiResponse
 import chats.cash.chats_field.utils.ImageUploadCallback
 import chats.cash.chats_field.utils.PreferenceUtil
 import chats.cash.chats_field.utils.ProgressRequestBody
+import chats.cash.chats_field.utils.Utils
 import chats.cash.chats_field.utils.toFile
 import chats.cash.chats_field.views.core.strings.UiText
 import com.google.gson.Gson
@@ -25,6 +28,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.HttpException
 import timber.log.Timber
 import java.io.File
 import java.util.*
@@ -248,7 +252,13 @@ class RetrofitDataSource(
         }
     }.catch {
         Timber.v(it.toString())
-        emit(NetworkResponse.Error(it.message ?: unknownError, it))
+        if(it is HttpException) {
+            val message = Utils.getErrorMessage(it)
+            emit(NetworkResponse.Error(message , it))
+        }
+        else{
+            emit(NetworkResponse.Error(it.message.toString() , it))
+        }
     }.onStart {
         emit(NetworkResponse.Loading())
     }
@@ -296,6 +306,10 @@ class RetrofitDataSource(
         }.onStart {
             emit(NetworkResponse.Loading())
         }
+
+    suspend fun answerSurvey(answer: SubmitSurveyAnswerBody, auth:String)  {
+       api.answerCampaignSurvey(answer,answer.campaignId,auth)
+    }
 
 
 }

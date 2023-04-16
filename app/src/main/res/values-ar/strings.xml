@@ -74,7 +74,7 @@
     <string name="text_report">تقرير</string>
     <string name="text_status">حالة</string>
     <string name="text_no_worker_found">لم يتم العثور على عامل</string>
-    <string name="text_pending_uploads">عمليات التحميل المعلقة</string>
+    <string name="text_pending_uploads">%s عمليات التحميل المعلقة</string>
     <string name="text_beneficiary_onboarding">المستفيد على متن الطائرة</string>
     <string name="text_vendor_onboarding">إعداد البائعين</string>
     <string name="text_logout_button">زر تسجيل الخروج</string>
@@ -138,4 +138,20 @@
     <string name = "upload_a_clear_picture_showing_your_face_navoid_group_picture"> قم بتحميل صورة واضحة تُظهر وجهك. \n تجنب صورة المجموعة. </string>
     <string name = "verify_fingerprint"> التحقق من بصمة الإصبع </string>
     <string name = "you_will_be_prompted_to_verify_your_nthumb_index_finger_amp_middle_finger"> سيُطلب منك التحقق من \n الإبهام والسبابة &amp; ؛ الاصبع الوسطى </string>
+    <string name="no_pending_uploads">No pending uploads</string>
+
+    <string name = "permission_denied"> تم رفض الإذن </string>
+    <string name = "permission_was_denied_permanently_please_grant_us_permission"> تم رفض الإذن بشكل دائم ، يرجى منحنا الإذن </string>
+    <string name = "location_access_was_rejected"> تم رفض الوصول إلى الموقع. </string>
+
+    <string name = "logged_in"> تم تسجيل الدخول </string>
+    <string name = "change_account"> هل تريد تغيير الحساب؟ </string>
+    <string name = "vendor_information"> معلومات البائع </string>
+    <string name = "business_name"> اسم الشركة </string>
+    <string name = "chats"> الدردشات </string>
+    <string name = "doe"> Doe </string>
+    <string name = "_123xxxxxx"> 123XXXXXX </string>
+
+    <string name="not_logged_in">"Not Logged In? "</string>
+
 </resources>

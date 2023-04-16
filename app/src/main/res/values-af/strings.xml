@@ -73,7 +73,7 @@
     <string name="text_report">Rapporteer</string>
     <string name="text_status">Status</string>
     <string name="text_no_worker_found">Geen werker gevind nie</string>
-    <string name="text_pending_uploads">Hangende oplaaie</string>
+    <string name="text_pending_uploads"> %s Hangende oplaaie</string>
     <string name="text_beneficiary_onboarding">Aanboord van begunstigde</string>
     <string name="text_vendor_onboarding">Verkoper aanboord</string>
     <string name="text_logout_button">Afmeld-knoppie</string>
@@ -137,4 +137,20 @@
     <string name="upload_a_clear_picture_showing_your_face_navoid_group_picture">Laai \'n duidelike prent op wat jou gesig wys.\nVermy groepprent.</string>
     <string name="verify_fingerprint">Verifieer vingerafdruk</string>
     <string name="you_will_be_prompted_to_verify_your_nthumb_index_finger_amp_middle_finger">Jy sal gevra word om jou\nduim, wysvinger &amp; middelvinger</string>
+    <string name="no_pending_uploads">No pending uploads</string>
+
+    <string name="permission_denied">Toestemming geweier</string>
+    <string name="permission_was_denied_permanently_please_grant_us_permission">Toestemming is permanent geweier, gee asseblief vir ons toestemming</string>
+    <string name="location_access_was_rejected">Liggingtoegang is afgekeur.</string>
+
+    <string name="logged_in">Aangeteken</string>
+    <string name="change_account">Verander rekening?</string>
+    <string name="vendor_information">Verskafferinligting</string>
+    <string name="business_name">Besigheidsnaam</string>
+    <string name="chats">KLETTES</string>
+    <string name="doe">Doe</string>
+    <string name="_123xxxxxx">123XXXXXX</string>
+
+    <string name="not_logged_in">"Not Logged In? "</string>
+
 </resources>

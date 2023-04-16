@@ -45,13 +45,14 @@ import kotlin.coroutines.resume
 
 
 @InternalCoroutinesApi
-class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback, PermissionResultReceiver {
+class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback,
+    PermissionResultReceiver {
 
-    private  var _binding: ActivityAuthBinding?=null
-    private  val binding: ActivityAuthBinding
+    private var _binding: ActivityAuthBinding? = null
+    private val binding: ActivityAuthBinding
         get() = _binding!!
     private val offlineViewModel by viewModel<OfflineViewModel>()
-    val permissionManager: PermissionManager = PermissionManager(this,this)
+    val permissionManager: PermissionManager = PermissionManager(this, this)
     private val mainViewModel by viewModel<RegisterViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
     private val preferenceUtil: PreferenceUtil by inject()
@@ -71,7 +72,7 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                     latitude = it.latitude,
                     longitude = it.longitude
                 )
-            }?: toast("Location access was rejected.")
+            } ?: toast(getString(R.string.location_access_was_rejected))
         }
 
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
@@ -85,7 +86,8 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
 
         offlineViewModel.getBeneficiaries.observe(this) {
             val count = it.count()
-            binding.pendingUploadTextView.text = "$count Pending uploads"
+            binding.pendingUploadTextView.text =
+                getString(R.string.text_pending_uploads, count.toString())
             if (count > 0) {
                 binding.pendingUploadTextView.setOnClickListener {
                     if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
@@ -93,12 +95,12 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
                             startUpload()
                         }
                     } else {
-                        this.toast("Internet not available.")
+                        this.toast(getString(R.string.no_internet))
                     }
                 }
             } else {
                 binding.pendingUploadTextView.setOnClickListener {
-                    this.toast("No pending uploads")
+                    this.toast(getString(R.string.no_pending_uploads))
                 }
             }
         }
@@ -112,28 +114,33 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
 
     override fun onResume() {
         super.onResume()
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
-            if(!permissionsList.contains(WRITE_STORAGE_PERMISSION) || !permissionsList.contains(
-                    READ_STORAGE_PERMISSION) ) {
-                permissionsList.addAll(listOf(WRITE_STORAGE_PERMISSION,READ_STORAGE_PERMISSION))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (!permissionsList.contains(WRITE_STORAGE_PERMISSION) || !permissionsList.contains(
+                    READ_STORAGE_PERMISSION
+                )
+            ) {
+                permissionsList.addAll(listOf(WRITE_STORAGE_PERMISSION, READ_STORAGE_PERMISSION))
             }
         }
-        if(!alertDialog.isShowing && !cameraRationale.isShowing){
+        if (!alertDialog.isShowing && !cameraRationale.isShowing) {
             permissionManager.checkPermissions(permissionsList)
         }
     }
-private val permissionsList= mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
-    private fun permissionListener(){
+
+    private val permissionsList = mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
+    private fun permissionListener() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment) as NavHostFragment
         val navController = navHostFragment.navController
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
-            if(permissionsList.contains(WRITE_STORAGE_PERMISSION) || !permissionsList.contains(
-                    READ_STORAGE_PERMISSION)) {
-                permissionsList.addAll(listOf(WRITE_STORAGE_PERMISSION,READ_STORAGE_PERMISSION))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (permissionsList.contains(WRITE_STORAGE_PERMISSION) || !permissionsList.contains(
+                    READ_STORAGE_PERMISSION
+                )
+            ) {
+                permissionsList.addAll(listOf(WRITE_STORAGE_PERMISSION, READ_STORAGE_PERMISSION))
             }
         }
-        navController.addOnDestinationChangedListener{_,_,_ ->
+        navController.addOnDestinationChangedListener { _, _, _ ->
             permissionManager.checkPermissions(permissionsList)
         }
     }
@@ -157,7 +164,10 @@ private val permissionsList= mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
                 if (grantResults.isEmpty() &&
                     grantResults[0] != PackageManager.PERMISSION_GRANTED
                 ) {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this, getString(R.string.permission_denied),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
                 return
             }
@@ -165,23 +175,26 @@ private val permissionsList= mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
     }
 
 
-    private suspend fun uploadBeneficiaryAsync(beneficiary: Beneficiary):Boolean=suspendCancellableCoroutine { continuation ->
-        mainViewModel.onboardBeneficiary(beneficiary,internetAvailabilityChecker.currentInternetAvailabilityStatus)
-        try {
-            CoroutineScope(Dispatchers.Main).launch {
-                mainViewModel.onboardBeneficiaryResponse.cancellable().collect {
-                    handleUploadResponse(it,beneficiary,continuation,this)
+    private suspend fun uploadBeneficiaryAsync(beneficiary: Beneficiary): Boolean =
+        suspendCancellableCoroutine { continuation ->
+            mainViewModel.onboardBeneficiary(
+                beneficiary,
+                internetAvailabilityChecker.currentInternetAvailabilityStatus
+            )
+            try {
+                CoroutineScope(Dispatchers.Main).launch {
+                    mainViewModel.onboardBeneficiaryResponse.cancellable().collect {
+                        handleUploadResponse(it, beneficiary, continuation, this)
 
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        }
-        catch (e:Exception){
-            e.printStackTrace()
+
         }
 
-    }
-
-    private var uploading=false
+    private var uploading = false
     private var index = 0
 
     private suspend fun uploadUser(beneficiary: Beneficiary, list: List<Beneficiary>) {
@@ -191,24 +204,26 @@ private val permissionsList= mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
                 registerVendor(beneficiary)
 
             }
+
             BENEFICIARY_TYPE -> {
                 uploadBeneficiaryAsync(beneficiary)
             }
         }
-        if(index==(list.size-1)){
-            showSuccessSnackbar(R.string.text_user_onboarded_success,binding.root)
+        if (index == (list.size - 1)) {
+            showSuccessSnackbar(R.string.text_user_onboarded_success, binding.root)
         }
 
         index += 1
 
 
     }
+
     private suspend fun startUpload() {
-        offlineViewModel.getBeneficiaries.observe(this) {list ->
-            if(!uploading) {
+        offlineViewModel.getBeneficiaries.observe(this) { list ->
+            if (!uploading) {
                 CoroutineScope(Dispatchers.IO).launch {
                     uploading = true
-                    while(index <=(list.size-1)){
+                    while (index <= (list.size - 1)) {
                         val beneficiary = list[index]
                         uploadUser(beneficiary, list)
                     }
@@ -219,27 +234,29 @@ private val permissionsList= mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
     }
 
 
-
-    private suspend fun registerVendor(beneficiary: Beneficiary):Boolean=suspendCancellableCoroutine { continuation ->
-        mainViewModel.vendorOnboarding(beneficiary,
-            internetAvailabilityChecker.currentInternetAvailabilityStatus
-        )
-        try {
-            CoroutineScope(Dispatchers.Main).launch {
-                mainViewModel.onboardVendorResponse.cancellable().collect {
-                    handleUploadResponse(it,beneficiary,continuation,this)
+    private suspend fun registerVendor(beneficiary: Beneficiary): Boolean =
+        suspendCancellableCoroutine { continuation ->
+            mainViewModel.vendorOnboarding(
+                beneficiary,
+                internetAvailabilityChecker.currentInternetAvailabilityStatus
+            )
+            try {
+                CoroutineScope(Dispatchers.Main).launch {
+                    mainViewModel.onboardVendorResponse.cancellable().collect {
+                        handleUploadResponse(it, beneficiary, continuation, this)
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        }
-        catch (e:Exception){
-            e.printStackTrace()
+
         }
 
-    }
-
-    private fun handleUploadResponse(it:NetworkResponse<Any>,beneficiary: Beneficiary,
-                                     continuation:CancellableContinuation<Boolean>,
-                                     job:CoroutineScope){
+    private fun handleUploadResponse(
+        it: NetworkResponse<Any>, beneficiary: Beneficiary,
+        continuation: CancellableContinuation<Boolean>,
+        job: CoroutineScope,
+    ) {
         Timber.v("upoading $beneficiary $it")
         binding.pendingProgress.hide()
         if (it is NetworkResponse.Success) {
@@ -310,26 +327,33 @@ private val permissionsList= mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
     }
 
     override fun notGranted(permission: String) {
-        if(permissionManager.shouldShowRationale(permission)){
+        if (permissionManager.shouldShowRationale(permission)) {
             showRationale(permission)
-        }
-        else {
-             if(!checkPermission(CAMERA_PERMISSION) && !checkPermission(FINE_LOCATION) && !checkPermission(
-                    READ_STORAGE_PERMISSION)) {
-                permissionManager.getPermissions(listOf(CAMERA_PERMISSION, FINE_LOCATION, COARSE_LOCATION, READ_STORAGE_PERMISSION))
-            }
-            else if(permission == FINE_LOCATION){
+        } else {
+            if (!checkPermission(CAMERA_PERMISSION) && !checkPermission(FINE_LOCATION) && !checkPermission(
+                    READ_STORAGE_PERMISSION
+                )
+            ) {
+                permissionManager.getPermissions(
+                    listOf(
+                        CAMERA_PERMISSION,
+                        FINE_LOCATION,
+                        COARSE_LOCATION,
+                        READ_STORAGE_PERMISSION
+                    )
+                )
+            } else if (permission == FINE_LOCATION) {
                 permissionManager.getPermissions(listOf(FINE_LOCATION, COARSE_LOCATION))
-            }
-            else {
+            } else {
                 permissionManager.getPermission(permission)
             }
         }
     }
+
     private val alertDialog by lazy {
         AlertDialog(this,
-            "Permission denied",
-            "Permission was denied permanently, please grant us permission",
+            getString(R.string.permission_denied),
+            getString(R.string.permission_was_denied_permanently_please_grant_us_permission),
             onNegativeClicked = {
                 finish()
             },
@@ -337,12 +361,13 @@ private val permissionsList= mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
                 openAppSystemSettings()
             }).create()
     }
-        override fun onDenied(permission: String) {
-            if (!alertDialog.isShowing) {
-                alertDialog.show()
-                Timber.v(permission)
-            }
+
+    override fun onDenied(permission: String) {
+        if (!alertDialog.isShowing) {
+            alertDialog.show()
+            Timber.v(permission)
         }
+    }
 
 
     private val cameraRationale by lazy {
@@ -353,13 +378,15 @@ private val permissionsList= mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
             permissionManager.getPermission(CAMERA_PERMISSION)
         }
     }
+
     override fun showRationale(permission: String) {
         when (permission) {
             CAMERA_PERMISSION -> {
-                if(!cameraRationale.isShowing){
+                if (!cameraRationale.isShowing) {
                     cameraRationale.show()
                 }
             }
+
             READ_STORAGE_PERMISSION -> {
 
             }

@@ -73,7 +73,7 @@
     <string name="text_report">Rapport</string>
     <string name="text_status">Statut</string>
     <string name="text_no_worker_found">Aucun travailleur trouvé</string>
-    <string name="text_pending_uploads">Téléchargements en attente</string>
+    <string name="text_pending_uploads"> %s Téléchargements en attente</string>
     <string name="text_beneficiary_onboarding">Intégration des bénéficiaires</string>
     <string name="text_vendor_onboarding">Intégration des fournisseurs</string>
     <string name="text_logout_button">Bouton de déconnexion</string>
@@ -137,4 +137,20 @@
     <string name="upload_a_clear_picture_showing_your_face_navoid_group_picture">Laai \'n duidelike prent op wat jou gesig wys.\nVermy groepprent.</string>
     <string name="verify_fingerprint">Verifieer vingerafdruk</string>
     <string name="you_will_be_prompted_to_verify_your_nthumb_index_finger_amp_middle_finger">Jy sal gevra word om jou\nduim, wysvinger en middelvinger te verifieer.</string>
+    <string name="no_pending_uploads">No pending uploads</string>
+
+    <string name="permission_denied">Autorisation refusée</string>
+    <string name="permission_was_denied_permanently_please_grant_us_permission">L\'autorisation a été refusée définitivement, veuillez nous accorder l\'autorisation</string>
+    <string name="location_access_was_rejected">L\'accès à l\'emplacement a été refusé.</string>
+
+    <string name="logged_in">Connecté</string>
+    <string name="change_account">Changer de compte ?</string>
+    <string name="vendor_information">Informations sur le fournisseur</string>
+    <string name="business_name">Nom de l\'entreprise</string>
+    <string name="chats">CHATS</string>
+    <string name="doe">Biche</string>
+    <string name="_123xxxxxx">123XXXXXX</string>
+
+    <string name="not_logged_in">"Not Logged In? "</string>
+
 </resources>

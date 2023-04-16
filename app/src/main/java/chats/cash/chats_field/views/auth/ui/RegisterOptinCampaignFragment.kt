@@ -14,7 +14,7 @@ import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentRegisterOptInBinding
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.campaignform.CampaignForm
-import chats.cash.chats_field.network.body.survey.AnswerSurveyQuestionBody
+import chats.cash.chats_field.network.body.survey.SubmitSurveyAnswerBody
 import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.safeNavigate
 import chats.cash.chats_field.views.base.BaseFragment
@@ -25,43 +25,43 @@ import timber.log.Timber
 class RegisterOptinCampaignFragment : BaseFragment() {
 
 
-    lateinit var _binding:FragmentRegisterOptInBinding
-    val binding:FragmentRegisterOptInBinding
+    lateinit var _binding: FragmentRegisterOptInBinding
+    val binding: FragmentRegisterOptInBinding
         get() = _binding
 
-    val answer = AnswerSurveyQuestionBody(null,null, emptyList())
+    lateinit var answer: SubmitSurveyAnswerBody
     var firstQuestionAnwser = mutableListOf<String>()
-    var firstQuestionReward = 0
-    var secondQuestionReward = 0
+    var firstQuestionReward = mutableListOf<Int>()
+    var secondQuestionReward = mutableListOf<Int>()
     var secondQuestionAnwser = mutableListOf<String>()
     var thirdQuestionAnwser = mutableListOf<String>()
-    lateinit var form:CampaignForm
+    lateinit var form: CampaignForm
 
     private val offlineViewModel by activityViewModels<OfflineViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentRegisterOptInBinding.inflate(inflater,container,false)
+        _binding = FragmentRegisterOptInBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    val args:RegisterOptinCampaignFragmentArgs by navArgs()
+    val args: RegisterOptinCampaignFragmentArgs by navArgs()
 
-    lateinit var firstName:String
-    lateinit var lastname:String
-    lateinit var email:String
-    lateinit var password:String
-    lateinit var phone:String
-    lateinit var lat:String
-    lateinit var long:String
-    var organizationId:Int=0
-    lateinit var gender:String
-    lateinit var date:String
-    lateinit var pin:String
-    lateinit var campaign:ModelCampaign
+    lateinit var firstName: String
+    lateinit var lastname: String
+    lateinit var email: String
+    lateinit var password: String
+    lateinit var phone: String
+    lateinit var lat: String
+    lateinit var long: String
+    var organizationId: Int = 0
+    lateinit var gender: String
+    lateinit var date: String
+    lateinit var pin: String
+    lateinit var campaign: ModelCampaign
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -82,7 +82,7 @@ class RegisterOptinCampaignFragment : BaseFragment() {
         lifecycleScope.launch {
 
             offlineViewModel.userCampaignForm.collect {
-                if(it!=null) {
+                if (it != null) {
                     Timber.d(it.toString())
                     if (it.questions.size >= 3) {
                         val first = it.questions[0]
@@ -106,13 +106,10 @@ class RegisterOptinCampaignFragment : BaseFragment() {
                         binding.questionTwoOptionOne.text = two.question.options[0].option
                         binding.questionTwoOptionTwo.text = two.question.options[1].option
 
-                    }
-
-                    else{
+                    } else {
                         navigateWithError()
                     }
-                }
-                else{
+                } else {
                     navigateWithError("no questions")
                 }
 
@@ -122,9 +119,9 @@ class RegisterOptinCampaignFragment : BaseFragment() {
 
         addClickListeners()
 
-        }
+    }
 
-    private fun navigateWithError(title:String = "Invalid campaign questions"){
+    private fun navigateWithError(title: String = "Invalid campaign questions") {
         findNavController().safeNavigate(
             RegisterOptinCampaignFragmentDirections.actionRegisterOptinCampaignFragmentToRegisterVerifyFragment(
                 firstName = firstName,
@@ -141,57 +138,59 @@ class RegisterOptinCampaignFragment : BaseFragment() {
                 campaign = campaign,
             )
         )
-        Toast.makeText(requireContext(),title,Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), title, Toast.LENGTH_SHORT).show()
     }
+
     private fun addClickListeners() {
 
         binding.optinRadiogroup.setOnCheckedChangeListener { group, checkedId ->
-            when(checkedId){
+            when (checkedId) {
                 R.id.question_two_option_one -> {
                     secondQuestionAnwser.clear()
                     secondQuestionAnwser.add(binding.questionTwoOptionOne.text.toString())
-                    secondQuestionReward = form.questions[1].question.options[0].reward.toInt()
+                    secondQuestionReward.clear()
+                    secondQuestionReward.add(form.questions[1].question.options[0].reward.toInt())
                 }
+
                 R.id.question_two_option_two -> {
                     secondQuestionAnwser.clear()
                     secondQuestionAnwser.add(binding.questionTwoOptionTwo.text.toString())
-                    secondQuestionReward = form.questions[1].question.options[1].reward.toInt()
+                    secondQuestionReward.clear()
+                    secondQuestionReward.add(form.questions[1].question.options[1].reward.toInt())
                 }
 
             }
         }
         campaign.title?.let {
-            binding.title.text = requireContext().getString(R.string.opt_in,it)
+            binding.title.text = requireContext().getString(R.string.opt_in, it)
         }
 
         binding.questionOneOptionOne.addOnCheckedStateChangedListener { checkBox, state ->
             val reward = form.questions[0].question.options[0].reward.toInt()
-            if(checkBox.isChecked){
-                if(!firstQuestionAnwser.contains(checkBox.text)) {
+            if (checkBox.isChecked) {
+                if (!firstQuestionAnwser.contains(checkBox.text)) {
                     firstQuestionAnwser.add(checkBox.text.toString())
-                    firstQuestionReward += reward
+                    firstQuestionReward.add(reward)
                 }
-            }
-            else {
-                if(firstQuestionAnwser.contains(checkBox.text)) {
+            } else {
+                if (firstQuestionAnwser.contains(checkBox.text)) {
                     firstQuestionAnwser.remove(checkBox.text.toString())
-                    firstQuestionReward -= reward
+                    firstQuestionReward.remove(reward)
                 }
             }
 
         }
         binding.questionOneOptionTwo.addOnCheckedStateChangedListener { checkBox, state ->
             val reward = form.questions[0].question.options[1].reward.toInt()
-            if(checkBox.isChecked){
-                if(!firstQuestionAnwser.contains(checkBox.text)) {
+            if (checkBox.isChecked) {
+                if (!firstQuestionAnwser.contains(checkBox.text)) {
                     firstQuestionAnwser.add(checkBox.text.toString())
-                    firstQuestionReward += reward
+                    firstQuestionReward.add(reward)
                 }
-            }
-            else {
-                if(firstQuestionAnwser.contains(checkBox.text)) {
+            } else {
+                if (firstQuestionAnwser.contains(checkBox.text)) {
                     firstQuestionAnwser.remove(checkBox.text.toString())
-                    firstQuestionReward -= reward
+                    firstQuestionReward.remove(reward)
                 }
             }
             Timber.v(firstQuestionAnwser.toString())
@@ -205,12 +204,30 @@ class RegisterOptinCampaignFragment : BaseFragment() {
         binding.optinSubmitbutton.setOnClickListener {
 
             checkIfAllFieldsAreFilledCorrectly() {
-                val answerBody = AnswerSurveyQuestionBody(null,form.id,
-                    listOf(AnswerSurveyQuestionBody.Question(firstQuestionAnwser,form.questions[0].question.title,firstQuestionReward,form.questions[0].type),
-                    AnswerSurveyQuestionBody.Question(secondQuestionAnwser,form.questions[1].question.title,secondQuestionReward,form.questions[1].type),
-                AnswerSurveyQuestionBody.Question(listOf(binding.optinQuestionthree.text.toString()),form.questions[2].question.title,form.questions[2].value.toInt(),form.questions[2].type)),
+                answer = SubmitSurveyAnswerBody(
+                    email, form.campaigns.getOrNull(0)?.id ?: 0, 0, form.id,
+                    listOf(
+                        SubmitSurveyAnswerBody.QuestionAnswers(
+                            firstQuestionAnwser,
+                            form.questions[0].question.title,
+                            firstQuestionReward, form.questions[0].type
+                        ),
+                        SubmitSurveyAnswerBody.QuestionAnswers(
+                            secondQuestionAnwser,
+                            form.questions[1].question.title,
+                            secondQuestionReward,
+                            form.questions[1].type
+                        ),
+                        SubmitSurveyAnswerBody.QuestionAnswers(
+                            listOf(binding.optinQuestionthree.text.toString()),
+                            form.questions[2].question.title,
+                            mutableListOf(form.questions[2].value.toInt()),
+                            form.questions[2].type
+                        )
+                    ),
                 )
-                Timber.v(answerBody.toString())
+                offlineViewModel.insertSurveryAnswer(answer)
+                Timber.v(answer.toString())
                 findNavController().safeNavigate(
                     RegisterOptinCampaignFragmentDirections.actionRegisterOptinCampaignFragmentToRegisterVerifyFragment(
                         firstName = firstName,
@@ -234,21 +251,28 @@ class RegisterOptinCampaignFragment : BaseFragment() {
     }
 
 
+    private fun checkIfAllFieldsAreFilledCorrectly(isOkay: () -> Unit) {
 
-    private fun checkIfAllFieldsAreFilledCorrectly(isOkay:()->Unit){
-
-        if(firstQuestionAnwser.isEmpty()){
-            showErrorSnackbar(requireContext().getString(R.string.please_select_an_option),binding.cardviewOne)
+        if (firstQuestionAnwser.isEmpty()) {
+            showErrorSnackbar(
+                requireContext().getString(R.string.please_select_an_option),
+                binding.cardviewOne
+            )
             return
         }
-        if(secondQuestionAnwser.isEmpty()){
-            showErrorSnackbar(getStringResource(R.string.please_select_an_option),
-                binding.cardviewTwo)
+        if (secondQuestionAnwser.isEmpty()) {
+            showErrorSnackbar(
+                getStringResource(R.string.please_select_an_option),
+                binding.cardviewTwo
+            )
             return
         }
 
-        if(binding.optinQuestionthree.text.isNullOrBlank()){
-            showErrorSnackbar(getStringResource(R.string.enter_a_value),binding.optinQuestionthreeParent)
+        if (binding.optinQuestionthree.text.isNullOrBlank()) {
+            showErrorSnackbar(
+                getStringResource(R.string.enter_a_value),
+                binding.optinQuestionthreeParent
+            )
             binding.optinQuestionthreeParent.apply {
                 this.error = getStringResource(R.string.enter_a_value)
                 isErrorEnabled = true
@@ -257,7 +281,7 @@ class RegisterOptinCampaignFragment : BaseFragment() {
         }
         binding.optinQuestionthreeParent.apply {
             error = ""
-            isErrorEnabled=false
+            isErrorEnabled = false
         }
         thirdQuestionAnwser.add(binding.optinQuestionthree.text.toString())
         isOkay()
@@ -265,16 +289,14 @@ class RegisterOptinCampaignFragment : BaseFragment() {
     }
 
 
-
-    private fun showErrorSnackbar(error:String,view: View){
+    private fun showErrorSnackbar(error: String, view: View) {
         binding.root.smoothScrollTo(0, binding.constraints.top + view.top);
 
-        val snackbar = Snackbar.make(binding.root,error,Snackbar.LENGTH_SHORT)
+        val snackbar = Snackbar.make(binding.root, error, Snackbar.LENGTH_SHORT)
         snackbar.setBackgroundTint(requireContext().getColor(R.color.design_default_color_error))
         snackbar.setTextColor(Color.WHITE)
         snackbar.show()
     }
-
 
 
 }
