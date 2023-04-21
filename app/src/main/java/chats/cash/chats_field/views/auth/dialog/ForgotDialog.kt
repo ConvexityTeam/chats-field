@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import chats.cash.chats_field.R
+import chats.cash.chats_field.databinding.DialogForgotBinding
 import chats.cash.chats_field.utils.ApiResponse
 import chats.cash.chats_field.utils.hide
 import chats.cash.chats_field.utils.show
 import chats.cash.chats_field.utils.toast
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.dialog_forgot.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ForgotDialog : BottomSheetDialogFragment() {
@@ -21,36 +21,38 @@ class ForgotDialog : BottomSheetDialogFragment() {
         setStyle(STYLE_NORMAL, R.style.CustomBottomSheet)
     }
 
+    private lateinit var binding:DialogForgotBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_forgot, container, false)
+        binding = DialogForgotBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        forgotButton.setOnClickListener {
+        binding.forgotButton.setOnClickListener {
             validateFields()
         }
 
         viewModel.forgot.observe(viewLifecycleOwner) {
             when (it) {
                 is ApiResponse.Loading -> {
-                    forgotProgress.show()
+                    binding.forgotProgress.show()
                 }
                 is ApiResponse.Success -> {
                     val data = it.data
-                    forgotProgress.hide()
+                    binding.forgotProgress.hide()
                     requireContext().toast(data.message)
 //                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, Intent().putExtra("login",true))
                     dismiss()
                 }
                 is ApiResponse.Failure -> {
-                    forgotProgress.hide()
+                    binding.forgotProgress.hide()
                     if (it.code in 400..499) {
                         requireContext().toast("Unauthorized. Please check your credentials.")
                     } else {
@@ -62,12 +64,12 @@ class ForgotDialog : BottomSheetDialogFragment() {
     }
 
     private fun validateFields() {
-        val email = forgotEmailEdit.text.toString()
-        if(forgotEmailEdit.text.isNullOrBlank()){
-            forgotEmailLayout.error = "Email is required"
+        val email = binding.forgotEmailEdit.text.toString()
+        if(binding.forgotEmailEdit.text.isNullOrBlank()){
+            binding.forgotEmailLayout.error = "Email is required"
             return
         }else{
-            forgotEmailLayout.error = ""
+            binding.forgotEmailLayout.error = ""
         }
         viewModel.sendForgotEmail(email)
     }

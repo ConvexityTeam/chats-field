@@ -16,6 +16,9 @@ postiveText:String = "Yes", negativeText:String="Cancel", onNegativeClicked:()->
                 onPostiveClicked:()-> Unit):MaterialAlertDialogBuilder{
    return MaterialAlertDialogBuilder(context)
         .setTitle(title)
+       .setOnCancelListener {
+           onNegativeClicked()
+       }
         .setMessage(message)
         .setPositiveButton(
             postiveText

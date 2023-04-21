@@ -1,161 +1,106 @@
 package chats.cash.chats_field.views.auth
 
-import android.content.Context
 import android.content.Intent
-import android.location.Location
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.ActivityAuthBinding
-import chats.cash.chats_field.network.body.LocationBody
+import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
+import chats.cash.chats_field.utils.ChatsFieldConstants.BENEFICIARY_TYPE
 import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
-import chats.cash.chats_field.utils.Utils.checkAppPermission
-import chats.cash.chats_field.utils.encryption.AESEncrption
+import chats.cash.chats_field.utils.dialogs.AlertDialog
 import chats.cash.chats_field.utils.location.LocationManager
+import chats.cash.chats_field.utils.permissions.POST_NOTIFICATION_PERMISSION_REQUEST_CODE
+import chats.cash.chats_field.utils.permissions.RequestNotificationPermission
+import chats.cash.chats_field.views.auth.ui.NFC_REQUEST_KEY
+import chats.cash.chats_field.views.auth.ui.NfcScanFragment
+import chats.cash.chats_field.views.auth.ui.RegisterVerifyFragmentDirections
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
+import chats.cash.chats_field.views.core.dialogs.getPermissionDialogs
+import chats.cash.chats_field.views.core.permissions.*
+import chats.cash.chats_field.views.core.showErrorSnackbar
+import chats.cash.chats_field.views.core.showSuccessSnackbar
 import com.google.android.gms.tasks.CancellationTokenSource
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.gson.Gson
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import com.treebo.internetavailabilitychecker.InternetConnectivityListener
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.cancellable
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import java.io.File
+import java.io.FileNotFoundException
+import kotlin.coroutines.resume
+
 
 @InternalCoroutinesApi
-class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback {
+class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUploadCallback,
+    PermissionResultReceiver {
 
-    private lateinit var binding: ActivityAuthBinding
+    private var _binding: ActivityAuthBinding? = null
+    private val binding: ActivityAuthBinding
+        get() = _binding!!
     private val offlineViewModel by viewModel<OfflineViewModel>()
+    val permissionManager: PermissionManager = PermissionManager(this, this)
     private val mainViewModel by viewModel<RegisterViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
-    private var currentBeneficiary = Beneficiary()
     private val preferenceUtil: PreferenceUtil by inject()
 
     private val cancellationTokenSource by lazy { CancellationTokenSource() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAuthBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        this.checkAppPermission()
-
+        _binding = ActivityAuthBinding.inflate(layoutInflater)
+        setContentView(_binding!!.root)
+        permissionListener()
+        RequestNotificationPermission(this).onCreate()
         val locationManager = LocationManager(this)
         lifecycleScope.launch {
-
             locationManager.getLastKnownLocationAsync().await()?.let {
                 preferenceUtil.setLatLong(
                     latitude = it.latitude,
                     longitude = it.longitude
                 )
-            }?: toast("Location access was rejected.")
+            } ?: toast(getString(R.string.location_access_was_rejected))
         }
-//        val locationPermissionRequest =
-//            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-//                when {
-//                    permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
-//                        setupLocationProviderClient(this)
-//                    }
-//                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
-//                        setupLocationProviderClient(this)
-//                    }
-//                    else -> {
-//                        toast("Location access was rejected.")
-//                    }
-//                }
-//            }
-//
-//        when {
-//            ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-//                    ContextCompat.checkSelfPermission(this,
-//                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
-//                setupLocationProviderClient(this)
-//            }
-//            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
-//                locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION))
-//            }
-//            else -> {
-//
-//            }
-//        }
 
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
         if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-            startUpload()
-        }
-        internetAvailabilityChecker.addInternetConnectivityListener(this)
-        mainViewModel.onboardUser.observe(this) {
-            when (it) {
-                is ApiResponse.Loading -> {
-                    if (binding.pendingUploadTextView.isVisible) {
-                        binding.pendingProgress.show()
-                    }
-                }
-                is ApiResponse.Success -> {
-                    binding.pendingProgress.hide()
-                    try {
-                        File(currentBeneficiary.leftLittle).delete()
-                        File(currentBeneficiary.leftIndex).delete()
-                        File(currentBeneficiary.leftThumb).delete()
-                        File(currentBeneficiary.rightLittle).delete()
-                        File(currentBeneficiary.rightIndex).delete()
-                        File(currentBeneficiary.rightThumb).delete()
-                        File(currentBeneficiary.profilePic).delete()
-                    } catch (t: Throwable) {
-
-                    }
-                    offlineViewModel.delete(beneficiary = currentBeneficiary)
-                }
-                is ApiResponse.Failure -> {
-                    binding.pendingProgress.hide()
-                    if (it.code == 400) {
-                        try {
-                            File(currentBeneficiary.leftLittle).delete()
-                            File(currentBeneficiary.leftIndex).delete()
-                            File(currentBeneficiary.leftThumb).delete()
-                            File(currentBeneficiary.rightLittle).delete()
-                            File(currentBeneficiary.rightIndex).delete()
-                            File(currentBeneficiary.rightThumb).delete()
-                            File(currentBeneficiary.profilePic).delete()
-                        } catch (t: Throwable) {
-
-                        }
-                        offlineViewModel.delete(beneficiary = currentBeneficiary)
-                    }
-                }
+            lifecycleScope.launch {
+                startUpload()
             }
         }
+        internetAvailabilityChecker.addInternetConnectivityListener(this)
+
 
         offlineViewModel.getBeneficiaries.observe(this) {
             val count = it.count()
-            binding.pendingUploadTextView.text = "$count Pending uploads"
+            binding.pendingUploadTextView.text =
+                getString(R.string.text_pending_uploads, count.toString())
             if (count > 0) {
                 binding.pendingUploadTextView.setOnClickListener {
                     if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-                        startUpload()
+                        lifecycleScope.launch {
+                            startUpload()
+                        }
                     } else {
-                        this.toast("Internet not available.")
+                        this.toast(getString(R.string.no_internet))
                     }
                 }
             } else {
                 binding.pendingUploadTextView.setOnClickListener {
-                    this.toast("No pending uploads")
+                    this.toast(getString(R.string.no_pending_uploads))
                 }
             }
         }
@@ -164,7 +109,39 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
     override fun onInternetConnectivityChanged(isConnected: Boolean) {
         if (isConnected) {
             Timber.v("Internet connectivity available")
-            startUpload()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (!permissionsList.contains(WRITE_STORAGE_PERMISSION) || !permissionsList.contains(
+                    READ_STORAGE_PERMISSION
+                )
+            ) {
+                permissionsList.addAll(listOf(WRITE_STORAGE_PERMISSION, READ_STORAGE_PERMISSION))
+            }
+        }
+        if (!alertDialog.isShowing && !cameraRationale.isShowing) {
+            permissionManager.checkPermissions(permissionsList)
+        }
+    }
+
+    private val permissionsList = mutableListOf(CAMERA_PERMISSION, FINE_LOCATION)
+    private fun permissionListener() {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (permissionsList.contains(WRITE_STORAGE_PERMISSION) || !permissionsList.contains(
+                    READ_STORAGE_PERMISSION
+                )
+            ) {
+                permissionsList.addAll(listOf(WRITE_STORAGE_PERMISSION, READ_STORAGE_PERMISSION))
+            }
+        }
+        navController.addOnDestinationChangedListener { _, _, _ ->
+            permissionManager.checkPermissions(permissionsList)
         }
     }
 
@@ -174,179 +151,250 @@ class AuthActivity : AppCompatActivity(), InternetConnectivityListener, ImageUpl
         cancellationTokenSource.cancel()
     }
 
-    private fun startUpload() {
-        offlineViewModel.getBeneficiaries.observe(this) {
-            if (it.isNotEmpty()) {
-                Timber.v("List is not empty")
-                if (currentBeneficiary != it.first()) {
-                    Timber.v("Initial = $currentBeneficiary")
-                    currentBeneficiary = it.first()
-                    Timber.v("Current = $currentBeneficiary")
-                    if (currentBeneficiary.type == VENDOR_TYPE) {
-                        registerVendor(currentBeneficiary)
-                    } else {
-                        postOnboardData(beneficiary = currentBeneficiary)
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            POST_NOTIFICATION_PERMISSION_REQUEST_CODE -> {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.isEmpty() &&
+                    grantResults[0] != PackageManager.PERMISSION_GRANTED
+                ) {
+                    Toast.makeText(
+                        this, getString(R.string.permission_denied),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                return
+            }
+        }
+    }
+
+
+    private suspend fun uploadBeneficiaryAsync(beneficiary: Beneficiary): Boolean =
+        suspendCancellableCoroutine { continuation ->
+            mainViewModel.onboardBeneficiary(
+                beneficiary,
+                internetAvailabilityChecker.currentInternetAvailabilityStatus
+            )
+            try {
+                CoroutineScope(Dispatchers.Main).launch {
+                    mainViewModel.onboardBeneficiaryResponse.cancellable().collect {
+                        handleUploadResponse(it, beneficiary, continuation, this)
+
                     }
-                } else {
-                    if (currentBeneficiary.type == VENDOR_TYPE) {
-                        registerVendor(currentBeneficiary)
-                    } else {
-                        postOnboardData(beneficiary = currentBeneficiary)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+        }
+
+    private var uploading = false
+    private var index = 0
+
+    private suspend fun uploadUser(beneficiary: Beneficiary, list: List<Beneficiary>) {
+        Timber.v("index $index")
+        when (beneficiary.type) {
+            VENDOR_TYPE -> {
+                registerVendor(beneficiary)
+
+            }
+
+            BENEFICIARY_TYPE -> {
+                uploadBeneficiaryAsync(beneficiary)
+            }
+        }
+        if (index == (list.size - 1)) {
+            showSuccessSnackbar(R.string.text_user_onboarded_success, binding.root)
+        }
+
+        index += 1
+
+
+    }
+
+    private suspend fun startUpload() {
+        offlineViewModel.getBeneficiaries.observe(this) { list ->
+            if (!uploading) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    uploading = true
+                    while (index <= (list.size - 1)) {
+                        val beneficiary = list[index]
+                        uploadUser(beneficiary, list)
                     }
+                    uploading = false
                 }
             }
         }
     }
 
-    private fun postOnboardData(beneficiary: Beneficiary) {
-        val mFirstName =
-            beneficiary.firstName.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mLastName =
-            beneficiary.lastName.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mEmail = beneficiary.email.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mLatitude =
-            beneficiary.latitude.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mLongitude = beneficiary.longitude.toString()
-            .toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mPhone = beneficiary.phone.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mPassword =
-            beneficiary.password.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mNfc = beneficiary.nfc.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mStatus = 0.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mGender = beneficiary.gender.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mDate = beneficiary.date.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-//        val mOrganizationId = RequestBody.create("multipart/form-data".toMediaTypeOrNull(),beneficiary.id.toString())
-        val mProfilePic = beneficiary.profilePic.toFile()
-        val profilePicBody = ProgressRequestBody(beneficiary.profilePic.toFile(), "image/jpg", this)
 
-        val locationBody =
-            LocationBody(coordinates = listOf(beneficiary.longitude, beneficiary.latitude),
-                country = "Nigeria")
-        val location = Gson().toJson(locationBody)
-        val mLocation = location.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mCampaign =
-            beneficiary.campaignId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mNin = beneficiary.nin
-        val mPin =
-            beneficiary.pin.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val mFingers = ArrayList<File>()
-        if (!beneficiary.isSpecialCase) {
-            mFingers.add(beneficiary.leftThumb.toFile())
-            mFingers.add(beneficiary.leftIndex.toFile())
-            mFingers.add(beneficiary.leftLittle.toFile())
-            mFingers.add(beneficiary.rightThumb.toFile())
-            mFingers.add(beneficiary.rightIndex.toFile())
-            mFingers.add(beneficiary.rightLittle.toFile())
+    private suspend fun registerVendor(beneficiary: Beneficiary): Boolean =
+        suspendCancellableCoroutine { continuation ->
+            mainViewModel.vendorOnboarding(
+                beneficiary,
+                internetAvailabilityChecker.currentInternetAvailabilityStatus
+            )
+            try {
+                CoroutineScope(Dispatchers.Main).launch {
+                    mainViewModel.onboardVendorResponse.cancellable().collect {
+                        handleUploadResponse(it, beneficiary, continuation, this)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
         }
 
-        val prints = ArrayList<MultipartBody.Part>()
-
-        mFingers.forEachIndexed { _, f ->
-            val mBody = ProgressRequestBody(f, "image/jpg", this)
-            val finger = MultipartBody.Part.createFormData(
-                "fingerprints",
-                f.absolutePath.substringAfterLast("/"),
-                mBody
-            )
-            prints.add(finger)
-        }
-
-        if (beneficiary.isSpecialCase) {
-            mainViewModel.onboardSpecialUser(
-                beneficiary.id.toString(),
-                firstName = mFirstName,
-                lastName = mLastName,
-                email = mEmail,
-                phone = mPhone,
-                password = mPassword,
-                lat = mLatitude,
-                long = mLongitude,
-                nfc = mNfc,
-                status = mStatus,
-                profile_pic = mProfilePic,
-                mGender = mGender,
-                mDate = mDate,
-                location = mLocation,
-                campaign = mCampaign,
-                pin = mPin,
-                nin = mNin
-            )
+    private fun handleUploadResponse(
+        it: NetworkResponse<Any>, beneficiary: Beneficiary,
+        continuation: CancellableContinuation<Boolean>,
+        job: CoroutineScope,
+    ) {
+        Timber.v("upoading $beneficiary $it")
+        binding.pendingProgress.hide()
+        if (it is NetworkResponse.Success) {
+            Timber.v("success")
+            offlineViewModel.delete(beneficiary)
+            continuation.resume(true)
+            job.cancel()
+        } else if (it is NetworkResponse.Error) {
+            showErrorSnackbar(R.string.upload_failed, binding.root)
+            Timber.v((it)._message)
+            if (it._message.contains("400")) {
+                Timber.v("deleting")
+                offlineViewModel.delete(beneficiary)
+            }
+            if (it.e is FileNotFoundException) {
+                offlineViewModel.delete(beneficiary)
+                showErrorSnackbar(R.string.file_deleted, binding.root)
+            }
+            continuation.resume(false)
+            job.cancel()
+        } else if (it is NetworkResponse.SimpleError) {
+            showErrorSnackbar(R.string.upload_failed, binding.root)
+            Timber.v((it)._message)
+            if (it._message.contains("400")) {
+                Timber.v("deleting")
+                offlineViewModel.delete(beneficiary)
+            } else {
+                when (it.code) {
+                    in 400..499 -> {
+                        Timber.v("deleting")
+                        offlineViewModel.delete(beneficiary)
+                    }
+                }
+            }
+            continuation.resume(false)
+            job.cancel()
         } else {
-            mainViewModel.onboardUser(
-                beneficiary.id.toString(),
-                firstName = mFirstName,
-                lastName = mLastName,
-                email = mEmail,
-                phone = mPhone,
-                password = mPassword,
-                lat = mLatitude,
-                long = mLongitude,
-                nfc = mNfc,
-                status = mStatus,
-                profile_pic = mProfilePic,
-                prints = prints,
-                mGender = mGender,
-                mDate = mDate,
-                location = mLocation,
-                campaign = mCampaign,
-                pin = mPin
-            )
+            if (binding.pendingUploadTextView.isVisible) {
+                binding.pendingProgress.show()
+            }
         }
-    }
 
-    private fun registerVendor(currentBeneficiary: Beneficiary) {
-        mainViewModel.vendorOnboarding(
-            businessName = currentBeneficiary.storeName,
-            email = currentBeneficiary.email,
-            phone = currentBeneficiary.phone,
-//            password = currentBeneficiary.password,
-//            pin = currentBeneficiary.pin.toString(),
-//            bvn = currentBeneficiary.bvn,
-            firstName = currentBeneficiary.firstName,
-            lastName = currentBeneficiary.lastName,
-            address = currentBeneficiary.address,
-            country = currentBeneficiary.country,
-            state = currentBeneficiary.state,
-            coordinates = listOf(preferenceUtil.getLatLong().first,
-                preferenceUtil.getLatLong().second)
-        )
     }
 
     override fun onProgressUpdate(percentage: Int) {
         Timber.v(percentage.toString())
     }
 
-    private fun setupLocationProviderClient(context: Context) {
-        try {
-            val fusedLocationClient: FusedLocationProviderClient =
-                LocationServices.getFusedLocationProviderClient(context)
-            fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY,
-                cancellationTokenSource.token)
-                .addOnSuccessListener { location: Location? ->
-                    if (location != null) {
-                        preferenceUtil.setLatLong(
-                            latitude = location.latitude,
-                            longitude = location.longitude
-                        )
-                    } else {
-                        toast("Location is turned off on this device")
-                    }
-                }.addOnFailureListener {
-                    toast(it.localizedMessage)
-                    FirebaseCrashlytics.getInstance().recordException(it)
-            }
-        } catch (e: SecurityException) {
-            toast(e.localizedMessage)
-            Timber.e(e)
-            FirebaseCrashlytics.getInstance().recordException(e)
-        } catch (t: Throwable) {
-            Timber.e(t)
-            FirebaseCrashlytics.getInstance().recordException(t)
-        }
-    }
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
     }
+
+    fun hidePendingUpload() {
+        _binding?.let {
+            binding.pendingUploadTextView.hide()
+        }
+    }
+
+    fun showPendingUpload() {
+        _binding?.let {
+            binding.pendingUploadTextView.show()
+        }
+    }
+
+    override fun onGranted() {
+
+    }
+
+    override fun notGranted(permission: String) {
+        if (permissionManager.shouldShowRationale(permission)) {
+            showRationale(permission)
+        } else {
+            if (!checkPermission(CAMERA_PERMISSION) && !checkPermission(FINE_LOCATION) && !checkPermission(
+                    READ_STORAGE_PERMISSION
+                )
+            ) {
+                permissionManager.getPermissions(
+                    listOf(
+                        CAMERA_PERMISSION,
+                        FINE_LOCATION,
+                        COARSE_LOCATION,
+                        READ_STORAGE_PERMISSION
+                    )
+                )
+            } else if (permission == FINE_LOCATION) {
+                permissionManager.getPermissions(listOf(FINE_LOCATION, COARSE_LOCATION))
+            } else {
+                permissionManager.getPermission(permission)
+            }
+        }
+    }
+
+    private val alertDialog by lazy {
+        AlertDialog(this,
+            getString(R.string.permission_denied),
+            getString(R.string.permission_was_denied_permanently_please_grant_us_permission),
+            onNegativeClicked = {
+                finish()
+            },
+            onPostiveClicked = {
+                openAppSystemSettings()
+            }).create()
+    }
+
+    override fun onDenied(permission: String) {
+        if (!alertDialog.isShowing) {
+            alertDialog.show()
+            Timber.v(permission)
+        }
+    }
+
+
+    private val cameraRationale by lazy {
+        getPermissionDialogs(desc = R.string.camera_permission_desc,
+            icon = R.drawable.camera_permission_icon, onDismiss = {
+                finish()
+            }) {
+            permissionManager.getPermission(CAMERA_PERMISSION)
+        }
+    }
+
+    override fun showRationale(permission: String) {
+        when (permission) {
+            CAMERA_PERMISSION -> {
+                if (!cameraRationale.isShowing) {
+                    cameraRationale.show()
+                }
+            }
+
+            READ_STORAGE_PERMISSION -> {
+
+            }
+
+            WRITE_STORAGE_PERMISSION -> {
+
+            }
+        }
+    }
+
 }

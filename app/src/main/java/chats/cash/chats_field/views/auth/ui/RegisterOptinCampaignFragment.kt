@@ -2,49 +2,66 @@ package chats.cash.chats_field.views.auth.ui
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentRegisterOptInBinding
 import chats.cash.chats_field.model.ModelCampaign
+import chats.cash.chats_field.model.campaignform.CampaignForm
+import chats.cash.chats_field.network.body.survey.SubmitSurveyAnswerBody
+import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.safeNavigate
+import chats.cash.chats_field.views.base.BaseFragment
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class RegisterOptinCampaignFragment : Fragment() {
+class RegisterOptinCampaignFragment : BaseFragment() {
 
 
-    lateinit var _binding:FragmentRegisterOptInBinding
-    val binding:FragmentRegisterOptInBinding
+    lateinit var _binding: FragmentRegisterOptInBinding
+    val binding: FragmentRegisterOptInBinding
         get() = _binding
+
+    lateinit var answer: SubmitSurveyAnswerBody
+    var firstQuestionAnwser = mutableListOf<String>()
+    var firstQuestionReward = mutableListOf<Int>()
+    var secondQuestionReward = mutableListOf<Int>()
+    var secondQuestionAnwser = mutableListOf<String>()
+    var thirdQuestionAnwser = mutableListOf<String>()
+    lateinit var form: CampaignForm
+
+    private val offlineViewModel by activityViewModels<OfflineViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentRegisterOptInBinding.inflate(inflater,container,false)
+        _binding = FragmentRegisterOptInBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    val args:RegisterOptinCampaignFragmentArgs by navArgs()
+    val args: RegisterOptinCampaignFragmentArgs by navArgs()
 
-    lateinit var firstName:String
-    lateinit var lastname:String
-    lateinit var email:String
-    lateinit var password:String
-    lateinit var phone:String
-    lateinit var lat:String
-    lateinit var long:String
-    var organizationId:Int=0
-    lateinit var gender:String
-    lateinit var date:String
-    lateinit var pin:String
-    lateinit var campaign:ModelCampaign
+    lateinit var firstName: String
+    lateinit var lastname: String
+    lateinit var email: String
+    lateinit var password: String
+    lateinit var phone: String
+    lateinit var lat: String
+    lateinit var long: String
+    var organizationId: Int = 0
+    lateinit var gender: String
+    lateinit var date: String
+    lateinit var pin: String
+    lateinit var campaign: ModelCampaign
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,47 +79,123 @@ class RegisterOptinCampaignFragment : Fragment() {
         pin = args.pin
         campaign = args.campaign
 
-        addClickListeners()
+        lifecycleScope.launch {
 
+            offlineViewModel.userCampaignForm.collect {
+                if (it != null) {
+                    Timber.d(it.toString())
+                    if (it.questions.size >= 3) {
+                        val first = it.questions[0]
+                        val two = it.questions[1]
+                        val three = it.questions[2]
+
+                        form = it
+                        binding.cardviewOne.visibility = View.VISIBLE
+                        binding.cardviewTwo.visibility = View.VISIBLE
+                        binding.cardviewThree.visibility = View.VISIBLE
+
+
+                        binding.questionOneTitle.text = first.question.title
+                        binding.questionTwoTitle.text = two.question.title
+                        binding.questionThreeTitle.text = three.question.title
+
+
+                        binding.questionOneOptionOne.text = first.question.options[0].option
+                        binding.questionOneOptionTwo.text = first.question.options[1].option
+
+                        binding.questionTwoOptionOne.text = two.question.options[0].option
+                        binding.questionTwoOptionTwo.text = two.question.options[1].option
+
+                    } else {
+                        navigateWithError()
+                    }
+                } else {
+                    navigateWithError("no questions")
+                }
+
+
+            }
         }
 
-    private val selectedMediums = mutableListOf<String>()
-    private var ageGroup = ""
+        addClickListeners()
+
+    }
+
+    private fun navigateWithError(title: String = "Invalid campaign questions") {
+        findNavController().safeNavigate(
+            RegisterOptinCampaignFragmentDirections.actionRegisterOptinCampaignFragmentToRegisterVerifyFragment(
+                firstName = firstName,
+                lastName = lastname,
+                email = email,
+                phone = phone,
+                password = password,
+                latitude = lat,
+                longitude = long,
+                organizationId = organizationId,
+                gender = gender,
+                date = date,
+                pin = pin,
+                campaign = campaign,
+            )
+        )
+        Toast.makeText(requireContext(), title, Toast.LENGTH_SHORT).show()
+    }
 
     private fun addClickListeners() {
 
         binding.optinRadiogroup.setOnCheckedChangeListener { group, checkedId ->
-            when(checkedId){
-                R.id.age1217 -> {
-                    ageGroup = binding.age1217.text.toString()
+            when (checkedId) {
+                R.id.question_two_option_one -> {
+                    secondQuestionAnwser.clear()
+                    secondQuestionAnwser.add(binding.questionTwoOptionOne.text.toString())
+                    secondQuestionReward.clear()
+                    secondQuestionReward.add(form.questions[1].question.options[0].reward.toInt())
                 }
-                R.id.age1828 -> {
-                    ageGroup = binding.age1828.text.toString()
+
+                R.id.question_two_option_two -> {
+                    secondQuestionAnwser.clear()
+                    secondQuestionAnwser.add(binding.questionTwoOptionTwo.text.toString())
+                    secondQuestionReward.clear()
+                    secondQuestionReward.add(form.questions[1].question.options[1].reward.toInt())
                 }
-                R.id.age2942 -> {
-                    ageGroup = binding.age2942.text.toString()
-                }
-                else -> {
-                    ageGroup = binding.age2942.text.toString()
-                }
+
             }
         }
         campaign.title?.let {
-            binding.title.text = requireContext().getString(R.string.opt_in,it)
+            binding.title.text = requireContext().getString(R.string.opt_in, it)
         }
 
-        binding.newspaper.addOnCheckedStateChangedListener { checkBox, state ->
-            onViewMediumClicked(Mediums.Newspaper.value)
+        binding.questionOneOptionOne.addOnCheckedStateChangedListener { checkBox, state ->
+            val reward = form.questions[0].question.options[0].reward.toInt()
+            if (checkBox.isChecked) {
+                if (!firstQuestionAnwser.contains(checkBox.text)) {
+                    firstQuestionAnwser.add(checkBox.text.toString())
+                    firstQuestionReward.add(reward)
+                }
+            } else {
+                if (firstQuestionAnwser.contains(checkBox.text)) {
+                    firstQuestionAnwser.remove(checkBox.text.toString())
+                    firstQuestionReward.remove(reward)
+                }
+            }
+
         }
-        binding.tv.addOnCheckedStateChangedListener { checkBox, state ->
-            onViewMediumClicked(Mediums.Tv.value)
+        binding.questionOneOptionTwo.addOnCheckedStateChangedListener { checkBox, state ->
+            val reward = form.questions[0].question.options[1].reward.toInt()
+            if (checkBox.isChecked) {
+                if (!firstQuestionAnwser.contains(checkBox.text)) {
+                    firstQuestionAnwser.add(checkBox.text.toString())
+                    firstQuestionReward.add(reward)
+                }
+            } else {
+                if (firstQuestionAnwser.contains(checkBox.text)) {
+                    firstQuestionAnwser.remove(checkBox.text.toString())
+                    firstQuestionReward.remove(reward)
+                }
+            }
+            Timber.v(firstQuestionAnwser.toString())
         }
-        binding.twitter.addOnCheckedStateChangedListener { checkBox, state ->
-            onViewMediumClicked(Mediums.Twitter .value)
-        }
-        binding.newspaper2.addOnCheckedStateChangedListener { checkBox, state ->
-            onViewMediumClicked(Mediums.Newspaper.value)
-        }
+
 
         binding.backBtn.setOnClickListener {
             findNavController().navigateUp()
@@ -111,7 +204,30 @@ class RegisterOptinCampaignFragment : Fragment() {
         binding.optinSubmitbutton.setOnClickListener {
 
             checkIfAllFieldsAreFilledCorrectly() {
-
+                answer = SubmitSurveyAnswerBody(
+                    email, form.campaigns.getOrNull(0)?.id ?: 0, 0, form.id,
+                    listOf(
+                        SubmitSurveyAnswerBody.QuestionAnswers(
+                            firstQuestionAnwser,
+                            form.questions[0].question.title,
+                            firstQuestionReward, form.questions[0].type
+                        ),
+                        SubmitSurveyAnswerBody.QuestionAnswers(
+                            secondQuestionAnwser,
+                            form.questions[1].question.title,
+                            secondQuestionReward,
+                            form.questions[1].type
+                        ),
+                        SubmitSurveyAnswerBody.QuestionAnswers(
+                            listOf(binding.optinQuestionthree.text.toString()),
+                            form.questions[2].question.title,
+                            mutableListOf(form.questions[2].value.toInt()),
+                            form.questions[2].type
+                        )
+                    ),
+                )
+                offlineViewModel.insertSurveryAnswer(answer)
+                Timber.v(answer.toString())
                 findNavController().safeNavigate(
                     RegisterOptinCampaignFragmentDirections.actionRegisterOptinCampaignFragmentToRegisterVerifyFragment(
                         firstName = firstName,
@@ -124,7 +240,8 @@ class RegisterOptinCampaignFragment : Fragment() {
                         organizationId = organizationId,
                         gender = gender,
                         date = date,
-                        pin = pin
+                        pin = pin,
+                        campaign = campaign,
                     )
                 )
             }
@@ -134,66 +251,54 @@ class RegisterOptinCampaignFragment : Fragment() {
     }
 
 
+    private fun checkIfAllFieldsAreFilledCorrectly(isOkay: () -> Unit) {
 
-    private fun checkIfAllFieldsAreFilledCorrectly(isOkay:()->Unit){
-
-        if(selectedMediums.isEmpty()){
-            showErrorSnackbar(requireContext().getString(R.string.please_tell_us_how_you_heared_about),binding.cardviewHowdidyouhear)
+        if (firstQuestionAnwser.isEmpty()) {
+            showErrorSnackbar(
+                requireContext().getString(R.string.please_select_an_option),
+                binding.cardviewOne
+            )
             return
         }
-        if(ageGroup.isEmpty()){
-            showErrorSnackbar(requireContext().getString(R.string.please_tell_your_age),
-                binding.cardviewAgebracket)
+        if (secondQuestionAnwser.isEmpty()) {
+            showErrorSnackbar(
+                getStringResource(R.string.please_select_an_option),
+                binding.cardviewTwo
+            )
             return
         }
 
-        if(binding.optinMothermaidenname.text.isNullOrBlank()){
-            showErrorSnackbar(requireContext().getString(R.string.please_tell_your_mother_maiden_name),binding.optinMothermaidennameParent)
-            binding.optinMothermaidennameParent.apply {
-                this.error = requireContext().getString(R.string.please_tell_your_mother_maiden_name)
+        if (binding.optinQuestionthree.text.isNullOrBlank()) {
+            showErrorSnackbar(
+                getStringResource(R.string.enter_a_value),
+                binding.optinQuestionthreeParent
+            )
+            binding.optinQuestionthreeParent.apply {
+                this.error = getStringResource(R.string.enter_a_value)
                 isErrorEnabled = true
             }
             return
         }
-        binding.optinMothermaidennameParent.apply {
+        binding.optinQuestionthreeParent.apply {
             error = ""
-            isErrorEnabled=false
+            isErrorEnabled = false
         }
-
+        thirdQuestionAnwser.add(binding.optinQuestionthree.text.toString())
         isOkay()
 
     }
 
 
-
-    private fun showErrorSnackbar(error:String,view: View){
+    private fun showErrorSnackbar(error: String, view: View) {
         binding.root.smoothScrollTo(0, binding.constraints.top + view.top);
 
-        val snackbar = Snackbar.make(binding.root,error,Snackbar.LENGTH_SHORT)
+        val snackbar = Snackbar.make(binding.root, error, Snackbar.LENGTH_SHORT)
         snackbar.setBackgroundTint(requireContext().getColor(R.color.design_default_color_error))
         snackbar.setTextColor(Color.WHITE)
         snackbar.show()
     }
 
 
-    private fun onViewMediumClicked(id:Int){
-        val value = requireContext().getString(id)
-        Timber.d(selectedMediums.toString())
-        if(selectedMediums.contains(value)){
-            Timber.d("exists removing")
-            selectedMediums.remove(value)
-        }
-        else{
-            Timber.d("no exists adding")
-            selectedMediums.add(value)
-        }
-    }
-
 }
 
 
-private enum class Mediums(val value:Int){
-    Tv(R.string.tv),
-    Twitter(R.string.twitter),
-    Newspaper(R.string.newspaper)
-}

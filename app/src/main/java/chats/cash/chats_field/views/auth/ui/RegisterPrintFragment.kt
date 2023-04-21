@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import chats.cash.chats_field.R
+import chats.cash.chats_field.databinding.FragmentRegisterPrintBinding
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.CMD_CARDSN
 import chats.cash.chats_field.utils.ChatsFieldConstants.EXTRA_DEVICE_ADDRESS
@@ -32,7 +33,7 @@ import chats.cash.chats_field.views.auth.dialog.DeviceSelectorDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import chats.cash.chats_field.views.base.BaseFragment
 import io.sentry.Sentry
-import kotlinx.android.synthetic.main.fragment_register_print.*
+
 import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.internal.and
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -99,6 +100,8 @@ class RegisterPrintFragment : BaseFragment() {
     var printPager = ArrayList<PrintPager>()
 
     private lateinit var adapter : PrintPagerAdapter
+    
+    private lateinit var binding:FragmentRegisterPrintBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,24 +121,25 @@ class RegisterPrintFragment : BaseFragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register_print, container, false)
+        binding = FragmentRegisterPrintBinding.inflate(inflater, container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        scannerProgress.progress = 0
+        binding.scannerProgress.progress = 0
         adapter = PrintPagerAdapter(requireContext())
         printPager = ArrayList()
         printPager.add(PrintPager(R.drawable.ic_fingerprint_scan, null))
-        print_view_pager.adapter = adapter
+        binding.printViewPager.adapter = adapter
         adapter.submitList(printPager)
-        print_view_pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.printViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 currentPosition = position
                 if (isConnected) {
-                    scannerProgress.progress = currentPosition + 1
-                    registerPrintNextBtn.text = "Capture ${captureFingers[position]} finger"
+                    binding.scannerProgress.progress = currentPosition + 1
+                    binding.registerPrintNextBtn.text = "Capture ${captureFingers[position]} finger"
                 }
             }
         })
@@ -143,7 +147,7 @@ class RegisterPrintFragment : BaseFragment() {
     }
 
     private fun setUpData() {
-        registerPrintBackButton.setOnClickListener {
+        binding.registerPrintBackButton.setOnClickListener {
             findNavController().navigateUp()
         }
         // The Handler that gets information back from the BluetoothChatService
@@ -156,7 +160,7 @@ class RegisterPrintFragment : BaseFragment() {
         } else {
             if (mChatService == null) setupChat()
         }
-        registerPrintNextBtn.setOnClickListener {
+        binding.registerPrintNextBtn.setOnClickListener {
             openDeviceSelector()
         }
     }
@@ -240,12 +244,12 @@ class RegisterPrintFragment : BaseFragment() {
                         SendCommand(ChatsFieldConstants.CMD_GETBAT, null, 0)
 
                         isConnected = true
-                        registerPrintNextBtn.text = "Capture ${captureFingers[0]} finger"
-                        scannerProgress.progress = 1
-                        deviceConnectedText.text = "Connected to $mConnectedDeviceName"
-                        registerPrintNextBtn.setOnClickListener {
+                        binding.registerPrintNextBtn.text = "Capture ${captureFingers[0]} finger"
+                        binding.scannerProgress.progress = 1
+                        binding.deviceConnectedText.text = "Connected to $mConnectedDeviceName"
+                        binding.registerPrintNextBtn.setOnClickListener {
                             showToast("Place ${captureFingers[currentPosition]} on fingerprint scanner")
-                            printProgress.show()
+                            binding.printProgress.root.show()
                             imgSize = IMG288
                             mUpImageSize = 0
                             SendCommand(ChatsFieldConstants.CMD_GETIMAGE, null, 0)
@@ -292,7 +296,7 @@ class RegisterPrintFragment : BaseFragment() {
                     val bmpdata = getFingerprintImage(mUpImage, 256, 288, 0 /*18*/)
                     if(bmpdata !=null){
                         val image = BitmapFactory.decodeByteArray(bmpdata, 0, bmpdata.size)
-                        printProgress.hide()
+                        binding.printProgress.root.hide()
                         try {
                             allFinger[currentPosition] = image
                         }catch (t: Throwable){
@@ -304,13 +308,13 @@ class RegisterPrintFragment : BaseFragment() {
                                 PrintPager(R.drawable.ic_fingerprint_scan, image)
                             adapter.submitList(printPager)
                             adapter.notifyDataSetChanged()
-                            verifyPrintDoneBtn.show()
+                            binding.verifyPrintDoneBtn.show()
                             mViewModel.allFinger = allFinger
-                            verifyPrintDoneBtn.setOnClickListener{
+                            binding.verifyPrintDoneBtn.setOnClickListener{
                                 findNavController().navigateUp()
                             }
                         }else{
-                            scannerProgress.progress = currentPosition + 1
+                            binding.scannerProgress.progress = currentPosition + 1
                             try {
                                 printPager[currentPosition] =
                                     PrintPager(R.drawable.ic_fingerprint_scan, image)
@@ -319,18 +323,18 @@ class RegisterPrintFragment : BaseFragment() {
                                 }
                                 adapter.submitList(printPager)
                                 adapter.notifyDataSetChanged()
-                                print_view_pager.setCurrentItem(currentPosition + 1, true)
+                                binding.printViewPager.setCurrentItem(currentPosition + 1, true)
                             }catch (t: Throwable){
 
                             }
 
                         }
 //                        saveJPGimage(image)
-                        printProgress.hide()
+                        binding.printProgress.root.hide()
                     }else{
                         Sentry.captureMessage("The Bitmap is Null")
                     }
-                    printProgress.hide()
+                    binding.printProgress.root.hide()
 
                     val inpdata = ByteArray(73728)
                     val inpsize = 73728
@@ -357,7 +361,7 @@ class RegisterPrintFragment : BaseFragment() {
                 if (mCmdData[0] == 'F'.toByte() && mCmdData[1] == 'T'.toByte()) {
                     val size: Int = mCmdData[5] + (mCmdData[6].toInt() shl 8 and 0xF0) - 1
                     if (size > 0) {
-                        printProgress.hide()
+                        binding.printProgress.root.hide()
                         memcpy(mCardSn, 0, mCmdData, 8, size)
                         val cardUID = Integer.toHexString(mCardSn[0] and 0xFF) + Integer.toHexString(
                             mCardSn[1] and 0xFF) + Integer.toHexString(mCardSn[2] and 0xFF) + Integer.toHexString(
@@ -370,15 +374,7 @@ class RegisterPrintFragment : BaseFragment() {
                         Timber.v("Search Fail")
                         showToast("Unable to scan card")
                     }
-//                    when (mCmdData[4]) {
-//                        CMD_CARDSN -> {
-//
-//                        }
-//                        else -> {
-//                            printProgress.hide()
-//                            Timber.v("Search Fail_${mCmdData[4]}")
-//                        }
-//                    }
+
                 }
             }
         }
@@ -403,7 +399,7 @@ class RegisterPrintFragment : BaseFragment() {
                 val batPercent = (batVal - 3.45) / 0.75 * 100
                 val decimalFormat = DecimalFormat("0.00")
                 val batPercentage = decimalFormat.format(batPercent) + " %"
-                deviceConnectedText.text =
+                binding.deviceConnectedText.text =
                     "Connected to $mConnectedDeviceName" + "\nBattery Percentage:$batPercentage"
             }
         }
@@ -480,7 +476,7 @@ class RegisterPrintFragment : BaseFragment() {
     fun timeOutStop() {
         if (mTimerTimeout != null) {
             if(isAdded){
-                printProgress.hide()
+                binding.printProgress.root.hide()
             }
             mTimerTimeout!!.cancel()
             mTimerTimeout = null

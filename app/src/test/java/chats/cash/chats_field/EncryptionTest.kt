@@ -43,9 +43,7 @@ class EncryptionTest {
         val decryptedString = decrypted.toString(Charsets.UTF_8)
         println(decryptedString)
         assert(decryptedString == stringToEncrypt)
-
     }
-
 
     @After
     fun tearDown(){

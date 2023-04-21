@@ -63,10 +63,10 @@ class LoginDialog : BottomSheetDialogFragment() {
         setupObservers()
 
         binding.terms.makeLinks(
-            "Terms and Conditions" to View.OnClickListener {
+            getString(R.string.terms_and_conditions) to View.OnClickListener {
                 openLink(TERMS_OF_USE)
             },
-            "Privacy Policy" to View.OnClickListener {
+            getString(R.string.privacy_policy) to View.OnClickListener {
                 openLink(PRIVACY_POLICY)
             }
         )
@@ -90,9 +90,6 @@ class LoginDialog : BottomSheetDialogFragment() {
                     loginButton.isInvisible = true
                 }
                 is LoginViewModel.LoginState.Success -> {
-                    val data = it.result
-                    preferenceUtil.setNGO(data.user.associatedOrganisations.first().OrganisationId, "")
-                    preferenceUtil.setNGOToken("Bearer " + data.token)
                     setFragmentResult(FRAGMENT_LOGIN_RESULT_KEY, bundleOf(LOGIN_BUNDLE_KEY to true))
                     dismiss()
                     showToast("Login successful")

@@ -4,12 +4,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import chats.cash.chats_field.model.ModelCampaign
+import chats.cash.chats_field.model.campaignform.AllCampaignTypeConverter
+import chats.cash.chats_field.model.campaignform.CampaignForm
+import chats.cash.chats_field.model.utils.GsonParser
+import chats.cash.chats_field.network.body.survey.SubmitSurveyAnswerBody
 import chats.cash.chats_field.network.response.organization.campaign.Campaign
+import com.google.gson.Gson
 
-@Database(entities = [Beneficiary::class, Campaign::class, ModelCampaign::class],
-    version = 6,
-    exportSchema = false)
+@Database(
+    entities = [Beneficiary::class, Campaign::class, ModelCampaign::class, CampaignForm::class,
+               SubmitSurveyAnswerBody::class],
+    version = 14,
+    exportSchema = false
+)
+@TypeConverters(AllCampaignTypeConverter::class)
 abstract class BeneficiaryDatabase : RoomDatabase() {
     abstract fun beneficiaryDao(): BeneficiaryDao
 
@@ -23,7 +33,8 @@ abstract class BeneficiaryDatabase : RoomDatabase() {
                     context.applicationContext,
                     BeneficiaryDatabase::class.java,
                     "beneficiary"
-                ).fallbackToDestructiveMigration()
+                ).addTypeConverter(AllCampaignTypeConverter(GsonParser(Gson())))
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import chats.cash.chats_field.R
+import chats.cash.chats_field.databinding.DialogSelectorBinding
 import chats.cash.chats_field.model.ConnectedDevice
 import chats.cash.chats_field.utils.ChatsFieldConstants.EXTRA_DEVICE_ADDRESS
 import chats.cash.chats_field.utils.hide
@@ -24,7 +25,7 @@ import chats.cash.chats_field.utils.show
 import chats.cash.chats_field.views.auth.adapter.BluetoothClickListener
 import chats.cash.chats_field.views.auth.adapter.BluetoothDeviceAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.dialog_selector.*
+
 import timber.log.Timber
 
 class DeviceSelectorDialog : BottomSheetDialogFragment() {
@@ -67,9 +68,9 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
                     // When discovery is finished, change the Activity title
                 } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED == action) {
                     try {
-                        scanProgress.hide()
-                        scanDeviceBtn.isEnabled = true
-                        scanDeviceBtn.text = "Scan for devices"
+                        binding.scanProgress.hide()
+                        binding.scanDeviceBtn.isEnabled = true
+                        binding.scanDeviceBtn.text = "Scan for devices"
                     } catch (e: Exception) {
                         Timber.v(e)
                     }
@@ -84,19 +85,21 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
         setStyle(STYLE_NORMAL, R.style.CustomBottomSheet)
     }
 
+    private lateinit var binding:DialogSelectorBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.dialog_selector, container, false)
+        binding = DialogSelectorBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.v("onViewCreated")
-        scanProgress.hide()
+        binding.scanProgress.hide()
         //Adapter for the recyclerView
         availableAdapter = BluetoothDeviceAdapter(BluetoothClickListener {
             setDevice(it)
@@ -105,8 +108,8 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
         pairedAdapter = BluetoothDeviceAdapter(BluetoothClickListener {
             setDevice(it)
         })
-        pairedDeviceRV.adapter = pairedAdapter
-        availableDeviceRV.adapter = availableAdapter
+        binding.pairedDeviceRV.adapter = pairedAdapter
+        binding.availableDeviceRV.adapter = availableAdapter
         // Register for broadcasts when a device is discovered
         val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
@@ -165,7 +168,7 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
             val noDevices = "None Paired"
         }
 
-        scanDeviceBtn.setOnClickListener {
+        binding.scanDeviceBtn.setOnClickListener {
             doDiscovery()
         }
 
@@ -199,9 +202,9 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
             }
             // Request discover from BluetoothAdapter
             mBtAdapter.startDiscovery()
-            scanProgress.show()
-            scanDeviceBtn.isEnabled = false
-            scanDeviceBtn.text = "Scanning"
+            binding.scanProgress.show()
+            binding.scanDeviceBtn.isEnabled = false
+            binding.scanDeviceBtn.text = "Scanning"
             Timber.v("Search Starting : ${mBtAdapter.name} ${mBtAdapter.address}")
         }
     }

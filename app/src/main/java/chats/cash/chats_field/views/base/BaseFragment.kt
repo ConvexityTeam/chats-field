@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.StringRes
 import chats.cash.chats_field.R
 
 open class BaseFragment : Fragment() {
@@ -21,4 +22,7 @@ open class BaseFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    fun getStringResource(@StringRes resId : Int): String{
+        return requireContext().getString(resId)
+    }
 }

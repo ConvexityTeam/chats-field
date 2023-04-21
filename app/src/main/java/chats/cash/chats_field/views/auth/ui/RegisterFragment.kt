@@ -6,24 +6,38 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentRegisterBinding
 import chats.cash.chats_field.model.ModelCampaign
+import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.Utils.toCountryCode
 import chats.cash.chats_field.views.auth.login.LoginDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
+import chats.cash.chats_field.views.core.permissions.COARSE_LOCATION
+import chats.cash.chats_field.views.core.permissions.FINE_LOCATION
+import chats.cash.chats_field.views.core.permissions.checkPermission
+import com.hbb20.CountryCodePicker
+import com.hbb20.CountryCodePicker.OnCountryChangeListener
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 import java.util.*
+
 
 @InternalCoroutinesApi
 class RegisterFragment : Fragment(R.layout.fragment_register) {
@@ -32,10 +46,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     private val binding get() = _binding!!
 
     private val preferenceUtil: PreferenceUtil by inject()
+    private val offlineViewModel by activityViewModels<OfflineViewModel>()
     private val organizationId: Int by lazy { preferenceUtil.getNGOId() }
     private val viewModel by sharedViewModel<RegisterViewModel>()
     private val myCalendar: Calendar = Calendar.getInstance()
     private var campaign: ModelCampaign? = null
+
+    private var isNumberValid = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +63,22 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         }
     }
 
+    val adapter by lazy {
+        ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_selectable_list_item,
+            listOf("Male", "Female")
+        )
+    }
+
+    val specialAdapter by lazy {
+        ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_selectable_list_item,
+            listOf("No", "Yes")
+        )
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentRegisterBinding.bind(view)
@@ -54,7 +87,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         viewModel.nfc = null
         viewModel.allFinger = null
         viewModel.profileImage = null
-        viewModel.getAllCampaigns()
 
         binding.run {
             backBtn.setOnClickListener {
@@ -66,24 +98,20 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             registerCampaignLayout.setEndIconOnClickListener {
                 findNavController().safeNavigate(RegisterFragmentDirections.toCampaignDialog())
             }
-            val adapter =
-                ArrayAdapter(requireContext(), android.R.layout.simple_selectable_list_item, listOf("Male", "Female"))
+
             registerGenderEdit.setAdapter(adapter)
 
             observeLoginDone()
 
-            val specialAdapter =
-                ArrayAdapter(requireContext(), android.R.layout.simple_selectable_list_item, listOf("No", "Yes"))
             registerSpecialCaseEdit.setAdapter(specialAdapter)
-            registerNINLayout.hide()
-            txtNin.hide()
+
             registerSpecialCaseEdit.setOnItemClickListener { _, _, position, _ ->
                 if (position == 0) {
-                    registerNINLayout.hide()
-                    txtNin.hide()
+                    ninGroup.hide()
                 } else {
-                    registerNINLayout.show()
-                    txtNin.show()
+                   if( ccp.selectedCountryEnglishName.equals(NIGERIA,true)){
+                       ninGroup.show()
+                   }
                 }
             }
 
@@ -100,18 +128,12 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             registerDateEdit.setOnClickListener {
                 openCalendar()
             }
-            if (ActivityCompat.checkSelfPermission(requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            ) {
-                findNavController().navigateUp()
-                showToast("Location permission is required.")
-                return
-            }
+
             registerNextButton.setOnClickListener {
                 checkInputs()
             }
+
+            addCCpListeners()
         }
     }
 
@@ -129,13 +151,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     }
 
     private fun changeLoggedInText() = with(binding) {
-        loggedInText.text = "Logged In "
-        changeAccountText.text = "Change Account? "
+        loggedInText.text = getString(R.string.logged_in)
+        changeAccountText.text =getString(R.string.change_account)
     }
 
     private fun changeLoggedOutText() = with(binding) {
-        loggedInText.text = "Not Logged In? "
-        changeAccountText.text = "Log In"
+        loggedInText.text = getString(R.string.not_logged_in)
+        changeAccountText.text = getString(R.string.log_in)
     }
 
     private fun checkInputs() = with(binding) {
@@ -176,11 +198,14 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 return@with
             }
         }
-        if (registerPhoneEdit.isValid() && registerPhoneEdit.text.toString().isValidPhoneNo()) {
-            registerPhoneLayout.error = ""
-            phone = registerPhoneEdit.text.toString()
+        if ( isNumberValid) {
+            phoneError.error = ""
+            phoneError.hide()
+            phone = binding.ccp.fullNumber
+            Timber.v(phone)
         } else {
-            registerPhoneLayout.error = "Phone number is required"
+            phoneError.error = "Phone number is required"
+            phoneError.show()
             return
         }
         if (inputPinEdit.isValid() && inputPinEdit.text.toString().isValidPin()) {
@@ -233,33 +258,74 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 }
             }
         }
-//        findNavController().safeNavigate(RegisterFragmentDirections.toRegisterVerifyFragment(
-//            firstName = firstName,
-//            lastName = lastName,
-//            email = email,
-//            phone = phone.toCountryCode(),
-//            password = password,
-//            latitude = preferenceUtil.getLatLong().first.toString(),
-//            longitude = preferenceUtil.getLatLong().second.toString(),
-//            organizationId = organizationId,
-//            gender = gender,
-//            date = date,
-//            pin = pin
-//        ))
-        findNavController().safeNavigate(RegisterFragmentDirections.toRegisterOptinCampaignFragment2(
-            firstName = firstName,
-            lastName = lastName,
-            email = email,
-            phone = phone.toCountryCode(),
-            password = password,
-            latitude = preferenceUtil.getLatLong().first.toString(),
-            longitude = preferenceUtil.getLatLong().second.toString(),
-            organizationId = organizationId,
-            gender = gender,
-            date = date,
-            pin = pin,
-            campaign = campaign!!
-        ))
+
+        lifecycleScope.launch {
+            offlineViewModel.getAllCampaignForms().asLiveData(coroutineContext).observe(viewLifecycleOwner) {
+                if (it.isNotEmpty()) {
+                    Timber.d(campaign!!.id.toString())
+                    val campaignForm = it.find { it.campaigns[0].id == campaign!!.id }
+                    campaignForm?.let {form ->
+                        Timber.d(form.questions.toString())
+                        offlineViewModel.setCampaignForm(form)
+                        findNavController().safeNavigate(RegisterFragmentDirections.toRegisterOptinCampaignFragment2(
+                            firstName = firstName,
+                            lastName = lastName,
+                            email = email,
+                            phone = phone,
+                            password = password,
+                            latitude = preferenceUtil.getLatLong().first.toString(),
+                            longitude = preferenceUtil.getLatLong().second.toString(),
+                            organizationId = organizationId,
+                            gender = gender,
+                            date = date,
+                            pin = pin,
+                            campaign = campaign!!
+                        ))
+                    }?:run{
+                        findNavController().safeNavigate(
+                            RegisterFragmentDirections.toRegisterVerifyFragment(
+                                firstName = firstName,
+                                lastName = lastName,
+                                email = email,
+                                phone = phone,
+                                password = password,
+                                latitude =  preferenceUtil.getLatLong().first.toString(),
+                                longitude = preferenceUtil.getLatLong().second.toString(),
+                                organizationId = organizationId,
+                                gender = gender,
+                                date = date,
+                                pin = pin,
+                                campaign = campaign!!,
+                            )
+                        )
+
+                    }
+
+                }
+                else{
+                    viewModel.getAllCampaignForms()
+                    findNavController().safeNavigate(
+                        RegisterFragmentDirections.toRegisterVerifyFragment(
+                            firstName = firstName,
+                            lastName = lastName,
+                            email = email,
+                            phone = phone,
+                            password = password,
+                            latitude =  preferenceUtil.getLatLong().first.toString(),
+                            longitude = preferenceUtil.getLatLong().second.toString(),
+                            organizationId = organizationId,
+                            gender = gender,
+                            date = date,
+                            pin = pin,
+                            campaign = campaign!!,
+                        )
+                    )
+                }
+
+            }
+        }
+
+
     }
 
 
@@ -308,8 +374,65 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         changeLoggedOutText()
     }
 
+    override fun onPause() {
+        super.onPause()
+        lifecycleScope.launch {
+            offlineViewModel.getAllCampaignForms().asLiveData(coroutineContext).removeObservers(viewLifecycleOwner)
+        }
+    }
+
+    fun addCCpListeners(){
+        binding.ccp.apply{
+            setOnCountryChangeListener(OnCountryChangeListener {
+                val country = binding.ccp.selectedCountryEnglishName
+                if(country.equals(NIGERIA,true)){
+                    if(binding.registerSpecialCaseEdit.text.toString() == "Yes") {
+                        binding.ninGroup.show()
+                    }
+                }
+                else{
+                    if(binding.registerSpecialCaseEdit.text.toString() == "Yes") {
+                        binding.ninGroup.hide()
+                    }
+                }
+            })
+
+            registerCarrierNumberEditText(binding.registerPhoneEdit)
+
+            setPhoneNumberValidityChangeListener {isValid ->
+                isNumberValid = isValid
+                Timber.v(fullNumber)
+            }
+            binding.registerPhoneEdit.addTextChangedListener(object : TextWatcher{
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int,
+                ) {
+
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    if(s?.startsWith("0")==true){
+                        s.replace(0,1,"")
+                    }
+                }
+
+            })
+        }
+
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+
+const val NIGERIA = "NIGERIA"

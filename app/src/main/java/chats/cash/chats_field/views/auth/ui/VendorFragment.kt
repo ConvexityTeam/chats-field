@@ -4,8 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.navigateUp
 import chats.cash.chats_field.R
+import chats.cash.chats_field.databinding.FragmentVendorBinding
+import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineViewModel
 import chats.cash.chats_field.utils.*
@@ -14,9 +19,13 @@ import chats.cash.chats_field.utils.Utils.toCountryCode
 import chats.cash.chats_field.views.auth.login.LoginDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import chats.cash.chats_field.views.base.BaseFragment
+import chats.cash.chats_field.views.core.showSnackbarWithAction
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
-import kotlinx.android.synthetic.main.fragment_vendor.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -29,31 +38,34 @@ class VendorFragment : BaseFragment() {
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
     private val preferenceUtil: PreferenceUtil by inject()
 
+    private lateinit var binding:FragmentVendorBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_vendor, container, false)
+        binding = FragmentVendorBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        logged_in_text2.show()
-        change_account_text2.show()
+        binding.loggedInText2.show()
+        binding.changeAccountText2.show()
 
-        back_btn.setOnClickListener {
+        binding.backBtn.setOnClickListener {
             findNavController().navigateUp()
         }
 
         internetAvailabilityChecker = InternetAvailabilityChecker.getInstance()
 
-        change_account_text2.setOnClickListener {
+        binding.changeAccountText2.setOnClickListener {
             openLogin(true)
         }
 
-        vendorNextButton.setOnClickListener {
+        binding.vendorNextButton.setOnClickListener {
             checkInputs()
         }
 
@@ -61,98 +73,106 @@ class VendorFragment : BaseFragment() {
     }
 
     private fun setObservers() {
-        registerViewModel.vendorOnboardingState.observe(viewLifecycleOwner) {
-            when (it) {
-                is RegisterViewModel.VendorOnboardingState.Error -> {
-                    vendorProgress.hide()
-                    showToast(it.errorMessage)
-                    vendorNextButton.isEnabled = true
-                }
-                RegisterViewModel.VendorOnboardingState.Loading -> {
-                    vendorProgress.show()
-                    vendorNextButton.isEnabled = false
-                }
-                RegisterViewModel.VendorOnboardingState.Success -> {
-                    vendorProgress.hide()
-                    vendorNextButton.isEnabled = true
-                    showToast("Success")
-                    findNavController().navigateUp()
+        lifecycleScope.launch(Dispatchers.Main) {
+            registerViewModel.onboardVendorResponse.cancellable().collect {
+                when (it) {
+
+                    is NetworkResponse.Error -> {
+                        binding.vendorProgress.hide()
+                        showToast(it._message)
+                        binding.vendorNextButton.isEnabled = true
+                    }
+                    is NetworkResponse.Loading -> {
+                        binding.vendorProgress.show()
+                        binding.vendorNextButton.isEnabled = false
+                    }
+                    is NetworkResponse.Offline -> {
+                        showSnackbarWithAction(
+                            R.string.no_internet, binding.root, R.string.dismiss,
+                            ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+                        ) {
+                            findNavController().navigateUp()
+
+                        }
+                    }
+                    is NetworkResponse.SimpleError -> {
+                        binding.vendorProgress.hide()
+                        showToast(it._message)
+                        binding.vendorNextButton.isEnabled = true
+                    }
+                    is NetworkResponse.Success -> {
+                        binding.vendorProgress.hide()
+                        binding.vendorNextButton.isEnabled = true
+                        showToast("Success")
+                        findNavController().navigateUp()
+                    }
                 }
             }
         }
     }
 
     private fun checkInputs() {
-        val firstName = vendorFirstNameEdit.text.toString()
-        val lastName = vendorLastNameEdit.text.toString()
-        val businessName = vendorBusinessNameEdit.text.toString()
-        val email = vendorEmailEdit.text.toString()
-        val phone = vendorPhoneEdit.text.toString()
+        val firstName = binding.vendorFirstNameEdit.text.toString()
+        val lastName = binding.vendorLastNameEdit.text.toString()
+        val businessName = binding.vendorBusinessNameEdit.text.toString()
+        val email = binding.vendorEmailEdit.text.toString()
+        val phone = binding.vendorPhoneEdit.text.toString()
         val password = Utils.generatePassword()
         val pin = Utils.generatePIN()
-        val bvn = vendorBvnEdit.text.toString()
-        val address = vendorAddressEdit.text.toString()
-        val country = vendorCountryEdit.text.toString()
-        val state = vendorStateEdit.text.toString()
+        val bvn = binding.vendorBvnEdit.text.toString()
+        val address = binding.vendorAddressEdit.text.toString()
+        val country = binding.vendorCountryEdit.text.toString()
+        val state = binding.vendorStateEdit.text.toString()
 
-        if (vendorFirstNameEdit.text.isNullOrBlank()) {
-            vendorFirstNameLayout.error = "First name is required"
+        if (binding.vendorFirstNameEdit.text.isNullOrBlank()) {
+           binding.vendorFirstNameLayout.error = "First name is required"
             return
         } else {
-            vendorFirstNameLayout.error = ""
+            binding.vendorFirstNameLayout.error = ""
         }
 
-        if (vendorLastNameEdit.text.isNullOrBlank()) {
-            vendorLastNameLayout.error = "Last name is required"
+        if (binding.vendorLastNameEdit.text.isNullOrBlank()) {
+            binding.vendorLastNameLayout.error = "Last name is required"
             return
         } else {
-            vendorLastNameLayout.error = ""
+            binding.vendorLastNameLayout.error = ""
         }
 
-        if (vendorBusinessNameEdit.text.isNullOrBlank()) {
-            vendorBusinessNameLayout.error = "Business name is required"
+        if (binding.vendorBusinessNameEdit.text.isNullOrBlank()) {
+            binding.vendorBusinessNameEdit.error = "Business name is required"
             return
         } else {
-            vendorBusinessNameLayout.error = ""
+            binding.vendorBusinessNameEdit.error = ""
         }
 
-        if (vendorEmailEdit.text.isNullOrBlank()) {
-            vendorEmailLayout.error = "Email Address is required"
+        if (binding.vendorEmailEdit.text.isNullOrBlank()) {
+            binding.vendorEmailLayout.error = "Email Address is required"
             return
         } else {
-            vendorEmailLayout.error = ""
+            binding.vendorEmailLayout.error = ""
         }
 
-//        if(vendorPasswordEdit.text.isNullOrBlank()){
-//            vendorPasswordLayout.error = "Password is required"
-//            return
-//        }else{
-//            if(vendorPasswordEdit.text.toString().length < 8){
-//                vendorPasswordLayout.error = "Password must be at least 8 characters"
-//                return
-//            }
-//            vendorPasswordLayout.error = ""
-//        }
 
-        if (vendorPhoneEdit.text.isNullOrBlank()) {
-            vendorPhoneLayout.error = "Phone number is required"
+
+        if (binding.vendorPhoneEdit.text.isNullOrBlank()) {
+            binding.vendorPhoneLayout.error = "Phone number is required"
             return
         } else {
-            if (vendorPhoneEdit.text.toString().length != 11) {
-                vendorPhoneLayout.error = "Invalid Phone Number"
+            if (binding.vendorPhoneEdit.text.toString().length != 11) {
+                binding.vendorPhoneLayout.error = "Invalid Phone Number"
                 return
             }
-            vendorPhoneLayout.error = ""
+            binding.vendorPhoneLayout.error = ""
         }
 
-        if (vendorBvnEdit.text.isNullOrBlank()) {
-            vendorBvnLayout.error = "BVN is required"
+        if (binding.vendorBvnEdit.text.isNullOrBlank()) {
+            binding.vendorBvnLayout.error = "BVN is required"
             return
         } else {
-            if (vendorBvnEdit.text.toString().length in 10..11) {
-                vendorBvnLayout.error = ""
+            if (binding.vendorBvnEdit.text.toString().length in 10..11) {
+                binding.vendorBvnLayout.error = ""
             } else {
-                vendorBvnLayout.error = "Invalid BVN"
+                binding.vendorBvnLayout.error = "Invalid BVN"
                 return
             }
         }
@@ -162,32 +182,17 @@ class VendorFragment : BaseFragment() {
         beneficiary.phone = phone.toCountryCode()
         beneficiary.password = password
         beneficiary.pin = pin
+        beneficiary.latitude =preferenceUtil.getLatLong().first
+        beneficiary.longitude =preferenceUtil.getLatLong().second
         beneficiary.bvn = bvn
         beneficiary.firstName = firstName
         beneficiary.lastName = lastName
-//        beneficiary.organizationId = PrefUtils.getNGOId()
         beneficiary.type = VENDOR_TYPE
         beneficiary.address = address
         beneficiary.country = country
         beneficiary.state = state
 
-        if (internetAvailabilityChecker.currentInternetAvailabilityStatus) {
-            registerViewModel.vendorOnboarding(
-                businessName = businessName,
-                email = email,
-                phone = phone.toCountryCode(),
-                firstName = firstName,
-                lastName = lastName,
-                address = address,
-                country = country,
-                state = state,
-                coordinates = listOf(preferenceUtil.getLatLong().first, preferenceUtil.getLatLong().second)
-            )
-        } else {
-            offlineViewModel.insert(beneficiary)
-            showToast(getString(R.string.no_internet))
-            findNavController().navigateUp()
-        }
+       registerViewModel.vendorOnboarding(beneficiary,internetAvailabilityChecker.currentInternetAvailabilityStatus)
     }
 
     private fun openLogin(isCancelable: Boolean = true) {

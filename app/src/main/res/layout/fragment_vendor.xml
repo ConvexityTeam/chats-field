@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Logged In"
+            android:text="@string/logged_in"
             android:textAppearance="@style/TextAppearance.TextBold"
             android:textColor="@color/textColorPrimary"
             app:layout_constraintEnd_toStartOf="@+id/change_account_text2"
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Change Account?"
+            android:text="@string/change_account"
             android:textAppearance="@style/TextAppearance.TextBold"
             android:textColor="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/logged_in_text2"
@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Vendor Information"
+            android:text="@string/vendor_information"
             android:textAppearance="@style/TextAppearance.TextBold"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Business Name"
+            android:text="@string/business_name"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="parent"
@@ -104,7 +104,7 @@
                 style="@style/TextInputEditText.Padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="CHATS"
+                android:hint="@string/chats"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -114,7 +114,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="First Name"
+            android:text="@string/first_name"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="parent"
@@ -137,7 +137,7 @@
                 style="@style/TextInputEditText.Padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="John"
+                android:hint="@string/john"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -147,7 +147,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Last Name"
+            android:text="@string/last_name"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="parent"
@@ -170,7 +170,7 @@
                 style="@style/TextInputEditText.Padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Doe"
+                android:hint="@string/doe"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -180,7 +180,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:text="Email"
+            android:text="@string/email"
             android:textAppearance="@style/TextAppearance.TextMedium"
             android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="parent"
@@ -439,7 +439,7 @@
                 style="@style/TextInputEditText.Padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="123XXXXXX"
+                android:hint="@string/_123xxxxxx"
                 android:inputType="number"
                 android:maxLength="11" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -450,7 +450,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Submit"
+            android:text="@string/submit"
             app:layout_constraintEnd_toEndOf="@+id/vendorBvnLayout"
             app:layout_constraintStart_toStartOf="@+id/vendorBvnLayout"
             app:layout_constraintTop_toBottomOf="@+id/vendorBvnLayout" />

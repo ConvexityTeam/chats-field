@@ -18,7 +18,7 @@ val viewModelModule = module {
         RegisterViewModel(get(), get())
     }
     viewModel {
-        OfflineViewModel(get())
+        OfflineViewModel(get(),get())
     }
     viewModel { CashForWorkViewModel(networkRepository = get()) }
 
@@ -30,6 +30,6 @@ val viewModelModule = module {
             campaignId = campaignId)
     }
     viewModel { TaskDetailsViewModel(repository = get()) }
-    viewModel { LoginViewModel(repository = get()) }
+    viewModel { LoginViewModel(repository = get(),get(), get()) }
     viewModel { OnboardingViewModel(repository = get()) }
 }

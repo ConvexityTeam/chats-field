@@ -9,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +21,9 @@ import chats.cash.chats_field.databinding.DialogCampaignBinding
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.utils.ChatsFieldConstants.CAMPAIGN_BUNDLE_KEY
 import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_CAMPAIGN_RESULT_LISTENER
+import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CampaignDialog : BottomSheetDialogFragment() {
@@ -27,6 +31,7 @@ class CampaignDialog : BottomSheetDialogFragment() {
     private var _binding: DialogCampaignBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModel<CampaignViewModel>()
+    private val registerViewModel by activityViewModels<RegisterViewModel>()
     private val campaignAdapter by lazy {
         CampaignAdapter(onCampaignClick = {
             setFragmentResult(FRAGMENT_CAMPAIGN_RESULT_LISTENER, bundleOf(CAMPAIGN_BUNDLE_KEY to it))
@@ -83,6 +88,11 @@ class CampaignDialog : BottomSheetDialogFragment() {
     }
 
     private fun handleCampaignList(campaigns: List<ModelCampaign>?) = with(binding) {
+        if(campaigns.isNullOrEmpty()){
+            lifecycleScope.launch {
+                registerViewModel.getAllCampaigns2()
+            }
+        }
         campaignAdapter.submitList(campaigns)
         if (campaigns.isNullOrEmpty().not()) {
             concatAdapter.addAdapter(CampaignHeaderAdapter("Select a Campaign"))
