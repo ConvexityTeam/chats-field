@@ -10,11 +10,17 @@ import chats.cash.chats_field.databinding.ItemExistingBeneficiaryBinding
 
 class BeneficiarySearchAdapter(private val onBeneficiaryClick: (BeneficiaryUi) -> Unit) :
     ListAdapter<BeneficiaryUi, BeneficiarySearchAdapter.BeneficiarySearchViewHolder>(
-        BENEFICIARY_DIFF_UTIL) {
+        BENEFICIARY_DIFF_UTIL,
+    ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeneficiarySearchViewHolder {
-        return BeneficiarySearchViewHolder(ItemExistingBeneficiaryBinding.bind(LayoutInflater.from(
-            parent.context).inflate(R.layout.item_existing_beneficiary, parent, false)))
+        return BeneficiarySearchViewHolder(
+            ItemExistingBeneficiaryBinding.bind(
+                LayoutInflater.from(
+                    parent.context,
+                ).inflate(R.layout.item_existing_beneficiary, parent, false),
+            ),
+        )
     }
 
     override fun onBindViewHolder(holder: BeneficiarySearchViewHolder, position: Int) {

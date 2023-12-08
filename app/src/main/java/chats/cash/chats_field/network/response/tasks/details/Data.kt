@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class Data(
     @SerializedName("task")
-    val task: Task
+    val task: Task,
 )

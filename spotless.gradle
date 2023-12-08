@@ -1,0 +1,14 @@
+
+spotless {
+
+    kotlin {
+        target '**/*.kt'
+        ktlint().setEditorConfigPath("${project.rootDir}/spotless/.editorconfig")
+        targetExclude("**/src/main/java/com/*")
+        targetExclude("**/src/main/jniLibs/*")
+        trimTrailingWhitespace()
+        indentWithSpaces()
+        endWithNewline()
+    }
+ 
+}

@@ -1,16 +1,20 @@
 package chats.cash.chats_field.views.cashForWork
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentCashForWorkTaskDetailsBinding
-import chats.cash.chats_field.utils.*
+import chats.cash.chats_field.utils.hide
+import chats.cash.chats_field.utils.safeNavigate
+import chats.cash.chats_field.utils.show
+import chats.cash.chats_field.utils.showToast
+import chats.cash.chats_field.utils.toStatusString
 import chats.cash.chats_field.views.auth.adapter.WorkerAdapter
-import chats.cash.chats_field.views.auth.adapter.WorkerAdapter.*
+import chats.cash.chats_field.views.auth.adapter.WorkerAdapter.TaskState
 import chats.cash.chats_field.views.cashForWork.model.AssignedWorker
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -23,7 +27,7 @@ class CashForWorkTaskDetailsFragment : Fragment(R.layout.fragment_cash_for_work_
     private val workAdapter: WorkerAdapter by lazy {
         WorkerAdapter(
             onItemClick = ::handleItemClick,
-            onAddWorkerClick = ::addWorker
+            onAddWorkerClick = ::addWorker,
         )
     }
 
@@ -90,15 +94,21 @@ class CashForWorkTaskDetailsFragment : Fragment(R.layout.fragment_cash_for_work_
     private fun handleItemClick(taskState: TaskState) {
         when (taskState) {
             TaskState.Completed -> showToast("Your task Evidence is approved")
-            TaskState.Disbursed -> showToast("This task has been completed and payment disbursed to beneficiary")
+            TaskState.Disbursed -> showToast(
+                "This task has been completed and payment disbursed to beneficiary",
+            )
             is TaskState.ProgressOrRejected -> {
-                findNavController().safeNavigate(CashForWorkTaskDetailsFragmentDirections.toCashForWorkSubmitFragment(
-                    taskId = taskState.worker.taskAssignment.taskId.toString(),
-                    taskName = args.job.name,
-                    userId = taskState.worker.taskAssignment.userId.toString(),
-                    beneficiaryId = taskState.worker.id,
-                    userName = taskState.worker.firstName.plus(" ").plus(taskState.worker.lastName)
-                ))
+                findNavController().safeNavigate(
+                    CashForWorkTaskDetailsFragmentDirections.toCashForWorkSubmitFragment(
+                        taskId = taskState.worker.taskAssignment.taskId.toString(),
+                        taskName = args.job.name,
+                        userId = taskState.worker.taskAssignment.userId.toString(),
+                        beneficiaryId = taskState.worker.id,
+                        userName = taskState.worker.firstName.plus(" ").plus(
+                            taskState.worker.lastName,
+                        ),
+                    ),
+                )
             }
         }
     }

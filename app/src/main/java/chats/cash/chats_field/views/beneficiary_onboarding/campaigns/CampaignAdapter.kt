@@ -9,12 +9,15 @@ import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.ItemCampaignBinding
 import chats.cash.chats_field.model.ModelCampaign
 
-class CampaignAdapter(private val onCampaignClick:(ModelCampaign) -> Unit) :
+class CampaignAdapter(private val onCampaignClick: (ModelCampaign) -> Unit) :
     ListAdapter<ModelCampaign, CampaignAdapter.CampaignViewHolder>(CAMPAIGN_DIFF_UTIL) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CampaignViewHolder {
-        return CampaignViewHolder(ItemCampaignBinding.bind(LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_campaign, parent, false))
+        return CampaignViewHolder(
+            ItemCampaignBinding.bind(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_campaign, parent, false),
+            ),
         )
     }
 

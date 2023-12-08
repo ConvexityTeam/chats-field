@@ -8,5 +8,5 @@ data class ErrorBody(
     @SerializedName("message")
     val message: String,
     @SerializedName("status")
-    val status: String
+    val status: String,
 )

@@ -10,8 +10,12 @@ class CampaignHeaderAdapter(private val title: String) :
     RecyclerView.Adapter<CampaignHeaderAdapter.CampaignHeaderViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CampaignHeaderViewHolder {
-        return CampaignHeaderViewHolder(ItemCampaignHeaderBinding.bind(LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_campaign_header, parent, false)))
+        return CampaignHeaderViewHolder(
+            ItemCampaignHeaderBinding.bind(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_campaign_header, parent, false),
+            ),
+        )
     }
 
     override fun onBindViewHolder(holder: CampaignHeaderViewHolder, position: Int) {

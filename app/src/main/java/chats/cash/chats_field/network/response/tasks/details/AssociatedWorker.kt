@@ -14,5 +14,5 @@ data class AssociatedWorker(
     @SerializedName("UserId")
     val userId: Int,
     @SerializedName("Worker")
-    val worker: Worker
+    val worker: Worker,
 )

@@ -7,5 +7,5 @@ data class Store(
     val id: Int,
     val location: String,
     val store_name: String,
-    val updatedAt: String
+    val updatedAt: String,
 )

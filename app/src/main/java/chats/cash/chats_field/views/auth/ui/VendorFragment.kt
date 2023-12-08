@@ -13,9 +13,12 @@ import chats.cash.chats_field.databinding.FragmentVendorBinding
 import chats.cash.chats_field.network.NetworkResponse
 import chats.cash.chats_field.offline.Beneficiary
 import chats.cash.chats_field.offline.OfflineViewModel
-import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.ChatsFieldConstants.VENDOR_TYPE
+import chats.cash.chats_field.utils.PreferenceUtilInterface
+import chats.cash.chats_field.utils.Utils
 import chats.cash.chats_field.utils.Utils.toCountryCode
+import chats.cash.chats_field.utils.hide
+import chats.cash.chats_field.utils.show
 import chats.cash.chats_field.views.auth.login.LoginDialog
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import chats.cash.chats_field.views.base.BaseFragment
@@ -36,12 +39,13 @@ class VendorFragment : BaseFragment() {
     private val registerViewModel by viewModel<RegisterViewModel>()
     private val offlineViewModel by viewModel<OfflineViewModel>()
     private lateinit var internetAvailabilityChecker: InternetAvailabilityChecker
-    private val preferenceUtil: PreferenceUtil by inject()
+    private val preferenceUtil: PreferenceUtilInterface by inject()
 
-    private lateinit var binding:FragmentVendorBinding
+    private lateinit var binding: FragmentVendorBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
@@ -76,7 +80,6 @@ class VendorFragment : BaseFragment() {
         lifecycleScope.launch(Dispatchers.Main) {
             registerViewModel.onboardVendorResponse.cancellable().collect {
                 when (it) {
-
                     is NetworkResponse.Error -> {
                         binding.vendorProgress.hide()
                         showToast(it._message)
@@ -88,11 +91,12 @@ class VendorFragment : BaseFragment() {
                     }
                     is NetworkResponse.Offline -> {
                         showSnackbarWithAction(
-                            R.string.no_internet, binding.root, R.string.dismiss,
-                            ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+                            R.string.no_internet,
+                            binding.root,
+                            R.string.dismiss,
+                            ContextCompat.getColor(requireContext(), R.color.colorPrimary),
                         ) {
                             findNavController().navigateUp()
-
                         }
                     }
                     is NetworkResponse.SimpleError -> {
@@ -105,6 +109,9 @@ class VendorFragment : BaseFragment() {
                         binding.vendorNextButton.isEnabled = true
                         showToast("Success")
                         findNavController().navigateUp()
+                    }
+
+                    else -> {
                     }
                 }
             }
@@ -125,7 +132,7 @@ class VendorFragment : BaseFragment() {
         val state = binding.vendorStateEdit.text.toString()
 
         if (binding.vendorFirstNameEdit.text.isNullOrBlank()) {
-           binding.vendorFirstNameLayout.error = "First name is required"
+            binding.vendorFirstNameLayout.error = "First name is required"
             return
         } else {
             binding.vendorFirstNameLayout.error = ""
@@ -151,8 +158,6 @@ class VendorFragment : BaseFragment() {
         } else {
             binding.vendorEmailLayout.error = ""
         }
-
-
 
         if (binding.vendorPhoneEdit.text.isNullOrBlank()) {
             binding.vendorPhoneLayout.error = "Phone number is required"
@@ -182,8 +187,8 @@ class VendorFragment : BaseFragment() {
         beneficiary.phone = phone.toCountryCode()
         beneficiary.password = password
         beneficiary.pin = pin
-        beneficiary.latitude =preferenceUtil.getLatLong().first
-        beneficiary.longitude =preferenceUtil.getLatLong().second
+        beneficiary.latitude = preferenceUtil.getLatLong().first
+        beneficiary.longitude = preferenceUtil.getLatLong().second
         beneficiary.bvn = bvn
         beneficiary.firstName = firstName
         beneficiary.lastName = lastName
@@ -192,7 +197,10 @@ class VendorFragment : BaseFragment() {
         beneficiary.country = country
         beneficiary.state = state
 
-       registerViewModel.vendorOnboarding(beneficiary,internetAvailabilityChecker.currentInternetAvailabilityStatus)
+        registerViewModel.vendorOnboarding(
+            beneficiary,
+            internetAvailabilityChecker.currentInternetAvailabilityStatus,
+        )
     }
 
     private fun openLogin(isCancelable: Boolean = true) {

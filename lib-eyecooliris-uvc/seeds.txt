@@ -1,0 +1,809 @@
+com.eyecool.algorithm.TesoV400$V4H
+com.eyecool.fragment.IrisBinocularFragment
+com.eyecool.iris.api.constant.Code
+com.eyecool.iris.api.IrisSDK
+com.eyecool.utils.ImageUtil
+com.eyecool.fragment.IrisBinocularFragment$VerifyCallback
+com.eyecool.fragment.IrisFragment$EnrollCallback
+com.eyecool.fragment.IrisBinocularFragment$CameraCallback
+com.eyecool.iris.api.IrisResult
+com.eyecool.utils.ListUtils
+com.eyecool.widget.CustomProgressCircle2
+com.eyecool.iris.api.IrisSDK$FocalLength
+com.eyecool.utils.DeviceUtil
+com.eyecool.utils.JSONUtils
+com.eyecool.fragment.IrisBinocularFragment$AcquireImageCallback
+com.eyecool.utils.ObjectUtils
+com.eyecool.algorithm.TesoV400
+com.eyecool.fragment.IrisFragment$CameraCallbackX
+com.eyecool.utils.StringUtils
+com.eyecool.iris.R
+com.eyecool.fragment.IrisFragment$VerifyCallback
+com.eyecool.utils.MapUtils
+com.eyecool.fragment.IrisFragment
+com.eyecool.utils.JavaAESCryptor
+com.eyecool.utils.Logs
+com.eyecool.utils.SharedPreferenceUtil
+com.eyecool.utils.FileUtils
+com.eyecool.fragment.IrisBinocularFragment$EnrollCallback
+com.eyecool.fragment.IrisFragment$VerifyCallbackX
+com.eyecool.fragment.IrisFragment$CameraCallback
+com.eyecool.iris.api.IrisSDK$Pic
+com.eyecool.utils.ExecutorUtil
+com.eyecool.widget.CustomProgressCircle
+com.eyecool.algorithm.UniqueType
+com.eyecool.fragment.IrisFragment$AcquireImageCallback
+com.eyecool.iris.Feature
+com.eyecool.utils.Utils
+com.eyecool.iris.api.ColorCardDetectResult
+com.eyecool.utils.ArrayUtils
+com.eyecool.iris.api.IrisSDK$IrisSDKCallback
+com.eyecool.widget.Draw
+com.eyecool.utils.NetUtils
+com.eyecool.iris.api.IrisPosition
+com.eyecool.utils.ImageUtil: byte[] mBmpImgBuf
+com.eyecool.fragment.IrisFragment: com.eyecool.fragment.IrisFragment$VerifyCallback mVerifyCallback
+com.eyecool.fragment.IrisBinocularFragment: int DISTANCE_OK
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.usb.USBMonitor mUSBMonitor
+com.eyecool.iris.api.IrisSDK: com.eyecool.iris.api.IrisSDK$FocalLength mFocalLength
+com.eyecool.fragment.IrisBinocularFragment: int mPreviewHeight
+com.eyecool.fragment.IrisFragment: cn.eyecool.uvc.widget.UVCCameraTextureView mCameraTextureView
+com.eyecool.fragment.IrisBinocularFragment: int TCI_322_PID_R
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.usb.UVCCameraManager$UVCCameraCallbackX mUVCCameraCallbackR
+com.eyecool.utils.FileUtils: java.lang.String FILE_EXTENSION_SEPARATOR
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_MIDX
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_SCOR
+com.eyecool.fragment.IrisFragment: int TCI303_25CM_PID
+com.eyecool.widget.CustomProgressCircle: int mColor
+com.eyecool.fragment.IrisFragment: int ECI302_VID
+com.eyecool.fragment.IrisFragment: int LOCATION_FAILED
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_GTPL
+com.eyecool.iris.api.IrisResult: int leftQualityScore
+com.eyecool.iris.api.IrisSDK$FocalLength: com.eyecool.iris.api.IrisSDK$FocalLength ECI102
+com.eyecool.fragment.IrisFragment: android.view.Surface mPreviewSurface
+com.eyecool.iris.api.IrisResult: int leftArea
+com.eyecool.iris.api.constant.Code: int ERROR_CAMERA
+com.eyecool.iris.api.constant.Code: int ERROR_INTERNAL
+com.eyecool.iris.api.IrisSDK: int mHeight
+com.eyecool.utils.JavaAESCryptor: java.lang.String TEST_DATA
+com.eyecool.fragment.IrisFragment: boolean isVerifying
+com.eyecool.widget.Draw: int minCount
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_CAMC
+com.eyecool.iris.api.constant.Code: int ERROR_INIT_FAILED
+com.eyecool.fragment.IrisFragment: int ECI301_25CM_VID
+com.eyecool.fragment.IrisFragment: int DISTANCE_OK
+com.eyecool.fragment.IrisFragment: cn.eyecool.uvc.usb.USBMonitor$OnDeviceConnectListener mOnDeviceConnectListener
+com.eyecool.iris.api.IrisSDK: java.lang.String IRIS_DIR
+com.eyecool.iris.api.IrisSDK: int mNumOfEye
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_VERG
+com.eyecool.fragment.IrisFragment: cn.eyecool.uvc.usb.USBMonitor mUSBMonitor
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.usb.UVCCameraManager$UVCCameraCallbackX mUVCCameraCallbackL
+com.eyecool.fragment.IrisFragment: cn.eyecool.uvc.usb.UVCCameraManager mUVCCameraManager
+com.eyecool.widget.Draw: int winWidth
+com.eyecool.iris.api.IrisSDK: java.lang.String mReturnCode
+com.eyecool.widget.CustomProgressCircle: int mBaseColor
+com.eyecool.utils.MapUtils: java.lang.String DEFAULT_KEY_AND_VALUE_PAIR_SEPARATOR
+com.eyecool.utils.Logs: java.lang.String TAG_CONTENT_PRINT
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H[] $VALUES
+com.eyecool.widget.CustomProgressCircle: int mRadius
+com.eyecool.utils.NetUtils: java.lang.String mAppId
+com.eyecool.iris.api.IrisSDK: java.lang.String ACTIVATIONCODE
+com.eyecool.fragment.IrisBinocularFragment: int DISTANCE_FUTHER
+com.eyecool.iris.api.IrisSDK: java.lang.String mUniqueId
+com.eyecool.iris.api.IrisSDK: long phEnvSet
+com.eyecool.iris.api.IrisSDK$FocalLength: com.eyecool.iris.api.IrisSDK$FocalLength CM_30
+com.eyecool.utils.ImageUtil: int sImgHeight
+com.eyecool.utils.Utils: double NANOS
+com.eyecool.widget.CustomProgressCircle2: int inner_move_progress_color
+com.eyecool.fragment.IrisBinocularFragment: int ECI_102_PID_L
+com.eyecool.utils.ImageUtil: int[] sImageAttr
+com.eyecool.utils.Utils: int MAX_SIZE
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_NONE
+com.eyecool.iris.api.IrisResult: byte[] leftImage
+com.eyecool.fragment.IrisBinocularFragment: boolean isEnrolling
+com.eyecool.fragment.IrisFragment: boolean isGetSn
+com.eyecool.fragment.IrisFragment: com.eyecool.iris.api.IrisSDK mIrisSDK
+com.eyecool.iris.api.IrisSDK$Pic: com.eyecool.iris.api.IrisSDK$Pic JP2
+com.eyecool.fragment.IrisFragment: int TCI303_25CM_VID
+com.eyecool.fragment.IrisFragment: boolean isCancel
+com.eyecool.fragment.IrisBinocularFragment: int ECI_102_PID_R
+com.eyecool.fragment.IrisFragment: cn.eyecool.uvc.usb.UVCCameraManager$UVCCameraCallbackX mUVCCameraCallbackX
+com.eyecool.fragment.IrisBinocularFragment: boolean isCancel
+com.eyecool.iris.api.IrisSDK: java.lang.String mVersion
+com.eyecool.iris.api.IrisResult: byte[] rightImage
+com.eyecool.iris.api.IrisPosition: int centerX
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.widget.UVCCameraTextureView mUVCCameraViewR
+com.eyecool.utils.ImageUtil: long mOpBmpImgLen
+com.eyecool.iris.api.IrisSDK: int mPixelEnd
+com.eyecool.iris.api.IrisSDK$FocalLength: com.eyecool.iris.api.IrisSDK$FocalLength ECI302
+com.eyecool.iris.api.IrisSDK: byte[] singleTemplate
+com.eyecool.iris.api.IrisSDK: java.lang.String mActivationCode
+com.eyecool.widget.CustomProgressCircle2: boolean endFlg
+com.eyecool.fragment.IrisFragment: java.util.List mTemplates
+com.eyecool.iris.api.IrisSDK: int singleTemplateLength
+com.eyecool.fragment.IrisBinocularFragment: com.eyecool.fragment.IrisBinocularFragment$EnrollCallback mEnrollCallback
+com.eyecool.iris.api.IrisPosition: int pupilCenterY
+com.eyecool.utils.NetUtils: java.lang.String TAG
+com.eyecool.utils.ExecutorUtil: java.util.concurrent.ExecutorService FIXED_POOL_SERVICE
+com.eyecool.fragment.IrisFragment: int ECI301_25CM_PID
+com.eyecool.fragment.IrisFragment: int OPEN_EYES
+com.eyecool.fragment.IrisFragment: byte[] mTemplate
+com.eyecool.fragment.IrisFragment: com.eyecool.fragment.IrisFragment$CameraCallback mCameraCallback
+com.eyecool.fragment.IrisFragment: java.lang.String TAG
+com.eyecool.fragment.IrisBinocularFragment: java.lang.String TAG
+com.eyecool.iris.api.constant.Code: int ERROR_BUSY
+com.eyecool.iris.api.constant.Code: int OK
+com.eyecool.utils.NetUtils: int mHttpStatus
+com.eyecool.widget.CustomProgressCircle2: int degress
+com.eyecool.iris.api.IrisResult: int rightArea
+com.eyecool.utils.JSONUtils: boolean isPrintException
+com.eyecool.widget.Draw: float CamWidth
+com.eyecool.widget.CustomProgressCircle: int mProgress
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.widget.UVCCameraTextureView mUVCCameraViewL
+com.eyecool.iris.api.IrisSDK: java.lang.String IRIS_DEVICE_INFO_NAME
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_IEYE
+com.eyecool.iris.api.IrisSDK: java.lang.String IRIS_DEVICE_INFO_PATH
+com.eyecool.iris.api.IrisResult: int mImageType
+com.eyecool.utils.SharedPreferenceUtil: com.eyecool.utils.SharedPreferenceUtil mInstance
+com.eyecool.utils.Utils: java.util.LinkedList times
+com.eyecool.iris.api.IrisPosition: int radius
+com.eyecool.utils.FileUtils: java.lang.String EXTERNAL_CACHE_DIR
+com.eyecool.widget.Draw: java.lang.String returnCode
+com.eyecool.fragment.IrisBinocularFragment: int TCI_322_PID_L
+com.eyecool.widget.Draw: float CamHeigh
+com.eyecool.fragment.IrisBinocularFragment: boolean isPause
+com.eyecool.fragment.IrisBinocularFragment: int DISTANCE_CLOSER
+com.eyecool.iris.api.constant.Code: int ERROR_PARAM
+com.eyecool.iris.api.IrisSDK: com.eyecool.utils.ImageUtil mImageUtil
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_KID7
+com.eyecool.utils.Logs: java.lang.String sApplicationTag
+com.eyecool.fragment.IrisBinocularFragment: int mVerifyThreshold
+com.eyecool.utils.Logs: boolean sIsLogEnabled
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.usb.USBMonitor$OnDeviceConnectListener mOnDeviceConnectListener
+com.eyecool.fragment.IrisBinocularFragment: int mQualityScore
+com.eyecool.fragment.IrisFragment: boolean isPause
+com.eyecool.fragment.IrisFragment: int NO_IRIS
+com.eyecool.utils.FileUtils: java.lang.String TEMP_PATH
+com.eyecool.iris.api.IrisSDK: int mWidth
+com.eyecool.iris.api.IrisSDK: com.eyecool.iris.api.IrisSDK sIrisSDK
+com.eyecool.algorithm.UniqueType: com.eyecool.algorithm.UniqueType[] $VALUES
+com.eyecool.utils.NetUtils: java.lang.String AUTH_URL
+com.eyecool.utils.FileUtils: java.lang.String THUMBNAIL_PATH
+com.eyecool.iris.api.IrisSDK: java.lang.String ECI_102_R
+com.eyecool.iris.api.IrisSDK: com.eyecool.iris.api.IrisSDK$IrisSDKCallback mCallback
+com.eyecool.iris.api.IrisSDK: java.lang.String mAppId
+com.eyecool.widget.Draw: java.lang.String actionText
+com.eyecool.fragment.IrisBinocularFragment: boolean isVerifying
+com.eyecool.iris.api.IrisSDK$Pic: com.eyecool.iris.api.IrisSDK$Pic JPG
+com.eyecool.iris.api.IrisSDK$FocalLength: com.eyecool.iris.api.IrisSDK$FocalLength CM_25
+com.eyecool.fragment.IrisBinocularFragment: int NO_IRIS
+com.eyecool.fragment.IrisFragment: int DISTANCE_CLOSER
+com.eyecool.fragment.IrisFragment: int mPreviewHeight
+com.eyecool.utils.ExecutorUtil: java.util.concurrent.ExecutorService SINGLE_SERVICE
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.usb.UVCCameraManager mUVCCameraManagerL
+com.eyecool.iris.api.IrisSDK$Pic: com.eyecool.iris.api.IrisSDK$Pic BMP
+com.eyecool.fragment.IrisFragment: java.lang.String mDeviceModel
+com.eyecool.utils.JavaAESCryptor: byte[] ivBytes
+com.eyecool.fragment.IrisFragment: int mIrisEffectiveArea
+com.eyecool.widget.Draw: java.lang.String actionTips
+com.eyecool.iris.api.IrisResult: int rightDiameter
+com.eyecool.widget.Draw: java.lang.String fpsText
+com.eyecool.widget.Draw: int winHeight
+com.eyecool.algorithm.UniqueType: com.eyecool.algorithm.UniqueType ANDROID_ID
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_HINT
+com.eyecool.algorithm.UniqueType: com.eyecool.algorithm.UniqueType SERIAL_NUMBER
+com.eyecool.iris.api.IrisSDK$FocalLength: com.eyecool.iris.api.IrisSDK$FocalLength ECI305
+com.eyecool.iris.api.IrisSDK: int mGetImagePixelMin
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.usb.UVCCameraManager mUVCCameraManagerR
+com.eyecool.utils.ListUtils: java.lang.String DEFAULT_JOIN_SEPARATOR
+com.eyecool.iris.api.ColorCardDetectResult: byte[] mImage
+com.eyecool.iris.api.IrisSDK: boolean isInitOK
+com.eyecool.iris.api.ColorCardDetectResult: int mScore
+com.eyecool.fragment.IrisFragment: boolean isEnrolling
+com.eyecool.iris.api.constant.Code: int ERROR_TIMEOUT
+com.eyecool.fragment.IrisBinocularFragment: java.util.List mTemplates
+com.eyecool.fragment.IrisFragment: int POOL_QUALITY
+com.eyecool.widget.CustomProgressCircle: int mWeight
+com.eyecool.widget.CustomProgressCircle2: int mWeight
+com.eyecool.widget.Draw: java.lang.String algorithmTime
+com.eyecool.iris.api.IrisSDK: android.content.Context mContext
+com.eyecool.fragment.IrisBinocularFragment: long mCurrentTime
+com.eyecool.iris.api.IrisSDK: int mGetImagePixelMax
+com.eyecool.iris.api.IrisSDK$Pic: com.eyecool.iris.api.IrisSDK$Pic[] $VALUES
+com.eyecool.fragment.IrisFragment: int mPreviewWidth
+com.eyecool.iris.api.IrisPosition: int centerY
+com.eyecool.widget.Draw: int[] location
+com.eyecool.iris.api.IrisSDK: java.lang.String IRIS_LICENSE_NAME
+com.eyecool.utils.SharedPreferenceUtil: android.content.Context mContext
+com.eyecool.widget.CustomProgressCircle: int mMax
+com.eyecool.widget.Draw: java.lang.String action
+com.eyecool.fragment.IrisFragment: float[] BANDWIDTH_FACTORS
+com.eyecool.widget.Draw: android.graphics.Paint paint
+com.eyecool.fragment.IrisBinocularFragment: com.eyecool.fragment.IrisBinocularFragment$CameraCallback mCameraCallback
+com.eyecool.fragment.IrisFragment: com.eyecool.fragment.IrisFragment$EnrollCallback mEnrollCallback
+com.eyecool.iris.api.IrisSDK$FocalLength: com.eyecool.iris.api.IrisSDK$FocalLength[] $VALUES
+com.eyecool.utils.FileUtils: java.lang.String APP_ABSOLUTEPATH
+com.eyecool.fragment.IrisBinocularFragment: int LOCATION_FAILED
+com.eyecool.iris.api.IrisPosition: int pupilRadius
+com.eyecool.fragment.IrisBinocularFragment: com.eyecool.fragment.IrisBinocularFragment$AcquireImageCallback mAcquireImageCallback
+com.eyecool.iris.api.IrisSDK: byte[] mVerifyFea
+com.eyecool.fragment.IrisBinocularFragment: int mPreviewWidth
+com.eyecool.fragment.IrisFragment: int ECI305_PID
+com.eyecool.fragment.IrisFragment: int mMatchScore
+com.eyecool.iris.api.IrisSDK: int mPixelStart
+com.eyecool.iris.api.IrisSDK: java.lang.String TAG
+com.eyecool.fragment.IrisFragment: int ECI301_30CM_VID
+com.eyecool.iris.api.IrisPosition: int pupilCenterX
+com.eyecool.iris.api.IrisSDK: com.eyecool.algorithm.UniqueType mUniqueType
+com.eyecool.utils.ImageUtil: java.lang.String TAG
+com.eyecool.fragment.IrisFragment: int ECI302_PID
+com.eyecool.widget.Draw: java.lang.String algorithmInfo
+com.eyecool.fragment.IrisFragment: com.eyecool.fragment.IrisFragment$AcquireImageCallback mAcquireImageCallback
+com.eyecool.utils.MapUtils: java.lang.String DEFAULT_KEY_AND_VALUE_SEPARATOR
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_EPRG
+com.eyecool.algorithm.UniqueType: com.eyecool.algorithm.UniqueType MAC
+com.eyecool.iris.api.IrisSDK: java.lang.String ECI_102_L
+com.eyecool.fragment.IrisFragment: int DISTANCE_FUTHER
+com.eyecool.utils.JavaAESCryptor: byte[] keyBytes
+com.eyecool.fragment.IrisFragment: int ECI305_VID
+com.eyecool.fragment.IrisFragment: int ECI301_30CM_PID
+com.eyecool.utils.NetUtils: java.lang.String mResponse
+com.eyecool.fragment.IrisBinocularFragment: android.os.Handler mUIHandler
+com.eyecool.iris.api.constant.Code: int ERROR_CANCEL
+com.eyecool.utils.SharedPreferenceUtil: java.lang.String APP_NAME
+com.eyecool.iris.api.IrisSDK: android.os.Handler mHandler
+com.eyecool.fragment.IrisBinocularFragment: int POOL_QUALITY
+com.eyecool.fragment.IrisBinocularFragment: boolean isPreviewSuccess
+com.eyecool.fragment.IrisBinocularFragment: com.eyecool.fragment.IrisBinocularFragment$VerifyCallback mVerifyCallback
+com.eyecool.fragment.IrisFragment: long mCurrentTime
+com.eyecool.iris.api.IrisSDK: java.lang.String IRIS_LICENSE_PATH
+com.eyecool.fragment.IrisBinocularFragment: int ECI_102_VID
+com.eyecool.widget.CustomProgressCircle2: android.graphics.SweepGradient sweepGradient
+com.eyecool.algorithm.UniqueType: com.eyecool.algorithm.UniqueType IMEI
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H V4H_KID3
+com.eyecool.iris.api.IrisResult: int leftDiameter
+com.eyecool.algorithm.UniqueType: com.eyecool.algorithm.UniqueType OTHER
+com.eyecool.iris.api.IrisResult: int rightQualityScore
+com.eyecool.utils.ImageUtil: int sImgWidth
+com.eyecool.fragment.IrisFragment: boolean isDebug
+com.eyecool.iris.api.IrisSDK: byte[] getFeature(byte[])
+com.eyecool.utils.ListUtils: ListUtils()
+com.eyecool.utils.JavaAESCryptor: byte[] decrypt(byte[])
+com.eyecool.iris.api.IrisSDK$FocalLength: com.eyecool.iris.api.IrisSDK$FocalLength[] values()
+com.eyecool.iris.api.IrisSDK: byte[] int2byte(int[])
+com.eyecool.utils.JSONUtils: java.lang.String getString(java.lang.String,java.lang.String,java.lang.String)
+com.eyecool.utils.DeviceUtil: DeviceUtil()
+com.eyecool.fragment.IrisBinocularFragment: void syncVerifys(long)
+com.eyecool.fragment.IrisFragment: void verify(long,com.eyecool.fragment.IrisFragment$VerifyCallback,byte[])
+com.eyecool.algorithm.TesoV400: int nativeTcMobiIsoGo(int,int[],int,int,long)
+com.eyecool.iris.api.IrisSDK: int split(byte[],byte[],byte[],int[],int,com.eyecool.iris.api.IrisSDK$Pic)
+com.eyecool.widget.CustomProgressCircle: void setWeight(int)
+com.eyecool.fragment.IrisBinocularFragment: void access$1300(com.eyecool.fragment.IrisBinocularFragment,long)
+com.eyecool.utils.FileUtils: java.lang.String getFileExtension(java.lang.String)
+com.eyecool.widget.CustomProgressCircle: CustomProgressCircle(android.content.Context,android.util.AttributeSet)
+com.eyecool.utils.JSONUtils: org.json.JSONObject parseByteToJson(byte[])
+com.eyecool.utils.JavaAESCryptor: JavaAESCryptor()
+com.eyecool.utils.ImageUtil: void setOpBmpImgLen(long)
+com.eyecool.utils.FileUtils: boolean isBlank(java.lang.String)
+com.eyecool.iris.api.IrisResult: int getLeftDiameter()
+com.eyecool.utils.FileUtils: boolean writeFile(java.lang.String,java.lang.String)
+com.eyecool.iris.api.IrisSDK: void access$500(com.eyecool.iris.api.IrisSDK,int,java.lang.String)
+com.eyecool.utils.ArrayUtils: java.lang.Object getNext(java.lang.Object[],java.lang.Object,boolean)
+com.eyecool.utils.SharedPreferenceUtil: com.eyecool.utils.SharedPreferenceUtil getInstance()
+com.eyecool.fragment.IrisFragment: java.lang.String getSn()
+com.eyecool.fragment.IrisBinocularFragment: com.eyecool.fragment.IrisBinocularFragment$EnrollCallback access$1900(com.eyecool.fragment.IrisBinocularFragment)
+com.eyecool.iris.api.IrisSDK: java.lang.String getReturnCode()
+com.eyecool.utils.JSONUtils: java.util.Map parseKeyAndValueToMap(org.json.JSONObject)
+com.eyecool.iris.api.IrisSDK$FocalLength: IrisSDK$FocalLength(java.lang.String,int)
+com.eyecool.utils.ExecutorUtil: void execSingle(java.lang.Runnable)
+com.eyecool.fragment.IrisBinocularFragment: void setPreviewSize(int,int)
+com.eyecool.iris.api.IrisSDK: java.lang.String access$600(com.eyecool.iris.api.IrisSDK)
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.usb.USBMonitor access$900(com.eyecool.fragment.IrisBinocularFragment)
+com.eyecool.fragment.IrisFragment: void startPreview()
+com.eyecool.algorithm.TesoV400: int nativeTcImageTran(byte[],int,int,int)
+com.eyecool.utils.ArrayUtils: long getLast(long[],long,long,boolean)
+com.eyecool.iris.api.IrisSDK: void setGetImagePixelMin(int)
+com.eyecool.utils.ImageUtil: byte[] bmpToRAW(byte[],int,int)
+com.eyecool.utils.FileUtils: byte[] readFile(java.lang.String)
+com.eyecool.utils.JSONUtils: java.util.Map getMap(java.lang.String,java.lang.String)
+com.eyecool.utils.FileUtils: long getFileSize(java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void enrollError(int,java.lang.String)
+com.eyecool.utils.JSONUtils: java.lang.Integer getInt(java.lang.String,java.lang.String,java.lang.Integer)
+com.eyecool.fragment.IrisFragment: void syncAcquireImage(long,int,int)
+com.eyecool.iris.api.IrisResult: void setRightDiameter(int)
+com.eyecool.widget.CustomProgressCircle: int getProgress()
+com.eyecool.fragment.IrisBinocularFragment: void lambda$callOnOpen$1(cn.eyecool.uvc.usb.UVCCamera,cn.eyecool.uvc.usb.UVCCamera)
+com.eyecool.fragment.IrisFragment: void verify(long,java.util.List,com.eyecool.fragment.IrisFragment$VerifyCallback)
+com.eyecool.utils.ListUtils: java.util.List invertList(java.util.List)
+com.eyecool.widget.CustomProgressCircle2: void startProgress()
+com.eyecool.fragment.IrisBinocularFragment: boolean isRightCamera(android.hardware.usb.UsbDevice)
+com.eyecool.fragment.IrisFragment: void closeCamera()
+com.eyecool.utils.JSONUtils: java.lang.String getString(org.json.JSONObject,java.lang.String,java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void setVerifyThreshold(int)
+com.eyecool.utils.Logs: void i(java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: byte[] mergeIrisImge(byte[],byte[])
+com.eyecool.fragment.IrisBinocularFragment: void startLeftCamera()
+com.eyecool.fragment.IrisBinocularFragment: void setCameraCallback(com.eyecool.fragment.IrisBinocularFragment$CameraCallback)
+com.eyecool.utils.ArrayUtils: int getNext(int[],int,int,boolean)
+com.eyecool.fragment.IrisFragment: void setMatchScore(int)
+com.eyecool.fragment.IrisBinocularFragment$CameraCallback: void onPreview()
+com.eyecool.iris.api.IrisSDK$V4H: com.eyecool.iris.api.IrisSDK$V4H valueOf(java.lang.String)
+com.eyecool.iris.api.IrisResult: void setRightArea(int)
+com.eyecool.utils.Logs: void d(java.lang.String,java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void access$700(com.eyecool.fragment.IrisBinocularFragment,long,cn.eyecool.uvc.usb.UVCCamera,cn.eyecool.uvc.usb.UVCCamera)
+com.eyecool.widget.CustomProgressCircle2: CustomProgressCircle2(android.content.Context,android.util.AttributeSet)
+com.eyecool.utils.ImageUtil: byte[] getBmpImgBuf()
+com.eyecool.iris.api.IrisSDK: byte[] getSingleTemplate()
+com.eyecool.fragment.IrisFragment: byte[] getCameraBytes()
+com.eyecool.fragment.IrisFragment: void closeLight()
+com.eyecool.fragment.IrisFragment: void callOnPreview()
+com.eyecool.fragment.IrisBinocularFragment$CameraCallback: void onOpenError(int)
+com.eyecool.utils.StringUtils: java.lang.String htmlEscapeCharsToString(java.lang.String)
+com.eyecool.iris.api.IrisSDK: int getPixelEnd()
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.usb.UVCCameraManager access$1200(com.eyecool.fragment.IrisBinocularFragment)
+com.eyecool.fragment.IrisBinocularFragment: void access$1500(com.eyecool.fragment.IrisBinocularFragment,long,int,int)
+com.eyecool.fragment.IrisFragment: void acquireImageSuccess(com.eyecool.iris.api.IrisResult)
+com.eyecool.fragment.IrisFragment: com.eyecool.fragment.IrisFragment$CameraCallback access$500(com.eyecool.fragment.IrisFragment)
+com.eyecool.iris.api.IrisSDK: int getHeight()
+com.eyecool.utils.FileUtils: java.lang.String getRandomStr()
+com.eyecool.utils.SharedPreferenceUtil: void init(android.content.Context)
+com.eyecool.utils.JSONUtils: java.util.Map parseKeyAndValueToMap(java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void runOnUiThread(java.lang.Runnable)
+com.eyecool.fragment.IrisBinocularFragment: void lambda$callOnPreview$2()
+com.eyecool.utils.Logs: void v(java.lang.String,java.lang.String)
+com.eyecool.utils.ObjectUtils: long[] transformLongArray(java.lang.Long[])
+com.eyecool.fragment.IrisBinocularFragment: boolean access$100(com.eyecool.fragment.IrisBinocularFragment)
+com.eyecool.fragment.IrisFragment: void callOnClose()
+com.eyecool.utils.Logs: java.lang.String getContents(java.lang.StackTraceElement)
+com.eyecool.utils.ArrayUtils: int getLast(int[],int,int,boolean)
+com.eyecool.utils.ListUtils: boolean addDistinctEntry(java.util.List,java.lang.Object)
+com.eyecool.utils.FileUtils: void clearThumbnailDir()
+com.eyecool.utils.FileUtils: java.lang.String getFileName(java.lang.String)
+com.eyecool.widget.CustomProgressCircle: void setProgress(int)
+com.eyecool.utils.FileUtils: java.lang.StringBuilder readFile(java.lang.String,java.lang.String)
+com.eyecool.fragment.IrisFragment: void acquireImageError(int,java.lang.String)
+com.eyecool.iris.api.IrisSDK: java.lang.String getUniqueId()
+com.eyecool.utils.JSONUtils: java.lang.String[] getStringArray(org.json.JSONObject,java.lang.String,java.lang.String[])
+com.eyecool.iris.api.IrisSDK: void setPixelStart(int)
+com.eyecool.iris.api.IrisResult: byte[] getLeftImage()
+com.eyecool.widget.Draw: void setLoaction(int[])
+com.eyecool.fragment.IrisFragment$VerifyCallback: void onSuccess(int)
+com.eyecool.fragment.IrisFragment: int getIrisEffectiveArea()
+com.eyecool.utils.ArrayUtils: long getNext(long[],long,long,boolean)
+com.eyecool.utils.ListUtils: int getSize(java.util.List)
+com.eyecool.fragment.IrisFragment: boolean access$000(com.eyecool.fragment.IrisFragment,android.hardware.usb.UsbDevice)
+com.eyecool.utils.FileUtils: boolean writeFile(java.io.File,java.io.InputStream)
+com.eyecool.iris.api.IrisSDK: int getGetImagePixelMax()
+com.eyecool.fragment.IrisFragment$VerifyCallbackX: void onProcess(int)
+com.eyecool.iris.api.IrisResult: int getLeftQualityScore()
+com.eyecool.fragment.IrisBinocularFragment: com.eyecool.fragment.IrisBinocularFragment$AcquireImageCallback access$2100(com.eyecool.fragment.IrisBinocularFragment)
+com.eyecool.fragment.IrisBinocularFragment: void acquireImageError(int,java.lang.String)
+com.eyecool.utils.SharedPreferenceUtil: void saveInt(java.lang.String,int)
+com.eyecool.utils.MapUtils: MapUtils()
+com.eyecool.iris.api.IrisSDK: void setImageSize(int,int)
+com.eyecool.iris.api.IrisSDK: int split(byte[],byte[],byte[],int[],int,com.eyecool.iris.api.IrisSDK$Pic,int)
+com.eyecool.fragment.IrisFragment: android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle)
+com.eyecool.utils.Logs: void ds(java.lang.String)
+com.eyecool.utils.StringUtils: java.lang.String utf8Encode(java.lang.String,java.lang.String)
+com.eyecool.utils.JavaAESCryptor: void main(java.lang.String[])
+com.eyecool.utils.ExecutorUtil: void exec(java.lang.Runnable)
+com.eyecool.utils.JSONUtils: org.json.JSONObject getJSONObjectCascade(java.lang.String,org.json.JSONObject,java.lang.String[])
+com.eyecool.iris.api.IrisSDK: int enrollData(byte[],int[])
+com.eyecool.utils.Logs: void v(java.lang.String)
+com.eyecool.utils.MapUtils: boolean putMapNotNullKey(java.util.Map,java.lang.Object,java.lang.Object)
+com.eyecool.utils.MapUtils: boolean putMapNotNullKeyAndValue(java.util.Map,java.lang.Object,java.lang.Object)
+com.eyecool.fragment.IrisFragment$CameraCallbackX: void onPreview()
+com.eyecool.fragment.IrisBinocularFragment: void startPreview()
+com.eyecool.iris.api.IrisSDK: void setFocalLength(com.eyecool.iris.api.IrisSDK$FocalLength)
+com.eyecool.algorithm.TesoV400$V4H: TesoV400$V4H(java.lang.String,int)
+com.eyecool.utils.StringUtils: boolean isEquals(java.lang.String,java.lang.String)
+com.eyecool.fragment.IrisFragment$CameraCallbackX: void onPreviewFailed()
+com.eyecool.iris.api.IrisSDK: void setGetImagePixelMax(int)
+com.eyecool.utils.StringUtils: java.lang.String getHrefInnerHtml(java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment$VerifyCallback: void onSuccess(int)
+com.eyecool.fragment.IrisBinocularFragment$AcquireImageCallback: void onSuccess(com.eyecool.iris.api.IrisResult)
+com.eyecool.fragment.IrisFragment: void openCameraDevice(cn.eyecool.uvc.usb.USBMonitor$UsbControlBlock)
+com.eyecool.iris.api.ColorCardDetectResult: void setScore(int)
+com.eyecool.utils.StringUtils: java.lang.String nullStrToEmpty(java.lang.Object)
+com.eyecool.utils.JSONUtils: java.lang.Long getLong(java.lang.String,java.lang.String,java.lang.Long)
+com.eyecool.iris.api.IrisResult: void setLeftImage(byte[])
+com.eyecool.utils.Utils: void createFileWithByte(java.lang.String,byte[])
+com.eyecool.utils.ImageUtil: long getOpBmpImgLen()
+com.eyecool.utils.Logs: java.lang.StackTraceElement getCurrentStackTraceElement()
+com.eyecool.iris.api.IrisResult: void setLeftArea(int)
+com.eyecool.iris.api.IrisResult: void setImageType(int)
+com.eyecool.fragment.IrisFragment: void onPause()
+com.eyecool.iris.api.IrisSDK$V4H: com.eyecool.iris.api.IrisSDK$V4H[] values()
+com.eyecool.utils.FileUtils: java.lang.String getExternalSdCardPath()
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H[] values()
+com.eyecool.fragment.IrisBinocularFragment: void startCamera()
+com.eyecool.utils.JSONUtils: int getInt(java.lang.String,java.lang.String,int)
+com.eyecool.fragment.IrisBinocularFragment: com.eyecool.fragment.IrisBinocularFragment$VerifyCallback access$2000(com.eyecool.fragment.IrisBinocularFragment)
+com.eyecool.fragment.IrisBinocularFragment: void enroll(long,com.eyecool.fragment.IrisBinocularFragment$EnrollCallback)
+com.eyecool.widget.Draw: void setFps(java.lang.String)
+com.eyecool.fragment.IrisFragment: void onDestroy()
+com.eyecool.utils.SharedPreferenceUtil: SharedPreferenceUtil()
+com.eyecool.utils.FileUtils: void clearThumbnailDirAsync()
+com.eyecool.fragment.IrisFragment: void verirySuc(int)
+com.eyecool.fragment.IrisFragment: java.lang.String access$1702(com.eyecool.fragment.IrisFragment,java.lang.String)
+com.eyecool.utils.Logs: java.lang.String getContent(java.lang.StackTraceElement)
+com.eyecool.utils.FileUtils: java.util.ArrayList getDevMountList()
+com.eyecool.iris.api.IrisSDK$Pic: IrisSDK$Pic(java.lang.String,int)
+com.eyecool.fragment.IrisBinocularFragment: void verifyX(long,java.util.List,com.eyecool.fragment.IrisBinocularFragment$VerifyCallback)
+com.eyecool.utils.JavaAESCryptor: byte[] docrypt(byte[],byte[],int)
+com.eyecool.fragment.IrisFragment: java.lang.String access$300()
+com.eyecool.utils.StringUtils: StringUtils()
+com.eyecool.fragment.IrisFragment: void access$1800(com.eyecool.fragment.IrisFragment)
+com.eyecool.iris.api.IrisSDK: com.eyecool.iris.api.IrisPosition[] getIrisPosition(byte[],int,int)
+com.eyecool.widget.CustomProgressCircle2: void setWeight(int)
+com.eyecool.fragment.IrisFragment: void access$1000(com.eyecool.fragment.IrisFragment,long,java.util.List)
+com.eyecool.fragment.IrisFragment: int access$2200(com.eyecool.fragment.IrisFragment)
+com.eyecool.fragment.IrisBinocularFragment: java.lang.String access$000()
+com.eyecool.fragment.IrisFragment: void syncVerify(long)
+com.eyecool.fragment.IrisBinocularFragment$EnrollCallback: void onSuccess(byte[])
+com.eyecool.algorithm.TesoV400: int nativeTcMobiComp(byte[],byte[],int,int)
+com.eyecool.utils.DeviceUtil: java.lang.String getLocalMacAddressFromWifiInfo(android.content.Context)
+com.eyecool.fragment.IrisFragment: cn.eyecool.uvc.usb.UVCCameraManager access$400(com.eyecool.fragment.IrisFragment)
+com.eyecool.utils.ListUtils: java.lang.String join(java.util.List,java.lang.String)
+com.eyecool.iris.api.IrisSDK: java.lang.String access$100()
+com.eyecool.utils.ObjectUtils: int[] transformIntArray(java.lang.Integer[])
+com.eyecool.algorithm.UniqueType: com.eyecool.algorithm.UniqueType[] values()
+com.eyecool.utils.Utils: void saveForDev(byte[])
+com.eyecool.utils.Logs: void setsIsLogEnabled(boolean)
+com.eyecool.fragment.IrisBinocularFragment: com.eyecool.fragment.IrisBinocularFragment$CameraCallback access$2200(com.eyecool.fragment.IrisBinocularFragment)
+com.eyecool.fragment.IrisFragment$CameraCallback: void onOpenError(int)
+com.eyecool.fragment.IrisFragment: void access$2000(com.eyecool.fragment.IrisFragment,int)
+com.eyecool.fragment.IrisFragment$AcquireImageCallback: void onError(int,java.lang.String)
+com.eyecool.utils.FileUtils: boolean isFileExist(java.lang.String)
+com.eyecool.fragment.IrisFragment: void access$600(com.eyecool.fragment.IrisFragment,long)
+com.eyecool.utils.Logs: void traceStack()
+com.eyecool.utils.Logs: void i(java.lang.String,java.lang.String)
+com.eyecool.widget.CustomProgressCircle2: int getWeight()
+com.eyecool.utils.Logs: void e(java.lang.String,java.lang.Exception)
+com.eyecool.utils.JSONUtils: boolean getBoolean(java.lang.String,java.lang.String,java.lang.Boolean)
+com.eyecool.fragment.IrisFragment: void onStop()
+com.eyecool.algorithm.TesoV400: int nativeTcStdCard(byte[],int,int,int,byte[],int[])
+com.eyecool.widget.Draw: void setAlgorithmTime(java.lang.String)
+com.eyecool.utils.Logs: void e(java.lang.String)
+com.eyecool.utils.ObjectUtils: java.lang.Long[] transformLongArray(long[])
+com.eyecool.iris.api.IrisResult: void setRightQualityScore(int)
+com.eyecool.widget.CustomProgressCircle: int getMax()
+com.eyecool.utils.NetUtils: void authByHttpPost(java.lang.String)
+com.eyecool.iris.api.IrisSDK: java.lang.String getLocalMacAddressFromWifiInfo(android.content.Context)
+com.eyecool.utils.NetUtils: java.lang.String getResponse()
+com.eyecool.iris.api.ColorCardDetectResult: byte[] getImage()
+com.eyecool.utils.JSONUtils: double getDouble(java.lang.String,java.lang.String,double)
+com.eyecool.fragment.IrisFragment: void enroll(long,com.eyecool.fragment.IrisFragment$EnrollCallback)
+com.eyecool.fragment.IrisBinocularFragment: void access$500(com.eyecool.fragment.IrisBinocularFragment)
+com.eyecool.utils.FileUtils: boolean writeFile(java.lang.String,java.io.InputStream,boolean)
+com.eyecool.iris.api.IrisSDK: void auth()
+com.eyecool.iris.api.IrisSDK: void dInit()
+com.eyecool.fragment.IrisFragment: void onResume()
+com.eyecool.fragment.IrisBinocularFragment: void verifyError(int,java.lang.String)
+com.eyecool.iris.api.IrisSDK: int getFeature(byte[],byte[])
+com.eyecool.iris.api.constant.Code: Code()
+com.eyecool.fragment.IrisFragment$CameraCallbackX: IrisFragment$CameraCallbackX()
+com.eyecool.iris.api.IrisResult: int getRightQualityScore()
+com.eyecool.utils.JSONUtils: java.lang.String[] getStringArray(java.lang.String,java.lang.String,java.lang.String[])
+com.eyecool.utils.Logs: void trace()
+com.eyecool.utils.MapUtils: java.util.Map parseKeyAndValueToMap(java.lang.String,boolean)
+com.eyecool.fragment.IrisBinocularFragment: void onPause()
+com.eyecool.fragment.IrisBinocularFragment: void onDestroy()
+com.eyecool.utils.JSONUtils: java.util.Map getMap(org.json.JSONObject,java.lang.String)
+com.eyecool.widget.Draw: void setActionTips(java.lang.String)
+com.eyecool.algorithm.TesoV400: int nativeTcMobiCam(byte[],int,int)
+com.eyecool.widget.CustomProgressCircle: void onDraw(android.graphics.Canvas)
+com.eyecool.utils.Logs: void traceStack(java.lang.String,int)
+com.eyecool.utils.FileUtils: boolean writeFile(java.lang.String,byte[])
+com.eyecool.utils.Logs: void d(java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void access$1800(com.eyecool.fragment.IrisBinocularFragment,long,java.util.List)
+com.eyecool.utils.Logs: void w(java.lang.String)
+com.eyecool.utils.Logs: void e(java.lang.String,java.lang.String,java.lang.Exception)
+com.eyecool.fragment.IrisBinocularFragment$CameraCallback: void onClose()
+com.eyecool.widget.CustomProgressCircle: void setBaseColor(int)
+com.eyecool.fragment.IrisBinocularFragment: byte[] getCameraYuvL()
+com.eyecool.fragment.IrisFragment: cn.eyecool.uvc.usb.USBMonitor access$100(com.eyecool.fragment.IrisFragment)
+com.eyecool.iris.api.IrisResult: int getRightArea()
+com.eyecool.iris.api.IrisSDK: void errorCallback(int,java.lang.String)
+com.eyecool.iris.api.IrisSDK: int getGetImagePixelMin()
+com.eyecool.utils.Logs: void w(java.lang.String,java.lang.String)
+com.eyecool.iris.api.IrisSDK: void init(android.content.Context,java.lang.String,com.eyecool.iris.api.IrisSDK$IrisSDKCallback)
+com.eyecool.utils.JSONUtils: org.json.JSONObject getJSONObjectCascade(org.json.JSONObject,org.json.JSONObject,java.lang.String[])
+com.eyecool.utils.StringUtils: boolean isBlank(java.lang.String)
+com.eyecool.iris.api.IrisSDK: java.lang.String byteToString(byte[])
+com.eyecool.fragment.IrisFragment$EnrollCallback: void onSuccess(byte[])
+com.eyecool.utils.MapUtils: java.lang.Object getKeyByValue(java.util.Map,java.lang.Object)
+com.eyecool.widget.CustomProgressCircle2: void onDraw(android.graphics.Canvas)
+com.eyecool.iris.api.IrisSDK$FocalLength: com.eyecool.iris.api.IrisSDK$FocalLength valueOf(java.lang.String)
+com.eyecool.fragment.IrisFragment$AcquireImageCallback: void onSuccess(com.eyecool.iris.api.IrisResult)
+com.eyecool.utils.Utils: Utils()
+com.eyecool.fragment.IrisFragment: void setDebug(boolean)
+com.eyecool.fragment.IrisFragment: void syncVerifys(long,java.util.List)
+com.eyecool.fragment.IrisFragment: int access$2100(com.eyecool.fragment.IrisFragment)
+com.eyecool.fragment.IrisBinocularFragment: void lambda$callOnClose$3()
+com.eyecool.utils.StringUtils: java.lang.String fullWidthToHalfWidth(java.lang.String)
+com.eyecool.algorithm.TesoV400: int nativeTcMobipFea(byte[],int,byte[],int,int,int,int,int)
+com.eyecool.utils.MapUtils: boolean putMapNotEmptyKeyAndValue(java.util.Map,java.lang.String,java.lang.String)
+com.eyecool.fragment.IrisFragment: void callOnOpen()
+com.eyecool.utils.FileUtils: FileUtils()
+com.eyecool.utils.ListUtils: java.lang.Object getNext(java.util.List,java.lang.Object)
+com.eyecool.fragment.IrisBinocularFragment: void syncVerifys(long,java.util.List)
+com.eyecool.fragment.IrisBinocularFragment: int getPreviewHeight()
+com.eyecool.utils.ExecutorUtil: ExecutorUtil()
+com.eyecool.fragment.IrisFragment: void verify(long,com.eyecool.fragment.IrisFragment$VerifyCallback,java.util.List)
+com.eyecool.utils.ImageUtil: ImageUtil()
+com.eyecool.iris.api.IrisSDK: void setUniqueType(com.eyecool.algorithm.UniqueType)
+com.eyecool.iris.R: R()
+com.eyecool.fragment.IrisBinocularFragment: void access$400(com.eyecool.fragment.IrisBinocularFragment,int)
+com.eyecool.utils.ArrayUtils: java.lang.Object getNext(java.lang.Object[],java.lang.Object,java.lang.Object,boolean)
+com.eyecool.algorithm.TesoV400$V4H: com.eyecool.algorithm.TesoV400$V4H valueOf(java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void access$1100(com.eyecool.fragment.IrisBinocularFragment,java.lang.Runnable)
+com.eyecool.algorithm.TesoV400: int nativeTcMobiDexit(long)
+com.eyecool.utils.NetUtils: int getHttpStatus()
+com.eyecool.fragment.IrisFragment: void stopPreview()
+com.eyecool.utils.DeviceUtil: java.lang.String getIMEI(android.content.Context)
+com.eyecool.iris.api.IrisResult: byte[] getRightImage()
+com.eyecool.fragment.IrisBinocularFragment: void setMirror(boolean)
+com.eyecool.utils.Logs: void setsApplicationTag(java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void syncEnroll(long)
+com.eyecool.utils.JSONUtils: java.lang.Long getLong(org.json.JSONObject,java.lang.String,java.lang.Long)
+com.eyecool.iris.api.IrisSDK: com.eyecool.iris.api.IrisSDK$FocalLength getFocalLength()
+com.eyecool.utils.JSONUtils: java.util.List getStringList(java.lang.String,java.lang.String,java.util.List)
+com.eyecool.utils.ImageUtil: byte[] int2byte(int)
+com.eyecool.widget.Draw: void setAlgorithmInfo(java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: com.eyecool.fragment.IrisBinocularFragment newInstance()
+com.eyecool.widget.CustomProgressCircle2: CustomProgressCircle2(android.content.Context)
+com.eyecool.utils.ArrayUtils: java.lang.Object getLast(java.lang.Object[],java.lang.Object,java.lang.Object,boolean)
+com.eyecool.fragment.IrisBinocularFragment: boolean access$1702(com.eyecool.fragment.IrisBinocularFragment,boolean)
+com.eyecool.utils.Logs: void e(java.lang.String,java.lang.String)
+com.eyecool.fragment.IrisFragment: java.lang.String access$1600(com.eyecool.fragment.IrisFragment,int)
+com.eyecool.fragment.IrisFragment: void acquireImageProcess(int)
+com.eyecool.iris.api.ColorCardDetectResult: int getScore()
+com.eyecool.fragment.IrisFragment: void access$200(com.eyecool.fragment.IrisFragment,cn.eyecool.uvc.usb.USBMonitor$UsbControlBlock)
+com.eyecool.utils.StringUtils: java.lang.String capitalizeFirstLetter(java.lang.String)
+com.eyecool.iris.api.IrisSDK: int getPixelStart()
+com.eyecool.utils.MapUtils: java.lang.String toJson(java.util.Map)
+com.eyecool.fragment.IrisBinocularFragment$CameraCallback: void onOpen()
+com.eyecool.utils.Logs: java.lang.String getTagContentPrint()
+com.eyecool.utils.ImageUtil: byte[] long2byte(long)
+com.eyecool.utils.ListUtils: boolean isEmpty(java.util.List)
+com.eyecool.fragment.IrisFragment: int getPreviewWidth()
+com.eyecool.widget.Draw: void onMeasure(int,int)
+com.eyecool.utils.FileUtils: java.util.List readFileToList(java.lang.String,java.lang.String)
+com.eyecool.utils.NetUtils: java.lang.String readInStream(java.io.InputStream)
+com.eyecool.fragment.IrisBinocularFragment$CameraCallback: void onPreviewError()
+com.eyecool.iris.api.IrisSDK: com.eyecool.iris.api.IrisSDK$IrisSDKCallback access$900(com.eyecool.iris.api.IrisSDK)
+com.eyecool.fragment.IrisBinocularFragment: void access$1000(com.eyecool.fragment.IrisBinocularFragment,android.hardware.usb.UsbDevice,cn.eyecool.uvc.usb.USBMonitor$UsbControlBlock)
+com.eyecool.iris.api.IrisSDK: java.lang.String access$800()
+com.eyecool.iris.api.IrisSDK: com.eyecool.iris.api.IrisSDK getInstance(android.content.Context)
+com.eyecool.iris.api.IrisSDK$IrisSDKCallback: void onSuccess()
+com.eyecool.utils.Logs: void e(java.lang.Exception)
+com.eyecool.utils.JSONUtils: java.lang.Double getDouble(java.lang.String,java.lang.String,java.lang.Double)
+com.eyecool.fragment.IrisFragment: void setMirror(boolean)
+com.eyecool.fragment.IrisFragment: void enrollProcess(int,int)
+com.eyecool.fragment.IrisBinocularFragment$AcquireImageCallback: void onError(int,java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void acquireImageSuccess(com.eyecool.iris.api.IrisResult)
+com.eyecool.fragment.IrisFragment: void callOnOpenError(int)
+com.eyecool.fragment.IrisBinocularFragment: boolean access$1402(com.eyecool.fragment.IrisBinocularFragment,boolean)
+com.eyecool.utils.JSONUtils: int getInt(org.json.JSONObject,java.lang.String,int)
+com.eyecool.iris.api.IrisSDK: int getWidth()
+com.eyecool.iris.api.IrisSDK: IrisSDK(android.content.Context)
+com.eyecool.iris.api.IrisSDK: com.eyecool.iris.api.ColorCardDetectResult detectColorCard(byte[],int,int)
+com.eyecool.utils.ImageUtil: void setBmpImgBuf(byte[])
+com.eyecool.utils.ListUtils: java.lang.String join(java.util.List)
+com.eyecool.utils.ObjectUtils: int compare(java.lang.Object,java.lang.Object)
+com.eyecool.fragment.IrisBinocularFragment: void verify(long,java.util.List,com.eyecool.fragment.IrisBinocularFragment$VerifyCallback)
+com.eyecool.fragment.IrisBinocularFragment: void onStart()
+com.eyecool.iris.api.IrisResult: int getLeftArea()
+com.eyecool.fragment.IrisFragment: java.lang.String intToHexStr(int)
+com.eyecool.widget.CustomProgressCircle: CustomProgressCircle(android.content.Context,android.util.AttributeSet,int)
+com.eyecool.utils.FileUtils: boolean writeFile(java.lang.String,java.lang.String,boolean)
+com.eyecool.algorithm.UniqueType: com.eyecool.algorithm.UniqueType valueOf(java.lang.String)
+com.eyecool.widget.CustomProgressCircle: void onMeasure(int,int)
+com.eyecool.utils.MapUtils: java.util.Map parseKeyAndValueToMap(java.lang.String)
+com.eyecool.utils.StringUtils: boolean isEmpty(java.lang.CharSequence)
+com.eyecool.iris.api.IrisSDK: void setActivationCode(java.lang.String)
+com.eyecool.utils.FileUtils: java.lang.String getFolderName(java.lang.String)
+com.eyecool.widget.CustomProgressCircle: int getColor()
+com.eyecool.iris.api.IrisSDK: int split(byte[],byte[],byte[],int[],int[],int,com.eyecool.iris.api.IrisSDK$Pic,int)
+com.eyecool.fragment.IrisFragment: com.eyecool.fragment.IrisFragment$VerifyCallback access$1400(com.eyecool.fragment.IrisFragment)
+com.eyecool.widget.Draw: void setAction(java.lang.String)
+com.eyecool.utils.ListUtils: boolean addListNotNullValue(java.util.List,java.lang.Object)
+com.eyecool.iris.api.IrisPosition: IrisPosition()
+com.eyecool.utils.JSONUtils: org.json.JSONObject getJSONObject(java.lang.String,java.lang.String,org.json.JSONObject)
+com.eyecool.utils.ImageUtil: int saveRawAsBmpBuf(byte[],int,int)
+com.eyecool.fragment.IrisBinocularFragment: IrisBinocularFragment()
+com.eyecool.iris.api.IrisSDK: java.lang.String access$400(com.eyecool.iris.api.IrisSDK)
+com.eyecool.fragment.IrisBinocularFragment: void cancel()
+com.eyecool.utils.JSONUtils: long getLong(org.json.JSONObject,java.lang.String,long)
+com.eyecool.utils.ArrayUtils: java.lang.Object getLast(java.lang.Object[],java.lang.Object,boolean)
+com.eyecool.fragment.IrisBinocularFragment: boolean isLeftCamera(android.hardware.usb.UsbDevice)
+com.eyecool.fragment.IrisFragment$AcquireImageCallback: void onProcess(int)
+com.eyecool.utils.JavaAESCryptor: byte[] encrypt(byte[])
+com.eyecool.fragment.IrisFragment: int getMatchScore()
+com.eyecool.fragment.IrisFragment: void setGetSn(boolean)
+com.eyecool.algorithm.TesoV400: int nativeTcMobiVersn(java.lang.Object,int,char[],int,int,int)
+com.eyecool.utils.SharedPreferenceUtil: java.lang.String getString(java.lang.String)
+com.eyecool.utils.FileUtils: java.lang.String getRandomName()
+com.eyecool.fragment.IrisFragment: void verifyError(int,java.lang.String)
+com.eyecool.utils.ImageUtil: byte[] short2byte(short)
+com.eyecool.iris.api.IrisSDK: void saveString(java.lang.String,java.lang.String)
+com.eyecool.utils.FileUtils: boolean copyFile(java.lang.String,java.lang.String)
+com.eyecool.utils.JSONUtils: java.util.List getStringList(org.json.JSONObject,java.lang.String,java.util.List)
+com.eyecool.fragment.IrisFragment: void onStart()
+com.eyecool.utils.JSONUtils: java.lang.String getStringCascade(java.lang.String,java.lang.String,java.lang.String[])
+com.eyecool.fragment.IrisFragment: void openCamera()
+com.eyecool.utils.ObjectUtils: java.lang.String nullStrToEmpty(java.lang.Object)
+com.eyecool.fragment.IrisBinocularFragment: void enrollSuc(byte[],byte[])
+com.eyecool.algorithm.TesoV400: int nativeEyeCoolEnter(int,java.lang.String,java.lang.String,java.lang.String,byte[])
+com.eyecool.fragment.IrisBinocularFragment: void stopPreview()
+com.eyecool.fragment.IrisBinocularFragment: void callOnClose()
+com.eyecool.iris.Feature: byte[] getIrisFeature()
+com.eyecool.fragment.IrisFragment$EnrollCallback: void onError(int,java.lang.String)
+com.eyecool.utils.FileUtils: boolean writeFile(java.lang.String,java.io.InputStream)
+com.eyecool.iris.api.IrisSDK: java.lang.String getVersion()
+com.eyecool.utils.Logs: java.lang.String getsApplicationTag()
+com.eyecool.utils.DeviceUtil: java.lang.String getSerialNumber(android.content.Context)
+com.eyecool.utils.JSONUtils: java.lang.String getStringCascade(org.json.JSONObject,java.lang.String,java.lang.String[])
+com.eyecool.fragment.IrisFragment: void syncVerifys(long)
+com.eyecool.iris.api.IrisSDK: int compare(byte[],byte[])
+com.eyecool.fragment.IrisBinocularFragment: byte[] getMergeCameraBytes()
+com.eyecool.fragment.IrisFragment: void access$1900(com.eyecool.fragment.IrisFragment)
+com.eyecool.widget.CustomProgressCircle: void setMax(int)
+com.eyecool.utils.ArrayUtils: ArrayUtils()
+com.eyecool.utils.JSONUtils: double getDouble(org.json.JSONObject,java.lang.String,double)
+com.eyecool.fragment.IrisFragment: void acquireImage(long,int,int,com.eyecool.fragment.IrisFragment$AcquireImageCallback)
+com.eyecool.fragment.IrisBinocularFragment: void lambda$callOnOpen$0(cn.eyecool.uvc.usb.UVCCamera,cn.eyecool.uvc.usb.UVCCamera)
+com.eyecool.fragment.IrisFragment: void addCallback(com.eyecool.fragment.IrisFragment$CameraCallback)
+com.eyecool.iris.api.IrisResult: void setLeftDiameter(int)
+com.eyecool.iris.api.IrisSDK: void access$200(com.eyecool.iris.api.IrisSDK)
+com.eyecool.iris.api.IrisSDK: boolean isInitOK()
+com.eyecool.utils.StringUtils: java.lang.String utf8Encode(java.lang.String)
+com.eyecool.iris.api.IrisSDK: com.eyecool.iris.api.IrisSDK getInstance()
+com.eyecool.utils.ObjectUtils: boolean isEquals(java.lang.Object,java.lang.Object)
+com.eyecool.fragment.IrisFragment: void lambda$openCameraDevice$0(cn.eyecool.uvc.usb.USBMonitor$UsbControlBlock)
+com.eyecool.utils.Utils: void outputEyeInfo(int[],java.lang.StringBuilder)
+com.eyecool.fragment.IrisFragment$CameraCallback: void onClose()
+com.eyecool.widget.CustomProgressCircle2: void stopProgress()
+com.eyecool.utils.JSONUtils: long getLong(java.lang.String,java.lang.String,long)
+com.eyecool.fragment.IrisFragment: com.eyecool.fragment.IrisFragment$AcquireImageCallback access$1300(com.eyecool.fragment.IrisFragment)
+com.eyecool.algorithm.TesoV400: int nativeTcMobiFrame(byte[],int,int,long)
+com.eyecool.utils.FileUtils: boolean makeFolders(java.lang.String)
+com.eyecool.iris.api.IrisSDK: void setPixelEnd(int)
+com.eyecool.iris.api.IrisSDK: java.lang.String access$700()
+com.eyecool.utils.JSONUtils: org.json.JSONObject getJSONObject(org.json.JSONObject,java.lang.String,org.json.JSONObject)
+com.eyecool.fragment.IrisBinocularFragment: void acquireImage(long,int,com.eyecool.fragment.IrisBinocularFragment$AcquireImageCallback)
+com.eyecool.fragment.IrisBinocularFragment: void onCreate(android.os.Bundle)
+com.eyecool.fragment.IrisBinocularFragment: void enrollProcess(int,int)
+com.eyecool.utils.StringUtils: java.lang.String halfWidthToFullWidth(java.lang.String)
+com.eyecool.fragment.IrisFragment: void enrollSuc(byte[])
+com.eyecool.fragment.IrisBinocularFragment: void verirySuc(int)
+com.eyecool.utils.FileUtils: boolean makeDirs(java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void callOnPreview(long)
+com.eyecool.fragment.IrisFragment: void enrollError(int,java.lang.String)
+com.eyecool.algorithm.TesoV400: int nativeTcMobiSmall(int,byte[],byte[],long)
+com.eyecool.iris.api.IrisResult: IrisResult()
+com.eyecool.fragment.IrisBinocularFragment: android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle)
+com.eyecool.utils.StringUtils: int length(java.lang.CharSequence)
+com.eyecool.fragment.IrisBinocularFragment: void showToast(java.lang.String)
+com.eyecool.utils.ListUtils: java.lang.Object getLast(java.util.List,java.lang.Object)
+com.eyecool.iris.api.IrisSDK: java.lang.String getString(java.lang.String)
+com.eyecool.iris.api.IrisSDK: int getSingleTemplateLength()
+com.eyecool.utils.MapUtils: java.util.Map parseKeyAndValueToMap(java.lang.String,java.lang.String,java.lang.String,boolean)
+com.eyecool.fragment.IrisFragment: boolean isECIDevice(android.hardware.usb.UsbDevice)
+com.eyecool.iris.api.IrisSDK: void setAppId(java.lang.String)
+com.eyecool.utils.ArrayUtils: boolean isEmpty(java.lang.Object[])
+com.eyecool.utils.MapUtils: boolean isEmpty(java.util.Map)
+com.eyecool.utils.ListUtils: boolean isEquals(java.util.ArrayList,java.util.ArrayList)
+com.eyecool.utils.StringUtils: boolean isZero(java.lang.String)
+com.eyecool.utils.ListUtils: int addDistinctList(java.util.List,java.util.List)
+com.eyecool.fragment.IrisBinocularFragment: void access$1600(com.eyecool.fragment.IrisBinocularFragment,long)
+com.eyecool.fragment.IrisFragment: int getPreviewHeight()
+com.eyecool.utils.ObjectUtils: java.lang.Integer[] transformIntArray(int[])
+com.eyecool.iris.api.IrisSDK$Pic: com.eyecool.iris.api.IrisSDK$Pic valueOf(java.lang.String)
+com.eyecool.utils.JSONUtils: JSONUtils()
+com.eyecool.fragment.IrisBinocularFragment: byte[] getCameraYuvR()
+com.eyecool.utils.Utils: java.lang.String fps()
+com.eyecool.iris.api.IrisSDK$Pic: com.eyecool.iris.api.IrisSDK$Pic[] values()
+com.eyecool.utils.JSONUtils: org.json.JSONObject parseMapToJson(java.util.Map)
+com.eyecool.fragment.IrisFragment: com.eyecool.fragment.IrisFragment$EnrollCallback access$1200(com.eyecool.fragment.IrisFragment)
+com.eyecool.fragment.IrisBinocularFragment$EnrollCallback: void onProcess(int,int)
+com.eyecool.fragment.IrisBinocularFragment: cn.eyecool.uvc.usb.UVCCameraManager access$600(com.eyecool.fragment.IrisBinocularFragment)
+com.eyecool.fragment.IrisFragment: void acquireImage(long,int,com.eyecool.fragment.IrisFragment$AcquireImageCallback)
+com.eyecool.utils.SharedPreferenceUtil: boolean getBoolean(java.lang.String)
+com.eyecool.utils.ListUtils: int distinctList(java.util.List)
+com.eyecool.fragment.IrisFragment: void access$900(com.eyecool.fragment.IrisFragment,long)
+com.eyecool.algorithm.TesoV400: int nativeTcGetImage(byte[],byte[],int[],int[],byte[],int,int,int,int,int,int,int)
+com.eyecool.utils.JSONUtils: org.json.JSONArray getJSONArray(org.json.JSONObject,java.lang.String,org.json.JSONArray)
+com.eyecool.fragment.IrisBinocularFragment: void acquireImageProcess(int)
+com.eyecool.fragment.IrisFragment: boolean access$1102(com.eyecool.fragment.IrisFragment,boolean)
+com.eyecool.utils.JSONUtils: org.json.JSONArray parseByteToJsonArray(byte[])
+com.eyecool.widget.CustomProgressCircle: void setColor(int)
+com.eyecool.utils.MapUtils: boolean putMapNotEmptyKeyAndValue(java.util.Map,java.lang.String,java.lang.String,java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment$EnrollCallback: void onError(int,java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void openCameraDevice(android.hardware.usb.UsbDevice,cn.eyecool.uvc.usb.USBMonitor$UsbControlBlock)
+com.eyecool.utils.ListUtils: java.lang.String join(java.util.List,char)
+com.eyecool.widget.Draw: void setReturn(java.lang.String)
+com.eyecool.widget.CustomProgressCircle: int getWeight()
+com.eyecool.fragment.IrisFragment$1: void lambda$onDettach$0()
+com.eyecool.utils.Logs: Logs()
+com.eyecool.utils.JSONUtils: org.json.JSONObject parseStringToJson(java.lang.String)
+com.eyecool.utils.JSONUtils: java.lang.Double getDouble(org.json.JSONObject,java.lang.String,java.lang.Double)
+com.eyecool.fragment.IrisFragment$CameraCallback: void onOpen()
+com.eyecool.utils.SharedPreferenceUtil: int getInt(java.lang.String)
+com.eyecool.utils.DeviceUtil: java.lang.String getAndroidId(android.content.Context)
+com.eyecool.fragment.IrisBinocularFragment: void acquireImage(long,int,int,com.eyecool.fragment.IrisBinocularFragment$AcquireImageCallback)
+com.eyecool.utils.FileUtils: java.lang.String getFileNameWithoutExtension(java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void stopCamera()
+com.eyecool.fragment.IrisFragment: cn.eyecool.uvc.widget.UVCCameraTextureView access$2300(com.eyecool.fragment.IrisFragment)
+com.eyecool.widget.Draw: void onDraw(android.graphics.Canvas)
+com.eyecool.utils.SharedPreferenceUtil: void saveString(java.lang.String,java.lang.String)
+com.eyecool.fragment.IrisFragment: void onCreate(android.os.Bundle)
+com.eyecool.utils.Logs: void e(java.lang.Exception,java.lang.String)
+com.eyecool.utils.JSONUtils: boolean getBoolean(org.json.JSONObject,java.lang.String,java.lang.Boolean)
+com.eyecool.algorithm.TesoV400: TesoV400()
+com.eyecool.algorithm.UniqueType: UniqueType(java.lang.String,int)
+com.eyecool.iris.api.IrisSDK: java.lang.String access$402(com.eyecool.iris.api.IrisSDK,java.lang.String)
+com.eyecool.iris.api.IrisSDK: android.content.Context access$000(com.eyecool.iris.api.IrisSDK)
+com.eyecool.utils.JSONUtils: org.json.JSONArray getJSONArray(java.lang.String,java.lang.String,org.json.JSONArray)
+com.eyecool.iris.api.ColorCardDetectResult: ColorCardDetectResult()
+com.eyecool.algorithm.TesoV400: int nativeTcMobiCor(byte[],int,int,int[],int[],int)
+com.eyecool.algorithm.TesoV400: int nativeTcMobiDinit(long[],int,int,int,int,int,int)
+com.eyecool.fragment.IrisBinocularFragment$VerifyCallback: void onError(int,java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void onResume()
+com.eyecool.fragment.IrisFragment: void syncEnroll(long)
+com.eyecool.utils.ObjectUtils: ObjectUtils()
+com.eyecool.fragment.IrisBinocularFragment: void syncAcquireImage(long,int,int)
+com.eyecool.fragment.IrisBinocularFragment$AcquireImageCallback: void onProcess(int)
+com.eyecool.fragment.IrisFragment: java.lang.String getDeviceModel()
+com.eyecool.fragment.IrisFragment: void cancel()
+com.eyecool.utils.Logs: void d(java.lang.String,java.lang.Object[])
+com.eyecool.iris.api.IrisResult: void setRightImage(byte[])
+com.eyecool.fragment.IrisBinocularFragment: void onStop()
+com.eyecool.fragment.IrisBinocularFragment: boolean access$800(com.eyecool.fragment.IrisBinocularFragment,android.hardware.usb.UsbDevice)
+com.eyecool.fragment.IrisFragment: void openLight()
+com.eyecool.fragment.IrisFragment$VerifyCallback: void onError(int,java.lang.String)
+com.eyecool.utils.SharedPreferenceUtil: void save(java.lang.String,boolean)
+com.eyecool.iris.api.IrisResult: int getRightDiameter()
+com.eyecool.utils.JSONUtils: java.lang.Integer getInt(org.json.JSONObject,java.lang.String,java.lang.Integer)
+com.eyecool.utils.Logs: boolean issIsLogEnabled()
+com.eyecool.utils.FileUtils: boolean deleteFile(java.lang.String)
+com.eyecool.iris.api.IrisSDK: IrisSDK()
+com.eyecool.fragment.IrisFragment$EnrollCallback: void onProcess(int,int)
+com.eyecool.utils.FileUtils: void moveFile(java.io.File,java.io.File)
+com.eyecool.utils.StringUtils: java.lang.String dateSubString(java.lang.String)
+com.eyecool.iris.api.IrisResult: void setLeftQualityScore(int)
+com.eyecool.iris.api.IrisSDK: com.eyecool.algorithm.UniqueType access$300(com.eyecool.iris.api.IrisSDK)
+com.eyecool.iris.api.IrisResult: java.lang.String toString()
+com.eyecool.fragment.IrisBinocularFragment: android.os.Handler access$200(com.eyecool.fragment.IrisBinocularFragment)
+com.eyecool.iris.api.IrisResult: int getImageType()
+com.eyecool.fragment.IrisBinocularFragment: void callOnOpenError(int)
+com.eyecool.utils.NetUtils: NetUtils()
+com.eyecool.fragment.IrisFragment: void access$700(com.eyecool.fragment.IrisFragment,long,int,int)
+com.eyecool.fragment.IrisFragment: void verifyProcess(int)
+com.eyecool.iris.api.IrisSDK: void setNumOfEye(int)
+com.eyecool.utils.FileUtils: boolean isEmpty(java.lang.CharSequence)
+com.eyecool.iris.api.IrisSDK: void initEyeInfoT(int[])
+com.eyecool.iris.api.ColorCardDetectResult: void setImage(byte[])
+com.eyecool.utils.StringUtils: int parseStringToInt(java.lang.String)
+com.eyecool.widget.CustomProgressCircle: int getBaseColor()
+com.eyecool.iris.api.IrisSDK$IrisSDKCallback: void onError(int,java.lang.String)
+com.eyecool.fragment.IrisBinocularFragment: void startRightCamera()
+com.eyecool.fragment.IrisBinocularFragment: void access$300(com.eyecool.fragment.IrisBinocularFragment,long)
+com.eyecool.utils.FileUtils: boolean writeFile(java.io.File,java.io.InputStream,boolean)
+com.eyecool.fragment.IrisBinocularFragment$1: void lambda$onOpened$0()
+com.eyecool.fragment.IrisFragment: void access$800(com.eyecool.fragment.IrisFragment,long)
+com.eyecool.widget.Draw: Draw(android.content.Context,android.util.AttributeSet)
+com.eyecool.iris.api.IrisSDK: void successCallback()
+com.eyecool.fragment.IrisBinocularFragment: int getPreviewWidth()
+com.eyecool.utils.ImageUtil: void setImageAttr(int[])
+com.eyecool.utils.FileUtils: boolean isFolderExist(java.lang.String)
+com.eyecool.utils.MapUtils: boolean putMapNotEmptyKey(java.util.Map,java.lang.String,java.lang.String)
+com.eyecool.utils.FileUtils: void moveFile(java.lang.String,java.lang.String)
+com.eyecool.widget.CustomProgressCircle2: CustomProgressCircle2(android.content.Context,android.util.AttributeSet,int)
+com.eyecool.fragment.IrisFragment: void setIrisEffectiveArea(int)
+com.eyecool.fragment.IrisFragment: IrisFragment()
+com.eyecool.fragment.IrisBinocularFragment: void callOnOpen(long,cn.eyecool.uvc.usb.UVCCamera,cn.eyecool.uvc.usb.UVCCamera)
+com.eyecool.utils.NetUtils: java.lang.String getSendData(java.lang.String,int,java.lang.String,java.lang.String,java.lang.String)
+com.eyecool.widget.CustomProgressCircle: CustomProgressCircle(android.content.Context)
+com.eyecool.fragment.IrisFragment: boolean access$1500(com.eyecool.fragment.IrisFragment)

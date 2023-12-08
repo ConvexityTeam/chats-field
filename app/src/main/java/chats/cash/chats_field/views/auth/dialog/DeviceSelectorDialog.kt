@@ -25,17 +25,18 @@ import chats.cash.chats_field.utils.show
 import chats.cash.chats_field.views.auth.adapter.BluetoothClickListener
 import chats.cash.chats_field.views.auth.adapter.BluetoothDeviceAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-
 import timber.log.Timber
 
 class DeviceSelectorDialog : BottomSheetDialogFragment() {
-    private lateinit var pairedAdapter : BluetoothDeviceAdapter
-    private lateinit var availableAdapter : BluetoothDeviceAdapter
+    private lateinit var pairedAdapter: BluetoothDeviceAdapter
+    private lateinit var availableAdapter: BluetoothDeviceAdapter
     private val foundDevices = arrayListOf<ConnectedDevice>()
     private val mReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (ActivityCompat.checkSelfPermission(requireContext(),
-                    Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                ) == PackageManager.PERMISSION_GRANTED
             ) {
                 val action = intent.action
                 Timber.v("Receiver Started")
@@ -58,12 +59,10 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
                                     foundDevices.add(newDevice)
                                 }
                             } catch (t: Throwable) {
-
                             }
 
                             availableAdapter.submitList(foundDevices)
                         }
-
                     }
                     // When discovery is finished, change the Activity title
                 } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED == action) {
@@ -79,13 +78,13 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
             }
         }
     }
-    private lateinit var mBtAdapter : BluetoothAdapter
+    private lateinit var mBtAdapter: BluetoothAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.CustomBottomSheet)
     }
 
-    private lateinit var binding:DialogSelectorBinding
+    private lateinit var binding: DialogSelectorBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -95,19 +94,22 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.v("onViewCreated")
         binding.scanProgress.hide()
-        //Adapter for the recyclerView
-        availableAdapter = BluetoothDeviceAdapter(BluetoothClickListener {
-            setDevice(it)
-        })
+        // Adapter for the recyclerView
+        availableAdapter = BluetoothDeviceAdapter(
+            BluetoothClickListener {
+                setDevice(it)
+            },
+        )
 
-        pairedAdapter = BluetoothDeviceAdapter(BluetoothClickListener {
-            setDevice(it)
-        })
+        pairedAdapter = BluetoothDeviceAdapter(
+            BluetoothClickListener {
+                setDevice(it)
+            },
+        )
         binding.pairedDeviceRV.adapter = pairedAdapter
         binding.availableDeviceRV.adapter = availableAdapter
         // Register for broadcasts when a device is discovered
@@ -122,26 +124,36 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
         // Get the local Bluetooth adapter
         mBtAdapter = BluetoothAdapter.getDefaultAdapter()
 
-        val requestMultiplePermissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+        val requestMultiplePermissions = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions(),
+        ) {
             it.entries.forEach {
-
             }
         }
 
-        val requestBluetooth = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val requestBluetooth = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
             if (result.resultCode == RESULT_OK) {
-                //granted
-            }else{
-                //deny
+                // granted
+            } else {
+                // deny
             }
         }
 
         // Get a set of currently paired devices
-        val pairedDevices: Set<BluetoothDevice> = if (ActivityCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+        val pairedDevices: Set<BluetoothDevice> = if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.BLUETOOTH_CONNECT,
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                requestMultiplePermissions.launch(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
+                requestMultiplePermissions.launch(
+                    arrayOf(
+                        Manifest.permission.BLUETOOTH_SCAN,
+                        Manifest.permission.BLUETOOTH_CONNECT,
+                    ),
+                )
             } else {
                 val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
                 requestBluetooth.launch(enableBtIntent)
@@ -159,7 +171,7 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
                     val device = ConnectedDevice(it.name, it.address)
                     allPaired.add(device)
                 }
-            }catch (t : Throwable){
+            } catch (t: Throwable) {
                 Timber.e(t)
             }
 
@@ -171,18 +183,19 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
         binding.scanDeviceBtn.setOnClickListener {
             doDiscovery()
         }
-
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // Make sure we're not doing discovery anymore
         if (mBtAdapter != null) {
-            if (ActivityCompat.checkSelfPermission(requireContext(),
-                    Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
-            )
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 mBtAdapter.cancelDiscovery()
+            }
         }
 
         // Unregister broadcast listeners
@@ -193,8 +206,10 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
 
     private fun doDiscovery() {
         // If we're already discovering, stop it
-        if (ActivityCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.BLUETOOTH_CONNECT,
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             if (mBtAdapter.isDiscovering) {
                 mBtAdapter.cancelDiscovery()
@@ -209,10 +224,11 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
         }
     }
 
-
     private fun setDevice(device: ConnectedDevice) {
-        if (ActivityCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.BLUETOOTH_CONNECT,
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             mBtAdapter.cancelDiscovery()
             val intent = Intent()
@@ -226,7 +242,6 @@ class DeviceSelectorDialog : BottomSheetDialogFragment() {
         fun newInstance(): DeviceSelectorDialog =
             DeviceSelectorDialog().apply {
                 arguments = Bundle().apply {
-
                 }
             }
     }

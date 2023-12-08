@@ -16,9 +16,11 @@ val apiModule = module {
         return retrofit.create(ConvexityApiService::class.java)
     }
 
-    fun provideClient() = OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().also {
-        it.level = HttpLoggingInterceptor.Level.BODY
-    }).build()
+    fun provideClient() = OkHttpClient.Builder().addInterceptor(
+        HttpLoggingInterceptor().also {
+            it.level = HttpLoggingInterceptor.Level.BODY
+        },
+    ).build()
 
     single { provideUseApi(get()) }
 

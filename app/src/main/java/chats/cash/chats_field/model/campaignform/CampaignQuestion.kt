@@ -1,6 +1,5 @@
 package chats.cash.chats_field.model.campaignform
 
-
 import android.os.Parcelable
 import androidx.room.Embedded
 import com.google.gson.annotations.SerializedName
@@ -16,5 +15,5 @@ data class CampaignQuestion(
     @SerializedName("type")
     val type: String,
     @SerializedName("value")
-    val value: String
-):Parcelable
+    val value: String,
+) : Parcelable

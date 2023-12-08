@@ -11,5 +11,10 @@ data class GetAllCampaignsResponse(
     @SerializedName("message")
     var message: String?,
     @SerializedName("data")
-    var data: List<ModelCampaign>
-)
+    var data: CampaignsData,
+) {
+    data class CampaignsData(
+        val totalItems: Int,
+        val data: List<ModelCampaign>,
+    )
+}

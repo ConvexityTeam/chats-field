@@ -1,55 +1,40 @@
 package chats.cash.chats_field.views.auth.ui
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.hardware.Camera
-import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
-import androidx.core.net.toFile
-import androidx.lifecycle.Lifecycle
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.CameraInfo
+import androidx.camera.core.CameraState
+import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentImageCaptureBinding
-import chats.cash.chats_field.utils.*
 import chats.cash.chats_field.utils.camera.CameraManager
-import chats.cash.chats_field.utils.dialogs.AlertDialog
+import chats.cash.chats_field.utils.hide
+import chats.cash.chats_field.utils.show
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import chats.cash.chats_field.views.base.BaseFragment
-import chats.cash.chats_field.views.core.dialogs.getPermissionDialogs
-import chats.cash.chats_field.views.core.permissions.CAMERA_PERMISSION
-import chats.cash.chats_field.views.core.permissions.PermissionManager
-import chats.cash.chats_field.views.core.permissions.PermissionResultReceiver
-import chats.cash.chats_field.views.core.permissions.openAppSystemSettings
 import chats.cash.chats_field.views.core.showErrorSnackbar
-import chats.cash.chats_field.views.core.showSuccessSnackbar
 import com.bumptech.glide.Glide
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
-import com.google.mlkit.vision.face.FaceDetectorOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -63,9 +48,10 @@ import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-@ExperimentalGetImage class ImageCaptureFragment : BaseFragment() {
+@ExperimentalGetImage
+class ImageCaptureFragment : BaseFragment() {
 
-    private  var _binding: FragmentImageCaptureBinding?=null
+    private var _binding: FragmentImageCaptureBinding? = null
     private val binding get() = _binding!!
     private var photoUri: String = ""
 
@@ -75,18 +61,16 @@ import kotlin.math.sqrt
 
     private lateinit var outputDirectory: File
 
-
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
-    private val viewModel by sharedViewModel<RegisterViewModel>()
-
+    private val viewModel by activityViewModel<RegisterViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentImageCaptureBinding.inflate(inflater,container,false)
+        _binding = FragmentImageCaptureBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -100,37 +84,39 @@ import kotlin.math.sqrt
         // Determine the output directory
         outputDirectory = getOutputDirectory(requireContext())
 
-        cameraProgressState.observe(viewLifecycleOwner){
-            when(it){
-                CaptureProgressState.CLOSE_EYE ->{
+        cameraProgressState.observe(viewLifecycleOwner) {
+            when (it) {
+                CaptureProgressState.CLOSE_EYE -> {
                     binding.progressbar.show()
                     binding.progressbar.max = 5
-                    eyeCloseSteps.observe(viewLifecycleOwner){progressValue ->
-                        if(progressValue!=null){
+                    eyeCloseSteps.observe(viewLifecycleOwner) { progressValue ->
+                        if (progressValue != null) {
                             binding.progressbar.progress = progressValue
                         }
                     }
                 }
+
                 CaptureProgressState.BLINK -> {
                     binding.progressbar.hide()
-                    binding.blinkCountText.text=getString(R.string.blink_eyes)
-                    eyesClosed.observe(viewLifecycleOwner){
-                        if(it>2 && eyesOpened.value!!>6){
-                            if(cameraProgressState.value != CaptureProgressState.TAKE_PHOTO) {
+                    binding.blinkCountText.text = getString(R.string.blink_eyes)
+                    eyesClosed.observe(viewLifecycleOwner) {
+                        if (it > 2 && eyesOpened.value!! > 6) {
+                            if (cameraProgressState.value != CaptureProgressState.TAKE_PHOTO) {
                                 cameraProgressState.value = CaptureProgressState.TAKE_PHOTO
                                 eyesClosed.removeObservers(viewLifecycleOwner)
                             }
                         }
                     }
-                    eyesOpened.observe(viewLifecycleOwner){
-                        if(it>2 && eyesClosed.value!!>6){
-                            if(cameraProgressState.value != CaptureProgressState.TAKE_PHOTO) {
+                    eyesOpened.observe(viewLifecycleOwner) {
+                        if (it > 2 && eyesClosed.value!! > 6) {
+                            if (cameraProgressState.value != CaptureProgressState.TAKE_PHOTO) {
                                 cameraProgressState.value = CaptureProgressState.TAKE_PHOTO
                                 eyesOpened.removeObservers(viewLifecycleOwner)
                             }
                         }
                     }
                 }
+
                 CaptureProgressState.TAKE_PHOTO -> {
                     binding.blinkCountText.text = getString(R.string.take_photo)
                     binding.cameraCaptureButton.setOnClickListener {
@@ -143,55 +129,57 @@ import kotlin.math.sqrt
         // Wait for the views to be properly laid out
         binding.let {
             it.viewFinder.post {
-                it.viewFinder.controller?.cameraInfo?.let {info ->
-                observeCameraState(info)
+                it.viewFinder.controller?.cameraInfo?.let { info ->
+                    observeCameraState(info)
                 }
                 // Build UI controls
                 updateCameraUi()
 
                 cameraManager?.startCamera()
                 // Set up the camera and its use cases
-                //setUpCamera()
-
+                // setUpCamera()
             }
         }
     }
-    private  var cameraManager: CameraManager?=null
+
+    private var cameraManager: CameraManager? = null
 
     override fun onPause() {
         super.onPause()
-        cameraManager=null
+        cameraManager = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        _binding=null
+        _binding = null
     }
 
     override fun onResume() {
         super.onResume()
         createCameraManager()
-       }
-    private fun createCameraManager() {
+    }
 
+    private fun createCameraManager() {
         binding.apply {
             val screenAspectRatio =
                 aspectRatio(root.width, root.height)
-
 
             cameraManager = CameraManager(
                 this@ImageCaptureFragment.requireContext(),
                 viewFinder,
                 this@ImageCaptureFragment,
-                graphicOverlayFinder, screenAspectRatio
-            ){result,imagecaptures ->
-                if(_binding!=null) {
+                graphicOverlayFinder,
+                screenAspectRatio,
+            ) { result, imagecaptures ->
+                if (_binding != null) {
                     try {
                         imageCapture = imagecaptures
 
                         if (result.size > 1) {
                             binding.overlay.setCircleColor(requireContext().getColor(R.color.white))
-                            this@ImageCaptureFragment.showToast("Please make sure you are the only one in frame")
+                            this@ImageCaptureFragment.showToast(
+                                "Please make sure you are the only one in frame",
+                            )
                             cameraCaptureButton.isEnabled = false
                         } else if (result.isEmpty()) {
                             binding.overlay.setCircleColor(requireContext().getColor(R.color.white))
@@ -211,46 +199,51 @@ import kotlin.math.sqrt
                                 val distance =
                                     sqrt(
                                         (boxCenterX - centerX).pow(2) + (boxCenterY - centerY).pow(
-                                            2
-                                        )
+                                            2,
+                                        ),
                                     )
                                 Timber.d(distance.toString())
                                 Timber.d(boundingBox.top.toString())
                                 Timber.d(boundingBox.left.toString())
                                 Timber.d(binding.overlayView.top.toString())
                                 Timber.d(binding.overlayView.left.toString())
-                                if (distance <= radius && distance < 270 && top > 20 && left > 80) {
-                                    binding.overlay.setCircleColor(requireContext().getColor(R.color.colorPrimary))
-                                    Timber.d("IN FRAME")
-                                    cameraProgressState.value.let {
-                                        Timber.v(it?.name ?: "null")
-                                        when (it) {
-                                            CaptureProgressState.CLOSE_EYE -> {
-                                                if (!shouldWait) {
-                                                    lifecycleScope.launch { observeEyeClose(face) }
-                                                }
+//                                if (distance <= radius && distance < 270 && top > 20 && left > 80) {
+                                binding.overlay.setCircleColor(
+                                    requireContext().getColor(R.color.colorPrimary),
+                                )
+                                Timber.d("IN FRAME")
+                                cameraProgressState.value.let {
+                                    Timber.v(it?.name ?: "null")
+                                    when (it) {
+                                        CaptureProgressState.CLOSE_EYE -> {
+                                            if (!shouldWait) {
+                                                lifecycleScope.launch { observeEyeClose(face) }
                                             }
-                                            CaptureProgressState.BLINK -> {
-                                                if (!shouldWait) {
-                                                    lifecycleScope.launch { observeEyeBlink(face) }
-                                                }
-                                            }
-                                            CaptureProgressState.TAKE_PHOTO -> {
-                                                cameraCaptureButton.isEnabled = true
-                                            }
-                                            else -> {}
                                         }
+
+                                        CaptureProgressState.BLINK -> {
+                                            if (!shouldWait) {
+                                                lifecycleScope.launch { observeEyeBlink(face) }
+                                            }
+                                        }
+
+                                        CaptureProgressState.TAKE_PHOTO -> {
+                                            cameraCaptureButton.isEnabled = true
+                                        }
+
+                                        else -> {}
                                     }
-
-                                } else {
-                                    Timber.d("NOT IN FRAME")
-                                    binding.overlay.setCircleColor(requireContext().getColor(R.color.white))
-                                    cameraCaptureButton.isEnabled = false
                                 }
+//                                } else {
+//                                    Timber.d("NOT IN FRAME")
+//                                    binding.overlay.setCircleColor(
+//                                        requireContext().getColor(R.color.white),
+//                                    )
+//                                    cameraCaptureButton.isEnabled = false
+//                                }
                             }
-
                         }
-                    }catch(e: Exception){
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
@@ -262,20 +255,19 @@ import kotlin.math.sqrt
     private var shouldWait = false
     private suspend fun observeEyeClose(face: Face) {
         shouldWait = true
-        while (eyeCloseSteps.value!!<5){
+        while (eyeCloseSteps.value!! < 5) {
             val isRightEyeClosed = (face.rightEyeOpenProbability ?: 1f) < 0.5f
             val isLeftEyeClosed = (face.leftEyeOpenProbability ?: 1f) < 0.5f
             Timber.v("eye ${face.rightEyeOpenProbability} ${face.leftEyeOpenProbability}")
-            if(isRightEyeClosed && isLeftEyeClosed){
-                //increase step by 1
-                eyeCloseSteps.value =  (eyeCloseSteps.value?:0)+1
+            if (isRightEyeClosed && isLeftEyeClosed) {
+                // increase step by 1
+                eyeCloseSteps.value = (eyeCloseSteps.value ?: 0) + 1
                 delay(1000)
-                shouldWait=false
+                shouldWait = false
                 return
-            }
-            else{
+            } else {
                 delay(1000)
-                shouldWait=false
+                shouldWait = false
                 eyeCloseSteps.value = 0
                 return
             }
@@ -283,36 +275,29 @@ import kotlin.math.sqrt
         shouldWait = false
 
         cameraProgressState.value = CaptureProgressState.BLINK
-
     }
 
     private var eyesClosed = MutableLiveData(0)
     private var eyesOpened = MutableLiveData(0)
     private suspend fun observeEyeBlink(face: Face) {
         shouldWait = true
-            val isRightEyeClosed = (face.rightEyeOpenProbability ?: 1f) < 0.5f
-            val isLeftEyeClosed = (face.leftEyeOpenProbability ?: 1f) < 0.5f
-            Timber.v("eyeclosed ${face.rightEyeOpenProbability} ${face.leftEyeOpenProbability}")
-            Timber.v("eyeclosed ${eyesClosed.value} ${eyesOpened.value}")
-            if(isRightEyeClosed && isLeftEyeClosed){
-                //increase step by 1
-                eyesClosed.value =  (eyesClosed.value?:0)+1
-                delay(200)
-                shouldWait=false
-                return
-            }
-            else{
-                eyesOpened.value =  (eyesOpened.value?:0)+1
-                delay(200)
-                shouldWait=false
-                return
-            }
-
-
+        val isRightEyeClosed = (face.rightEyeOpenProbability ?: 1f) < 0.5f
+        val isLeftEyeClosed = (face.leftEyeOpenProbability ?: 1f) < 0.5f
+        Timber.v("eyeclosed ${face.rightEyeOpenProbability} ${face.leftEyeOpenProbability}")
+        Timber.v("eyeclosed ${eyesClosed.value} ${eyesOpened.value}")
+        if (isRightEyeClosed && isLeftEyeClosed) {
+            // increase step by 1
+            eyesClosed.value = (eyesClosed.value ?: 0) + 1
+            delay(200)
+            shouldWait = false
+            return
+        } else {
+            eyesOpened.value = (eyesOpened.value ?: 0) + 1
+            delay(200)
+            shouldWait = false
+            return
+        }
     }
-
-
-
 
     private fun observeCameraState(cameraInfo: CameraInfo) {
         cameraInfo.cameraState.observe(viewLifecycleOwner) { cameraState ->
@@ -323,39 +308,43 @@ import kotlin.math.sqrt
                         Toast.makeText(
                             context,
                             "CameraState: Pending Open",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
+
                     CameraState.Type.OPENING -> {
                         // Show the Camera UI
                         Toast.makeText(
                             context,
                             "CameraState: Opening",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
+
                     CameraState.Type.OPEN -> {
                         // Setup Camera resources and begin processing
                         Toast.makeText(
                             context,
                             "CameraState: Open",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
+
                     CameraState.Type.CLOSING -> {
                         // Close camera UI
                         Toast.makeText(
                             context,
                             "CameraState: Closing",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
+
                     CameraState.Type.CLOSED -> {
                         // Free camera resources
                         Toast.makeText(
                             context,
                             "CameraState: Closed",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
                 }
@@ -369,7 +358,7 @@ import kotlin.math.sqrt
                         Toast.makeText(
                             context,
                             "Stream config error",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
                     // Opening errors
@@ -379,23 +368,25 @@ import kotlin.math.sqrt
                         Toast.makeText(
                             context,
                             "Camera in use",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
+
                     CameraState.ERROR_MAX_CAMERAS_IN_USE -> {
                         // Close another open camera in the app, or ask the user to close another
                         // camera app that's using the camera
                         Toast.makeText(
                             context,
                             "Max cameras in use",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
+
                     CameraState.ERROR_OTHER_RECOVERABLE_ERROR -> {
                         Toast.makeText(
                             context,
                             "Other recoverable error",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
                     // Closing errors
@@ -404,15 +395,16 @@ import kotlin.math.sqrt
                         Toast.makeText(
                             context,
                             "Camera disabled",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
+
                     CameraState.ERROR_CAMERA_FATAL_ERROR -> {
                         // Ask the user to reboot the device to restore camera function
                         Toast.makeText(
                             context,
                             "Fatal error",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
                     // Closed errors
@@ -421,7 +413,7 @@ import kotlin.math.sqrt
                         Toast.makeText(
                             context,
                             "Do not disturb mode enabled",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
                 }
@@ -448,12 +440,9 @@ import kotlin.math.sqrt
         return AspectRatio.RATIO_16_9
     }
 
-
     /** Method used to re-draw the camera UI controls, called every time configuration changes. */
     private fun updateCameraUi() {
-
         binding.apply {
-
             flipButton.setOnClickListener {
                 cameraManager?.changeCameraSelector()
             }
@@ -462,7 +451,6 @@ import kotlin.math.sqrt
             cameraCaptureButton.setOnClickListener {
                 takePhoto()
             }
-
         }
     }
 
@@ -479,87 +467,100 @@ import kotlin.math.sqrt
 
             // Setup image capture listener which is triggered after photo has been taken
             imageCapture.takePicture(
-                outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
+                outputOptions,
+                cameraExecutor,
+                object : ImageCapture.OnImageSavedCallback {
                     override fun onError(exc: ImageCaptureException) {
                         Timber.e(exc, getString(R.string.photo_capture_failed) + exc.message)
-                        showErrorSnackbar(R.string.photo_capture_failed,binding.root)
+                        showErrorSnackbar(R.string.photo_capture_failed, binding.root)
                     }
 
                     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                         val savedUri: Uri = output.savedUri ?: Uri.fromFile(photoFile)
 
                         try {
+                            photoUri = savedUri.toString()
 
-                        photoUri = savedUri.toString()
-
-                        lifecycleScope.launch (Dispatchers.Main) {
-                            binding.imagePreviewView.loadGlide(photoFile)
-                            try {
-                                binding.apply {
-                                    selectButton.show()
-                                    retakeButton.show()
-                                    cameraCaptureButton.hide()
-                                    blinkCountText.hide()
-                                    this.overlay.hide()
-                                    this.circleText.hide()
-                                    this.flipButton.hide()
-                                    this.graphicOverlayFinder.hide()
-                                    viewFinder.hide()
-                                    imagePreviewView.show()
-                                    retakeButton.setOnClickListener {
-                                        photoFile.delete()
-                                        viewModel.profileImage = null
-                                        showCamera()
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                binding.imagePreviewView.loadGlide(photoFile)
+                                try {
+                                    binding.apply {
+                                        selectButton.show()
+                                        retakeButton.show()
+                                        cameraCaptureButton.hide()
+                                        blinkCountText.hide()
+                                        //   this.overlay.hide()
+                                        this.circleText.hide()
+                                        this.flipButton.hide()
+                                        this.graphicOverlayFinder.hide()
+                                        viewFinder.hide()
+                                        imagePreviewView.show()
+                                        retakeButton.setOnClickListener {
+                                            photoFile.delete()
+                                            viewModel.profileImage = null
+                                            showCamera()
+                                        }
+                                        selectButton.setOnClickListener {
+                                            viewModel.profileImage = photoFile.path
+                                            val temp = viewModel.tempBeneficiary
+                                            temp?.let {
+                                                findNavController().navigate(
+                                                    ImageCaptureFragmentDirections.toRegisterVerifyFragment(
+                                                        firstName = temp.firstName,
+                                                        lastName = it.lastName,
+                                                        email = it.email,
+                                                        phone = it.phone,
+                                                        password = it.password,
+                                                        latitude = it.latitude.toString(),
+                                                        longitude = it.longitude.toString(),
+                                                        organizationId = it.id!!,
+                                                        gender = it.gender,
+                                                        date = it.date,
+                                                    ),
+                                                )
+                                            }
+                                        }
                                     }
-                                    selectButton.setOnClickListener {
-                                        viewModel.profileImage = photoFile.path
-                                        findNavController().navigateUp()
-                                    }
+                                } catch (e: Exception) {
+                                    Timber.e(e)
+                                    FirebaseCrashlytics.getInstance().recordException(e)
                                 }
-                            } catch (e: Exception) {
-                                Timber.e(e)
-                                FirebaseCrashlytics.getInstance().recordException(e)
                             }
-                        }
-                        }
-                        catch (e: IOException) {
+                        } catch (e: IOException) {
                             e.printStackTrace()
                             FirebaseCrashlytics.getInstance().recordException(e)
                         }
-
                     }
-                })
+                },
+            )
 
             // We can only change the foreground Drawable using API level 23+ API
 
             // Display flash animation to indicate that photo was captured
 
-                binding.root.postDelayed({
-                    binding.root.foreground = ColorDrawable(Color.WHITE)
-                    binding.root.postDelayed(
-                        { binding.root.foreground = null }, ANIMATION_FAST_MILLIS
-                    )
-                }, ANIMATION_SLOW_MILLIS)
-
+            binding.root.postDelayed({
+                binding.root.foreground = ColorDrawable(Color.WHITE)
+                binding.root.postDelayed(
+                    { binding.root.foreground = null },
+                    ANIMATION_FAST_MILLIS,
+                )
+            }, ANIMATION_SLOW_MILLIS)
         }
     }
 
-
-private fun showCamera() = with(binding) {
-    cameraCaptureButton.show()
-    viewFinder.show()
-    blinkCountText.show()
-    imagePreviewView.hide()
-    selectButton.hide()
-    retakeButton.hide()
-    this.overlay.show()
-    this.circleText.show()
-    this.flipButton.show()
-    this.graphicOverlayFinder.show()
-}
+    private fun showCamera() = with(binding) {
+        cameraCaptureButton.show()
+        viewFinder.show()
+        blinkCountText.show()
+        imagePreviewView.hide()
+        selectButton.hide()
+        retakeButton.hide()
+        this.circleText.show()
+        this.flipButton.show()
+        this.graphicOverlayFinder.show()
+    }
 
     companion object {
-
         private const val TAG = "CameraFragment"
         const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
         const val PHOTO_EXTENSION = ".jpg"
@@ -569,8 +570,9 @@ private fun showCamera() = with(binding) {
         /** Helper function used to create a timestamped file */
         fun createFile(baseFolder: File, format: String, extension: String) =
             File(
-                baseFolder, SimpleDateFormat(format, Locale.US)
-                    .format(System.currentTimeMillis()) + extension
+                baseFolder,
+                SimpleDateFormat(format, Locale.US)
+                    .format(System.currentTimeMillis()) + extension,
             )
 
         fun getOutputDirectory(context: Context): File {
@@ -578,26 +580,27 @@ private fun showCamera() = with(binding) {
             val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
                 File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
             }
-            return if (mediaDir != null && mediaDir.exists())
-                mediaDir else appContext.filesDir
+            return if (mediaDir != null && mediaDir.exists()) {
+                mediaDir
+            } else {
+                appContext.filesDir
+            }
         }
     }
-
-
 }
 
- fun ImageView.loadGlide(photoFile: File) {
+fun ImageView.loadGlide(photoFile: File) {
     Glide.with(this).load(photoFile).into(this)
 }
 
+fun ImageView.loadGlide(photoFile: Any) {
+    Glide.with(this).load(photoFile).into(this)
+}
 
 /** Milliseconds used for UI animations */
 const val ANIMATION_FAST_MILLIS = 50L
 const val ANIMATION_SLOW_MILLIS = 100L
 
-
-
-
-enum class CaptureProgressState(){
-     CLOSE_EYE, BLINK,TAKE_PHOTO
+enum class CaptureProgressState() {
+    CLOSE_EYE, BLINK, TAKE_PHOTO
 }

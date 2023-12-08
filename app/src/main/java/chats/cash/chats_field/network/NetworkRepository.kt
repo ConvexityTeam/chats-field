@@ -2,48 +2,32 @@ package chats.cash.chats_field.network
 
 import android.content.Context
 import chats.cash.chats_field.model.ModelCampaign
-import chats.cash.chats_field.model.NFCModel
-import chats.cash.chats_field.model.campaignform.AllCampaignFormResponse
 import chats.cash.chats_field.network.api.ConvexityApiService
 import chats.cash.chats_field.network.api.NinVerificationApi
-import chats.cash.chats_field.network.api.RetrofitClient
-import chats.cash.chats_field.network.api.SessionManager
-import chats.cash.chats_field.network.body.LocationBody
-import chats.cash.chats_field.network.body.login.LoginBody
 import chats.cash.chats_field.network.response.BaseResponse
-import chats.cash.chats_field.network.response.NfcUpdateResponse
-import chats.cash.chats_field.network.response.RegisterResponse
-import chats.cash.chats_field.network.response.UserDetailsResponse
-import chats.cash.chats_field.network.response.beneficiary_onboarding.Beneficiary
+import chats.cash.chats_field.network.response.beneficiary_onboarding.OrganizationBeneficiary
 import chats.cash.chats_field.network.response.campaign.CampaignByOrganizationModel
-import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
-import chats.cash.chats_field.network.response.forgot.ForgotBody
-import chats.cash.chats_field.network.response.forgot.ForgotPasswordResponse
-import chats.cash.chats_field.network.response.login.LoginResponse
-import chats.cash.chats_field.network.response.organization.OrganizationResponse
-import chats.cash.chats_field.network.response.organization.campaign.CampaignResponse
 import chats.cash.chats_field.network.response.progress.PostCompletionBody
 import chats.cash.chats_field.network.response.progress.SubmitProgressModel
 import chats.cash.chats_field.network.response.tasks.GetTasksModel
 import chats.cash.chats_field.offline.OfflineRepository
 import chats.cash.chats_field.utils.ApiResponse
-import chats.cash.chats_field.utils.PreferenceUtil
+import chats.cash.chats_field.utils.PreferenceUtilInterface
 import chats.cash.chats_field.utils.Utils
 import chats.cash.chats_field.utils.location.UserLocation
 import chats.cash.chats_field.views.beneficiary_list.BeneficiaryUi
 import chats.cash.chats_field.views.cashForWork.model.TaskDetailsResponse
 import com.google.gson.Gson
 import id.zelory.compressor.Compressor
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.Protocol
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.*
+import retrofit2.HttpException
 import timber.log.Timber
 import java.io.File
 
@@ -52,295 +36,21 @@ class NetworkRepository(
     private val ninApi: NinVerificationApi,
     private val offlineRepository: OfflineRepository,
     private val context: Context,
-    private val preferenceUtil: PreferenceUtil,
+    private val preferenceUtil: PreferenceUtilInterface,
 ) {
 
-    suspend fun onboardUser(
-        organizationId: String,
-        firstName: RequestBody,
-        lastName: RequestBody,
-        email: RequestBody,
-        phone: RequestBody,
-        password: RequestBody,
-        lat: RequestBody,
-        long: RequestBody,
-        nfc: RequestBody,
-        status: RequestBody,
-        profile_pic: File,
-        prints: ArrayList<MultipartBody.Part>,
-        mGender: RequestBody,
-        mDate: RequestBody,
-        location: RequestBody,
-        campaign: RequestBody,
-        pin: RequestBody,
-    ): ApiResponse<RegisterResponse> {
-        return try {
-            val compressed = Compressor.compress(context, profile_pic)
-
-            val mBody = compressed.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-
-            val image = MultipartBody.Part.createFormData(
-                "profile_pic",
-                compressed.absolutePath.substringAfterLast("/"),
-                mBody
-            )
-            val data = api.onboardUser(
-                id = organizationId,
-                firstName = firstName,
-                lastName = lastName,
-                email = email,
-                phone = phone,
-                password = password,
-                lat = lat,
-                long = long,
-                location = location,
-                nfc = nfc,
-                status = status,
-                profile_pic = image,
-                prints = prints,
-                gender = mGender,
-                date = mDate,
-                campaign = campaign,
-                pin = pin,
-                authorization = preferenceUtil.getNGOToken()
-            ).await()
-            ApiResponse.Success(data)
-        } catch (e: HttpException) {
-            val message = Utils.getErrorMessage(e)
-            ApiResponse.Failure(message, e.code())
-        } catch (t: Throwable) {
-            ApiResponse.Failure(t.message!!)
-        }
-    }
-
-    suspend fun onboardSpecialUser(
-        organizationId: String,
-        firstName: RequestBody,
-        lastName: RequestBody,
-        email: RequestBody,
-        phone: RequestBody,
-        password: RequestBody,
-        lat: RequestBody,
-        long: RequestBody,
-        nfc: RequestBody,
-        status: RequestBody,
-        profile_pic: File,
-        mGender: RequestBody,
-        mDate: RequestBody,
-        location: RequestBody,
-        campaign: RequestBody,
-        pin: RequestBody,
-        nin: String?,
-    ): ApiResponse<RegisterResponse> {
-        return try {
-            val compressed = Compressor.compress(context, profile_pic)
-
-            val mBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), compressed)
-
-            val image = MultipartBody.Part.createFormData(
-                "profile_pic",
-                compressed.absolutePath.substringAfterLast("/"),
-                mBody
-            )
-
-//            val ninResponse = ninApi.verifyNin(NinVerificationApi.NinBody(number = nin))
-//            if (ninResponse.status) {
-            val data = api.onboardSpecialUser(
-                organizationId,
-                firstName,
-                lastName,
-                email,
-                phone,
-                password,
-                lat,
-                long,
-                location,
-                nfc,
-                status,
-                nin?.toRequestBody("multipart/form-data".toMediaTypeOrNull()),
-                image,
-                mGender,
-                mDate,
-                campaign,
-                pin,
-                authorization = preferenceUtil.getNGOToken()
-            ).await()
-            ApiResponse.Success(data)
-//            } else {
-//                ApiResponse.Failure("NIN: ${ninResponse.message}")
-//            }
-        } catch (e: HttpException) {
-            val message = Utils.getErrorMessage(e)
-            ApiResponse.Failure(message, e.code())
-        } catch (t: Throwable) {
-            ApiResponse.Failure(t.message!!)
-        }
-    }
-
-    suspend fun vendorOnboarding(
-        businessName: String,
-        email: String,
-        phone: String,
-        firstName: String,
-        lastName: String,
-        address: String,
-        country: String,
-        state: String,
-        coordinates: List<Double>,
-    ): BaseResponse<Any> {
-        return withContext(Dispatchers.IO) {
-            api.vendorOnboarding(
-                organisationId = preferenceUtil.getNGOId(),
-                email = email,
-                firstName = firstName,
-                lastName = lastName,
-                address = address,
-                country = country,
-                phone = phone,
-                storeName = businessName,
-                state = state,
-                location = Gson().toJson(LocationBody(coordinates, country)),
-                authorization = preferenceUtil.getNGOToken()
-            )
-        }
-    }
-
-    suspend fun getNGOs(): ApiResponse<OrganizationResponse> {
-        return try {
-            val data = api.getNGOs().await()
-            ApiResponse.Success(data)
-        } catch (t: Throwable) {
-            ApiResponse.Failure(t.message!!)
-        }
-    }
-
-    suspend fun getUserDetails(id: String): ApiResponse<UserDetailsResponse> {
-        return try {
-            val data = api.getUserDetails(id, authorization = preferenceUtil.getNGOToken()).await()
-            ApiResponse.Success(data)
-        } catch (t: Throwable) {
-            ApiResponse.Failure(t.message!!)
-        }
-    }
-
-
-    suspend fun loginNGO(loginBody: LoginBody): ApiResponse<LoginResponse> {
-        ApiResponse.Loading<LoginResponse>()
-        return try {
-            val data = api.loginNGO(loginBody)
-            preferenceUtil.setNGOToken("Bearer " + data.data.token)
-            getCampaigns()
-            ApiResponse.Success(data)
-        } catch (e: HttpException) {
-            val message = Utils.getErrorMessage(e)
-            ApiResponse.Failure(message, e.code())
-        } catch (t: Throwable) {
-            ApiResponse.Failure(t.message!!)
-        }
-    }
-
-    suspend fun sendForgotEmail(email: String): ApiResponse<ForgotPasswordResponse> {
-        return try {
-            val forgotBody = ForgotBody(email)
-            val data = api.sendForgotMail(forgotBody)
-            ApiResponse.Success(data)
-        } catch (e: HttpException) {
-            val message = Utils.getErrorMessage(e)
-            ApiResponse.Failure(message, e.code())
-        } catch (t: Throwable) {
-            ApiResponse.Failure(t.message!!)
-        }
-    }
-
-    suspend fun postNFCDetails(nfcModel: NFCModel): ApiResponse<NfcUpdateResponse> {
-        return try {
-            val data =
-                api.postNfcDetails(nfcModel, authorization = preferenceUtil.getNGOToken())
-            ApiResponse.Success(data)
-        } catch (e: HttpException) {
-            val message = Utils.getErrorMessage(e)
-            ApiResponse.Failure(message, e.code())
-        } catch (t: Throwable) {
-            ApiResponse.Failure(t.message!!)
-        }
-    }
-
-    suspend fun getCampaigns(): ApiResponse<CampaignResponse> {
-        return try {
-            val data = api.getCampaigns(authorization = preferenceUtil.getNGOToken())
-            Timber.v("Campaign: $data")
-            offlineRepository.insertCampaign(data.data)
-            ApiResponse.Success(data)
-        } catch (e: HttpException) {
-            val message = Utils.getErrorMessage(e)
-            ApiResponse.Failure(message, e.code())
-        } catch (t: Throwable) {
-            ApiResponse.Failure(t.message!!)
-        }
-    }
-
-    suspend fun getAllCampaigns(): List<ModelCampaign> {
-        return try {
-
-            val data = api.getAllCampaigns(preferenceUtil.getNGOId(),
-                null,
-                authorization = preferenceUtil.getNGOToken()).data
-            Timber.v("XXXgetAllCampaigns: called$data")
-            offlineRepository.insertAllCampaign(data)
-            data
-        } catch (e: Exception) {
-            Timber.v("XXXgetAllCampaigns %s", e.message)
-            val data: List<ModelCampaign> = ArrayList()
-            data
-        }
-    }
-
-    suspend fun getAllCampaignsForms():  Flow<NetworkResponse<AllCampaignFormResponse>> = flow {
-        emit(NetworkResponse.Loading())
-         try {
-
-            val response =  api.getAllCampaignForms(preferenceUtil.getNGOId(),
-                authorization = preferenceUtil.getNGOToken())
-            if(response.isSuccessful && response.body()?.data?.isNotEmpty()==true) {
-                Timber.v("XXXgetAllCampaignsForms: called${response.body()}")
-                response.body()?.data?.let {
-                    offlineRepository.deleteAllCampaignForms()
-                    offlineRepository.insertAllCampaignForms(it)
-                    emit(NetworkResponse.Success(response.body()!!))
-                }
-
-            }
-             else{
-                 emit(NetworkResponse.SimpleError(response.message()))
-             }
-
-        } catch (e: Exception) {
-            Timber.v("XXXgetAllCampaigns %s", e.message)
-             emit(NetworkResponse.Error(e.message.toString(),e))
-        }
-    }
-
-
-    suspend fun getCampaignSurveyQuestions(campaignId: Int): Flow<NetworkResponse<CampaignSurveyResponse>> = flow {
-        emit(NetworkResponse.Loading())
-         try {
-
-            val data = api.getCampaignSurvey(campaignId,
-                authorization = preferenceUtil.getNGOToken())
-            Timber.v("XXXgetAllCampaigns: called$data")
-            if(data.isSuccessful && data.body()!=null ){
-                 emit(NetworkResponse.Success(data.body()!!))
-            }
-            else{
-                emit(NetworkResponse.SimpleError(data.message()))
-            }
-        } catch (e: Exception) {
-            Timber.v("XXXgetAllCampaigns %s", e.message)
-             emit(NetworkResponse.Error(e.localizedMessage?:"Unknown Error Occured",e))
-        }
-
-    }
-
+//    suspend fun postNFCDetails(nfcModel: NFCModel): ApiResponse<NfcUpdateResponse> {
+//        return try {
+//            val data =
+//                api.postNfcDetails(nfcModel, authorization = preferenceUtil.getNGOToken())
+//            ApiResponse.Success(data)
+//        } catch (e: HttpException) {
+//            val message = Utils.getErrorMessage(e)
+//            ApiResponse.Failure(message, e.code())
+//        } catch (t: Throwable) {
+//            ApiResponse.Failure(t.message!!)
+//        }
+//    }
 
     suspend fun getExistingBeneficiaries(
         firstName: String? = null,
@@ -348,7 +58,7 @@ class NetworkRepository(
         email: String? = null,
         phone: String? = null,
         nin: String? = null,
-    ): BaseResponse<List<Beneficiary>> {
+    ): BaseResponse<List<OrganizationBeneficiary>> {
         return withContext(Dispatchers.IO) {
             api.getExistingBeneficiary(
                 firstName = firstName,
@@ -356,7 +66,7 @@ class NetworkRepository(
                 email = email,
                 nin = nin,
                 phone = phone,
-                authorization = preferenceUtil.getNGOToken()
+                authorization = preferenceUtil.getNGOToken(),
             )
         }
     }
@@ -364,9 +74,11 @@ class NetworkRepository(
     suspend fun getAllCashForWorkCampaigns(): List<ModelCampaign> {
         return try {
             withContext(Dispatchers.IO) {
-                val data = api.getAllCampaigns(preferenceUtil.getNGOId(),
+                val data = api.getAllCampaigns(
+                    preferenceUtil.getNGOId(),
                     "cash-for-work",
-                    authorization = preferenceUtil.getNGOToken()).data
+                    authorization = preferenceUtil.getNGOToken(),
+                ).data.data
                 Timber.v("XXXgetAllCampaigns: called$data")
                 offlineRepository.insertAllCashForWork(data)
                 data
@@ -380,8 +92,10 @@ class NetworkRepository(
 
     suspend fun getCampaignByOrganization(organizationId: String): ApiResponse<CampaignByOrganizationModel> {
         return try {
-            val data = api.getCampaignsByOrganization(organizationId,
-                authorization = preferenceUtil.getNGOToken())
+            val data = api.getCampaignsByOrganization(
+                organizationId,
+                authorization = preferenceUtil.getNGOToken(),
+            )
             ApiResponse.Success(data)
         } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
@@ -406,8 +120,10 @@ class NetworkRepository(
 
     suspend fun getTasksDetails(taskId: String): BaseResponse<TaskDetailsResponse> {
         return withContext(Dispatchers.IO) {
-            api.getTasksDetails(taskId,
-                authorization = preferenceUtil.getNGOToken())
+            api.getTasksDetails(
+                taskId,
+                authorization = preferenceUtil.getNGOToken(),
+            )
         }
     }
 
@@ -430,16 +146,18 @@ class NetworkRepository(
                 val imagePart = MultipartBody.Part.createFormData(
                     "images_$index",
                     compressed.absolutePath.substringAfterLast("/"),
-                    mBody
+                    mBody,
                 )
                 imageParts.add(imagePart)
             }
             val data =
-                api.postTaskEvidence(taskIdBody,
+                api.postTaskEvidence(
+                    taskIdBody,
                     userIdBody,
                     descriptionBody,
                     imageParts,
-                    authorization = preferenceUtil.getNGOToken()).await()
+                    authorization = preferenceUtil.getNGOToken(),
+                ).await()
             ApiResponse.Success(data)
         } catch (e: HttpException) {
             val message = Utils.getErrorMessage(e)
@@ -452,14 +170,16 @@ class NetworkRepository(
     suspend fun uploadTaskEvidence(
         beneficiaryId: Int,
         taskAssignmentId: String,
-        location:UserLocation,
+        location: UserLocation,
         comment: String,
         type: String = "image",
         uploads: ArrayList<File>,
     ): BaseResponse<Any> = withContext(Dispatchers.IO) {
         val typeBody = type.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val commentBody = comment.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val locationJson =Gson().toJson(location).toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val locationJson = Gson().toJson(location).toRequestBody(
+            "multipart/form-data".toMediaTypeOrNull(),
+        )
         val taskAssignmentBody =
             taskAssignmentId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val imageParts = ArrayList<MultipartBody.Part>()
@@ -468,7 +188,7 @@ class NetworkRepository(
             val imagePart = MultipartBody.Part.createFormData(
                 "images_$index",
                 imageFile.name,
-                mBody
+                mBody,
             )
             imageParts.add(imagePart)
         }
@@ -479,7 +199,7 @@ class NetworkRepository(
             type = typeBody,
             location = locationJson,
             uploads = imageParts,
-            authorization = preferenceUtil.getNGOToken()
+            authorization = preferenceUtil.getNGOToken(),
         )
     }
 
@@ -502,16 +222,18 @@ class NetworkRepository(
 
     suspend fun addBeneficiaryToCampaign(beneficiaryId: Int, campaignId: Int) =
         withContext(Dispatchers.IO) {
-            api.addBeneficiaryToCampaign(beneficiaryId,
+            api.addBeneficiaryToCampaign(
+                beneficiaryId,
                 campaignId,
-                authorization = preferenceUtil.getNGOToken())
+                authorization = preferenceUtil.getNGOToken(),
+            )
         }
 
     private suspend fun getBeneficiaryByOrganisation() =
         withContext(Dispatchers.IO) {
             api.getBeneficiariesByOrganisation(
                 organisationId = preferenceUtil.getNGOId(),
-                authorization = preferenceUtil.getNGOToken()
+                authorization = preferenceUtil.getNGOToken(),
             )
         }
 
@@ -519,7 +241,7 @@ class NetworkRepository(
         api.getBeneficiariesByCampaign(
             campaignId = campaignId,
             organisationId = preferenceUtil.getNGOId(),
-            authorization = preferenceUtil.getNGOToken()
+            authorization = preferenceUtil.getNGOToken(),
         )
     }
 
@@ -545,27 +267,26 @@ class NetworkRepository(
         val campaignBeneficiaries = campaignBeneficiariesDef.await()
         allBeneficiaries.map {
             BeneficiaryUi(
-                id = it.id,
+                id = it.id!!,
                 email = it.email,
                 phone = it.phone,
                 firstName = it.firstName,
                 lastName = it.lastName,
                 profilePic = it.profilePic,
-                isAdded = campaignBeneficiaries.contains(it)
+                isAdded = campaignBeneficiaries.contains(it),
             )
         }
     }
 }
 
+sealed class NetworkResponse<out T>() {
 
+    data class Success<out T>(val body: T, val _message: String = "SUCCESS") : NetworkResponse<T>()
+    data class Error<out T>(val _message: String, val e: Throwable) : NetworkResponse<T>()
+    data class SimpleError<out T>(val _message: String, val code: Int = 0) : NetworkResponse<T>()
 
-sealed class NetworkResponse<out T>(){
+    class NetworkError<out T>() : NetworkResponse<T>()
 
-    data class Success<out T>(val body: T, val _message: String="SUCCESS"):NetworkResponse<T>()
-    data class Error<out T>(val _message: String, val e:Throwable):NetworkResponse<T>()
-    data class SimpleError<out T>(val _message: String,val code:Int=0 ):NetworkResponse<T>()
-
-     class Loading<out T>():NetworkResponse<T>()
-    class Offline<out T>():NetworkResponse<T>()
-
+    class Loading<out T>() : NetworkResponse<T>()
+    class Offline<out T>() : NetworkResponse<T>()
 }

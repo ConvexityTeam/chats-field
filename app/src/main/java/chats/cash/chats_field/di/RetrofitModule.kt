@@ -1,7 +1,9 @@
 package chats.cash.chats_field.di
 
-import androidx.core.content.ContextCompat
 import chats.cash.chats_field.R
+import chats.cash.chats_field.network.api.AuthInterceptor
+import chats.cash.chats_field.network.api.interfaces.BeneficiaryRepositoryInterface
+import chats.cash.chats_field.network.api.interfaces.ConvexityDataSourceInterface
 import chats.cash.chats_field.network.datasource.RetrofitDataSource
 import chats.cash.chats_field.network.repository.BeneficiaryRepository
 import chats.cash.chats_field.utils.ChatsFieldConstants
@@ -26,18 +28,30 @@ val retrofitModule = module {
             .disableHtmlEscaping().create()
     }
 
-    fun provideHttpClient(interceptor: HttpLoggingInterceptor): OkHttpClient {
+    fun provideHttpClient(
+        interceptor: HttpLoggingInterceptor,
+        authInterceptor: AuthInterceptor,
+    ): OkHttpClient {
         val okHttpClientBuilder = OkHttpClient.Builder()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         okHttpClientBuilder
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .addInterceptor(interceptor)
-            .protocols( Collections.singletonList(Protocol.HTTP_1_1) )
+            .addInterceptor(authInterceptor)
+            .protocols(Collections.singletonList(Protocol.HTTP_1_1))
         return okHttpClientBuilder.build()
     }
 
-    fun provideRetrofit(factory: Gson, client: OkHttpClient, callAdapterFactory: CoroutineCallAdapterFactory): Retrofit {
+    single {
+        AuthInterceptor(get())
+    }
+
+    fun provideRetrofit(
+        factory: Gson,
+        client: OkHttpClient,
+        callAdapterFactory: CoroutineCallAdapterFactory,
+    ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(ChatsFieldConstants.BASE_URL)
             .addCallAdapterFactory(callAdapterFactory)
@@ -47,11 +61,38 @@ val retrofitModule = module {
     }
 
     single { provideGson() }
-    single { provideHttpClient(get()) }
+    single { provideHttpClient(get(), get()) }
     single { HttpLoggingInterceptor().also { it.level = HttpLoggingInterceptor.Level.BODY } }
     single { CoroutineCallAdapterFactory() }
     single { provideRetrofit(get(), get(), get()) }
 
-    single { RetrofitDataSource(get(),androidContext().getString(R.string.an_unknown_error_occured))}
-    single{ BeneficiaryRepository(get(), get(), get()) }
+    single<ConvexityDataSourceInterface> {
+        RetrofitDataSource(
+            get(),
+            androidContext().getString(R.string.an_unknown_error_occured),
+            androidContext().getString(
+                R.string.pleas_check_your_network_connection_make_sure_you_re_connected_to_a_good_network,
+            ),
+            get(),
+            androidContext()
+                .getString(R.string.please_check_your_internet_connection_and_try_again),
+        )
+    }
+
+    single<BeneficiaryRepositoryInterface> {
+        BeneficiaryRepository(
+            RetrofitDataSource(
+                get(),
+                androidContext().getString(R.string.an_unknown_error_occured),
+                androidContext().getString(
+                    R.string.pleas_check_your_network_connection_make_sure_you_re_connected_to_a_good_network,
+                ),
+                get(),
+                androidContext()
+                    .getString(R.string.please_check_your_internet_connection_and_try_again),
+            ),
+            get(),
+            get(),
+        )
+    }
 }

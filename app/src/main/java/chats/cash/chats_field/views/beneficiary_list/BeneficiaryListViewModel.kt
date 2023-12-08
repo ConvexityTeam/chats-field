@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chats.cash.chats_field.network.NetworkRepository
-import chats.cash.chats_field.network.response.beneficiary_onboarding.Beneficiary
+import chats.cash.chats_field.network.response.beneficiary_onboarding.OrganizationBeneficiary
 import chats.cash.chats_field.utils.ChatsFieldConstants.API_SUCCESS
 import chats.cash.chats_field.utils.handleThrowable
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -42,8 +42,10 @@ class BeneficiaryListViewModel(
     fun addBeneficiaryToCampaign(beneficiaryId: Int, campaignId: Int) {
         _uiState.value = BeneficiaryListUiState.AddBeneficiaryLoading
         viewModelScope.launch(exceptionHandler) {
-            val response = repository.addBeneficiaryToCampaign(beneficiaryId = beneficiaryId,
-                campaignId = campaignId)
+            val response = repository.addBeneficiaryToCampaign(
+                beneficiaryId = beneficiaryId,
+                campaignId = campaignId,
+            )
             if (response.code in 200..201 && response.status == API_SUCCESS) {
                 _uiState.postValue(BeneficiaryListUiState.AddBeneficiarySuccess(response.message))
             } else {
@@ -52,15 +54,15 @@ class BeneficiaryListViewModel(
         }
     }
 
-    private fun Beneficiary.mapToBeneficiaryUi(): BeneficiaryUi {
+    private fun OrganizationBeneficiary.mapToBeneficiaryUi(): BeneficiaryUi {
         return BeneficiaryUi(
             email = this.email,
             lastName = this.lastName,
             firstName = this.firstName,
-            id = this.id,
+            id = this.id!!,
             phone = this.phone,
             profilePic = this.profilePic,
-            isAdded = false
+            isAdded = false,
         )
     }
 

@@ -21,5 +21,5 @@ data class TaskAssignment(
     val status: String,
     val updatedAt: String,
     @SerializedName("uploaded_evidence")
-    val uploadedEvidence: Boolean
+    val uploadedEvidence: Boolean,
 )

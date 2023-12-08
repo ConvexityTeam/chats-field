@@ -9,7 +9,6 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "modelCampaign")
-
 @Parcelize
 data class ModelCampaign(
     @SerializedName("id")
@@ -23,6 +22,8 @@ data class ModelCampaign(
     val type: String?,
     @SerializedName("spending")
     val spending: String?,
+    @SerializedName("Beneficiaries")
+    var Beneficiaries: List<CampaignBeneficiaries>? = emptyList(),
     @SerializedName("description")
     val description: String?,
     @SerializedName("status")
@@ -33,14 +34,15 @@ data class ModelCampaign(
     val funded_with: String?,
     @SerializedName("budget")
     val budget: String?,
+    @Ignore
     @SerializedName("location")
-    val location: String?,
+    val location: Location?,
     @SerializedName("start_date")
     val start_date: String?,
     @SerializedName("end_date")
     val end_date: String?,
     @SerializedName("ck8")
-    val ck8:String?,
+    val ck8: String?,
     @SerializedName("createdAt")
     val createdAt: String?,
     @SerializedName("updatedAt")
@@ -49,6 +51,21 @@ data class ModelCampaign(
     @Ignore
     val jobs: List<Job>,
 ) : Parcelable {
+    @Parcelize
+    data class Location(
+        val country: String,
+        val state: List<String>,
+    ) : Parcelable
+
+    @Parcelize
+    data class CampaignBeneficiaries(
+        val id: Int,
+        val email: String,
+        val phone: String,
+        val first_name: String,
+        val last_name: String,
+    ) : Parcelable
+
     constructor(
         id: Int,
         OrganisationId: Int,
@@ -60,29 +77,29 @@ data class ModelCampaign(
         is_funded: String?,
         funded_with: String?,
         budget: String?,
-        location: String?,
         start_date: String?,
         end_date: String?,
         ck8: String?,
         createdAt: String?,
-        updatedAt: String
+        updatedAt: String,
     ) : this(
         id,
         OrganisationId,
         title,
         type,
         spending,
+        null,
         description,
         status,
         is_funded,
         funded_with,
         budget,
-        location,
+        null,
         start_date,
         end_date,
         ck8,
         createdAt,
         updatedAt,
-        emptyList()
+        emptyList(),
     )
 }

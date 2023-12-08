@@ -13,5 +13,5 @@ data class BeneficiaryUi(
     val lastName: String?,
     val maritalStatus: String?,
     val phone: String?,
-    val profilePic: String?
-): Parcelable
+    val profilePic: String?,
+) : Parcelable

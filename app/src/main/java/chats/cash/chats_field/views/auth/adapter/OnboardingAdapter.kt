@@ -1,14 +1,12 @@
 package chats.cash.chats_field.views.auth.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.OnboardingItemLayoutBinding
 
 /*
@@ -21,13 +19,18 @@ on 17/07/2020.
 class OnboardingAdapter :
     ListAdapter<OnBoarding, OnboardingAdapter.MyViewHolder>(OnBoardingDiffCallback()) {
 
-    class MyViewHolder(val binding: OnboardingItemLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MyViewHolder(val binding: OnboardingItemLayoutBinding) : RecyclerView.ViewHolder(
+        binding.root,
+    ) {
         fun bind(item: OnBoarding) = with(itemView) {
             binding.onbDesc.text = item.desc
             binding.onbTitle.text = item.title
-            binding.onboardingImageView.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
-                item.image,
-                context.theme)
+            binding.onboardingImageView.setImageDrawable(
+                ResourcesCompat.getDrawable(
+                    context.resources,
+                    item.image,
+                    context.theme,
+                ),
             )
         }
     }
@@ -38,7 +41,7 @@ class OnboardingAdapter :
 
     private fun from(parent: ViewGroup): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = OnboardingItemLayoutBinding.inflate(layoutInflater,parent,false)
+        val binding = OnboardingItemLayoutBinding.inflate(layoutInflater, parent, false)
         return MyViewHolder(binding)
     }
 

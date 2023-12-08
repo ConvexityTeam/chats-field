@@ -1,6 +1,5 @@
 package chats.cash.chats_field.network.response.vendor
 
-
 import com.google.gson.annotations.SerializedName
 
 data class VendorOnboardingResponse(
@@ -11,7 +10,7 @@ data class VendorOnboardingResponse(
     @SerializedName("message")
     val message: String,
     @SerializedName("status")
-    val status: String?
+    val status: String?,
 ) {
     data class VendorResponseData(
         @SerializedName("address")
@@ -79,7 +78,7 @@ data class VendorOnboardingResponse(
         @SerializedName("username")
         val username: Any?,
         @SerializedName("vendor_id")
-        val vendorId: String?
+        val vendorId: String?,
     ) {
         data class Store(
             @SerializedName("address")
@@ -95,7 +94,7 @@ data class VendorOnboardingResponse(
             @SerializedName("updatedAt")
             val updatedAt: String?,
             @SerializedName("UserId")
-            val userId: Int?
+            val userId: Int?,
         )
     }
 }

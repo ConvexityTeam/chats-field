@@ -1,0 +1,173 @@
+# compiler: R8
+# compiler_version: 3.3.83
+# common_typos_disable
+# {"id":"com.android.tools.r8.mapping","version":"2.0"}
+# pg_map_id: 1235861
+# pg_map_hash: SHA-256 123586171d33b5c9a88e987d85d9f8c5d531a16ad4bce9bd32bb213ce6d05e87
+com.eyecool.fragment.IrisBinocularFragment$1 -> com.eyecool.fragment.IrisBinocularFragment$i:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> a
+    void lambda$onOpened$0() -> a
+com.eyecool.fragment.IrisBinocularFragment$10 -> com.eyecool.fragment.IrisBinocularFragment$a:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> c
+    int val$state -> b
+    int val$progress -> a
+com.eyecool.fragment.IrisBinocularFragment$11 -> com.eyecool.fragment.IrisBinocularFragment$b:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> c
+    java.lang.String val$msg -> b
+    int val$code -> a
+com.eyecool.fragment.IrisBinocularFragment$12 -> com.eyecool.fragment.IrisBinocularFragment$c:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> b
+    int val$position -> a
+com.eyecool.fragment.IrisBinocularFragment$13 -> com.eyecool.fragment.IrisBinocularFragment$d:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> c
+    java.lang.String val$msg -> b
+    int val$code -> a
+com.eyecool.fragment.IrisBinocularFragment$14 -> com.eyecool.fragment.IrisBinocularFragment$e:
+    com.eyecool.iris.api.IrisResult val$result -> a
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> b
+com.eyecool.fragment.IrisBinocularFragment$15 -> com.eyecool.fragment.IrisBinocularFragment$f:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> b
+    int val$state -> a
+com.eyecool.fragment.IrisBinocularFragment$16 -> com.eyecool.fragment.IrisBinocularFragment$g:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> c
+    java.lang.String val$msg -> b
+    int val$code -> a
+com.eyecool.fragment.IrisBinocularFragment$17 -> com.eyecool.fragment.IrisBinocularFragment$h:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> b
+    int val$error -> a
+com.eyecool.fragment.IrisBinocularFragment$2 -> com.eyecool.fragment.IrisBinocularFragment$j:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> a
+com.eyecool.fragment.IrisBinocularFragment$3 -> com.eyecool.fragment.IrisBinocularFragment$k:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> a
+com.eyecool.fragment.IrisBinocularFragment$3$1 -> com.eyecool.fragment.IrisBinocularFragment$k$a:
+    com.eyecool.fragment.IrisBinocularFragment$3 this$1 -> a
+com.eyecool.fragment.IrisBinocularFragment$4 -> com.eyecool.fragment.IrisBinocularFragment$l:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> b
+    cn.eyecool.uvc.usb.USBMonitor$UsbControlBlock val$ctrlBlock -> a
+com.eyecool.fragment.IrisBinocularFragment$5 -> com.eyecool.fragment.IrisBinocularFragment$m:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> b
+    long val$timeout -> a
+com.eyecool.fragment.IrisBinocularFragment$6 -> com.eyecool.fragment.IrisBinocularFragment$n:
+    long val$timeout -> a
+    int val$quality -> b
+    int val$imageType -> c
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> d
+com.eyecool.fragment.IrisBinocularFragment$7 -> com.eyecool.fragment.IrisBinocularFragment$o:
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> b
+    long val$timeout -> a
+com.eyecool.fragment.IrisBinocularFragment$8 -> com.eyecool.fragment.IrisBinocularFragment$p:
+    java.util.List val$featureList -> b
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> c
+    long val$timeout -> a
+com.eyecool.fragment.IrisBinocularFragment$9 -> com.eyecool.fragment.IrisBinocularFragment$q:
+    byte[] val$template -> a
+    com.eyecool.fragment.IrisBinocularFragment this$0 -> b
+com.eyecool.fragment.IrisFragment$1 -> com.eyecool.fragment.IrisFragment$k:
+    com.eyecool.fragment.IrisFragment this$0 -> a
+    void lambda$onDettach$0() -> a
+com.eyecool.fragment.IrisFragment$10 -> com.eyecool.fragment.IrisFragment$a:
+    com.eyecool.fragment.IrisFragment this$0 -> b
+    long val$timeout -> a
+com.eyecool.fragment.IrisFragment$11 -> com.eyecool.fragment.IrisFragment$b:
+    java.util.List val$featureList -> b
+    com.eyecool.fragment.IrisFragment this$0 -> c
+    long val$timeout -> a
+com.eyecool.fragment.IrisFragment$12 -> com.eyecool.fragment.IrisFragment$c:
+    byte[] val$template -> a
+    com.eyecool.fragment.IrisFragment this$0 -> b
+com.eyecool.fragment.IrisFragment$13 -> com.eyecool.fragment.IrisFragment$d:
+    com.eyecool.fragment.IrisFragment this$0 -> c
+    int val$state -> b
+    int val$progress -> a
+com.eyecool.fragment.IrisFragment$14 -> com.eyecool.fragment.IrisFragment$e:
+    com.eyecool.fragment.IrisFragment this$0 -> c
+    java.lang.String val$msg -> b
+    int val$code -> a
+com.eyecool.fragment.IrisFragment$15 -> com.eyecool.fragment.IrisFragment$f:
+    com.eyecool.iris.api.IrisResult val$result -> a
+    com.eyecool.fragment.IrisFragment this$0 -> b
+com.eyecool.fragment.IrisFragment$16 -> com.eyecool.fragment.IrisFragment$g:
+    com.eyecool.fragment.IrisFragment this$0 -> b
+    int val$state -> a
+com.eyecool.fragment.IrisFragment$17 -> com.eyecool.fragment.IrisFragment$h:
+    com.eyecool.fragment.IrisFragment this$0 -> c
+    java.lang.String val$msg -> b
+    int val$code -> a
+com.eyecool.fragment.IrisFragment$18 -> com.eyecool.fragment.IrisFragment$i:
+    com.eyecool.fragment.IrisFragment this$0 -> b
+    int val$position -> a
+com.eyecool.fragment.IrisFragment$19 -> com.eyecool.fragment.IrisFragment$j:
+    com.eyecool.fragment.IrisFragment this$0 -> b
+    int val$state -> a
+com.eyecool.fragment.IrisFragment$2 -> com.eyecool.fragment.IrisFragment$n:
+    com.eyecool.fragment.IrisFragment this$0 -> a
+com.eyecool.fragment.IrisFragment$20 -> com.eyecool.fragment.IrisFragment$l:
+    com.eyecool.fragment.IrisFragment this$0 -> c
+    java.lang.String val$msg -> b
+    int val$code -> a
+com.eyecool.fragment.IrisFragment$21 -> com.eyecool.fragment.IrisFragment$m:
+    com.eyecool.fragment.IrisFragment this$0 -> a
+com.eyecool.fragment.IrisFragment$3 -> com.eyecool.fragment.IrisFragment$o:
+    com.eyecool.fragment.IrisFragment this$0 -> a
+com.eyecool.fragment.IrisFragment$4 -> com.eyecool.fragment.IrisFragment$p:
+    com.eyecool.fragment.IrisFragment this$0 -> a
+com.eyecool.fragment.IrisFragment$5 -> com.eyecool.fragment.IrisFragment$q:
+    com.eyecool.fragment.IrisFragment this$0 -> b
+    int val$error -> a
+com.eyecool.fragment.IrisFragment$6 -> com.eyecool.fragment.IrisFragment$r:
+    com.eyecool.fragment.IrisFragment this$0 -> a
+com.eyecool.fragment.IrisFragment$7 -> com.eyecool.fragment.IrisFragment$s:
+    com.eyecool.fragment.IrisFragment this$0 -> b
+    long val$timeout -> a
+com.eyecool.fragment.IrisFragment$8 -> com.eyecool.fragment.IrisFragment$t:
+    com.eyecool.fragment.IrisFragment this$0 -> d
+    long val$timeout -> a
+    int val$quality -> b
+    int val$imageType -> c
+com.eyecool.fragment.IrisFragment$9 -> com.eyecool.fragment.IrisFragment$u:
+    com.eyecool.fragment.IrisFragment this$0 -> b
+    long val$timeout -> a
+com.eyecool.iris.api.IrisSDK$1 -> com.eyecool.iris.api.IrisSDK$a:
+    com.eyecool.iris.api.IrisSDK this$0 -> a
+com.eyecool.iris.api.IrisSDK$2 -> com.eyecool.iris.api.IrisSDK$b:
+    com.eyecool.iris.api.IrisSDK this$0 -> a
+com.eyecool.iris.api.IrisSDK$3 -> com.eyecool.iris.api.IrisSDK$c:
+    com.eyecool.iris.api.IrisSDK this$0 -> c
+    java.lang.String val$message -> b
+    int val$code -> a
+com.eyecool.iris.api.IrisSDK$4 -> com.eyecool.iris.api.IrisSDK$d:
+    int[] $SwitchMap$com$eyecool$algorithm$UniqueType -> b
+    int[] $SwitchMap$com$eyecool$iris$api$IrisSDK$Pic -> c
+    int[] $SwitchMap$com$eyecool$iris$api$IrisSDK$FocalLength -> a
+com.eyecool.iris.api.IrisSDK$V4H -> com.eyecool.iris.api.IrisSDK$e:
+    com.eyecool.iris.api.IrisSDK$V4H V4H_KID7 -> i
+    com.eyecool.iris.api.IrisSDK$V4H V4H_KID3 -> h
+    com.eyecool.iris.api.IrisSDK$V4H V4H_SCOR -> k
+    com.eyecool.iris.api.IrisSDK$V4H V4H_VERG -> j
+    com.eyecool.iris.api.IrisSDK$V4H V4H_NONE -> a
+    com.eyecool.iris.api.IrisSDK$V4H V4H_GTPL -> c
+    com.eyecool.iris.api.IrisSDK$V4H V4H_EPRG -> b
+    com.eyecool.iris.api.IrisSDK$V4H[] $VALUES -> l
+    com.eyecool.iris.api.IrisSDK$V4H V4H_IEYE -> e
+    com.eyecool.iris.api.IrisSDK$V4H V4H_MIDX -> d
+    com.eyecool.iris.api.IrisSDK$V4H V4H_HINT -> g
+    com.eyecool.iris.api.IrisSDK$V4H V4H_CAMC -> f
+com.eyecool.utils.FileUtils$1 -> com.eyecool.utils.FileUtils$a:
+com.eyecool.utils.ImageUtil$BITMAPFILEHEADER -> com.eyecool.utils.ImageUtil$a:
+    com.eyecool.utils.ImageUtil this$0 -> f
+    int bfOffBits -> e
+    int bfSize -> b
+    short bfReserved1 -> c
+    short bfReserved2 -> d
+    short bfType -> a
+com.eyecool.utils.ImageUtil$BITMAPINFOHEADER -> com.eyecool.utils.ImageUtil$b:
+    short biBitCount -> e
+    int biClrUsed -> h
+    com.eyecool.utils.ImageUtil this$0 -> j
+    int biClrImportant -> i
+    int biCompression -> f
+    int biSizeImage -> g
+    int biWidth -> b
+    int biHeight -> c
+    short biPlanes -> d
+    int biSize -> a

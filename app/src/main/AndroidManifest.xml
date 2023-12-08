@@ -15,7 +15,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"  android:maxSdkVersion="28"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-feature android:name="android.hardware.bluetooth" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -32,6 +33,20 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.BluetoothSensor">
+
+
+        <activity android:name="chats.cash.chats_field.views.iris.IrisCapture"
+            android:exported="true" android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".views.faceCapture.ConvexityFaceCaptureActivityCaptureActivity"
+            android:theme="@style/Theme.BluetoothSensor"
+            android:exported="false" />
 
         <activity android:name="chats.cash.chats_field.views.auth.AuthActivity"
             android:exported="true" android:launchMode="singleTask">
@@ -81,6 +96,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
 
     </application>
 

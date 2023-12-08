@@ -1,87 +1,55 @@
 package chats.cash.chats_field.views.auth.ui
 
-import android.Manifest
-import android.bluetooth.BluetoothAdapter
 import android.content.DialogInterface
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentNfcScanBinding
-import chats.cash.chats_field.utils.*
+import chats.cash.chats_field.utils.ChatsFieldConstants
 import chats.cash.chats_field.utils.ChatsFieldConstants.NFC_BUNDLE_KEY
 import chats.cash.chats_field.utils.dialogs.AlertDialog
 import chats.cash.chats_field.utils.dialogs.getErrorDialog
 import chats.cash.chats_field.utils.dialogs.getSuccessDialog
+import chats.cash.chats_field.utils.hide
 import chats.cash.chats_field.utils.nfc.NfcManager
+import chats.cash.chats_field.utils.show
 import chats.cash.chats_field.views.auth.dialog.DeviceSelectorDialog
-import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.*
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
 
 @InternalCoroutinesApi
 class NfcScanFragment : BottomSheetDialogFragment() {
 
-    private val mViewModel by sharedViewModel<RegisterViewModel>()
-
-    private var mDeviceCmd: Byte = 0x00
-    private var mIsWork = false
-    private var mCmdData = ByteArray(10240)
-    private var mCmdSize = 0
-
-    private var mTimerTimeout: Timer? = null
-    private var mTaskTimeout: TimerTask? = null
-    private var mHandlerTimeout: Handler? = null
-
-    // Name of the connected device
-    private var mConnectedDeviceName: String? = null
-
-    // String buffer for outgoing messages
-    private var mOutStringBuffer: StringBuffer? = null
-
-    // Local Bluetooth adapter
-    private var mBluetoothAdapter: BluetoothAdapter? = null
-
-    // Member object for the chat services
-    private var mChatService: BluetoothReaderService? = null
-
-
-    var mCardSn = ByteArray(7) // image data
-
-    var mUpImageSize = 0
-
     private var isOffline: Boolean = false
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         setStyle(STYLE_NORMAL, R.style.CustomBottomSheet)
-
-
     }
 
     private fun openDeviceSelector() {
         val bottomSheetDialogFragment = DeviceSelectorDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = true
         bottomSheetDialogFragment.setTargetFragment(this, ChatsFieldConstants.CONNECTION_CODE)
-        bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),
-            "BottomSheetDialog")
+        bottomSheetDialogFragment.show(
+            requireFragmentManager().beginTransaction(),
+            "BottomSheetDialog",
+        )
     }
 
-    lateinit var binding:FragmentNfcScanBinding
+    lateinit var binding: FragmentNfcScanBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
@@ -89,7 +57,7 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    private lateinit var NfcManager:NfcManager
+    private lateinit var NfcManager: NfcManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -99,48 +67,45 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         } else {
             binding.offlineText.hide()
         }
-        //setUpData()
+        // setUpData()
         NfcManager = NfcManager(requireActivity())
-        if(NfcManager.isNFCSupported()){
-            if(NfcManager.isNfcEnabled()){
-
-            }
-            else{
+        if (NfcManager.isNFCSupported()) {
+            if (NfcManager.isNfcEnabled()) {
+            } else {
                 lifecycleScope.launch {
                     delay(1000)
-                    AlertDialog(requireContext(),
+                    AlertDialog(
+                        requireContext(),
                         getString(R.string.enable_nfc),
                         getString(R.string.nfc_disabled_message),
                         postiveText = getString(R.string.enable),
                         onNegativeClicked = {
                             this@NfcScanFragment.dismiss()
-                        }) {
+                        },
+                    ) {
                         NfcManager.goToEnableNfcSettings()
                     }.show()
                 }
             }
-        }
-        else{
+        } else {
             binding.scanNfcBtn.isEnabled = false
             val error = getErrorDialog(getString(R.string.nfc_not_supported), requireContext())
             lifecycleScope.launch {
                 delay(1000)
                 error.show()
             }
-
         }
 
         registerClickEvents()
     }
-    private var isInScanMode = false
-    private fun registerClickEvents(){
+
+    private fun registerClickEvents() {
         binding.scanNfcBtn.setOnClickListener {
-            if(!NfcManager.scanMode){
-                NfcManager.scanMode=true
+            if (!NfcManager.scanMode) {
+                NfcManager.scanMode = true
                 binding.scanNfcBtn.text = getString(R.string.nfc_place_nfc_tag_close_to_)
-            }
-            else{
-                NfcManager.scanMode=false
+            } else {
+                NfcManager.scanMode = false
                 binding.scanNfcBtn.text = getString(R.string.click_here_to_start_scanning)
             }
         }
@@ -150,48 +115,72 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         registerNFCCallbacks()
     }
 
+    private fun registerNFCCallbacks() {
+        val data =
+            requireArguments().getString(emailBundle)?.trim()?.replace(" ", "")?.replace("\n", "")
+        NfcManager.tagData = data
+        binding.offlineText.hide()
 
-    private fun registerNFCCallbacks(){
-        val email = requireArguments().getString(emailBundle)
-        NfcManager.userEmail = email
         NfcManager.onSuccess = {
             lifecycleScope.launch(Dispatchers.Main) {
                 dismiss()
                 val dialog =
-                    getSuccessDialog("Tag written successfully", requireContext())
+                    getSuccessDialog(getString(R.string.tag_written_successfully), requireContext())
                 dialog.show()
             }
         }
         NfcManager.onSuccessFullRead = {
             lifecycleScope.launch(Dispatchers.Main) {
-              //  dismiss()
+                dismiss()
                 val dialog =
-                    getSuccessDialog("Data read from ${it.replace("?","")}", requireContext())
+                    getSuccessDialog("Data read from ${it.replace("?", "")}", requireContext())
                 dialog.show()
             }
         }
 
         NfcManager.onError = {
             lifecycleScope.launch(Dispatchers.Main) {
-               // dismiss()
+                dismiss()
                 val error =
-                    getErrorDialog("An error occurred while writing to card, try again", requireContext())
+                    getErrorDialog(
+                        getString(R.string.an_error_occurred_while_writing_to_card_try_again),
+                        requireContext(),
+                    )
                 error.show()
             }
         }
+
+        NfcManager.onAuthError = {
+            lifecycleScope.launch(Dispatchers.Main) {
+                dismiss()
+                val error =
+                    getErrorDialog(
+                        getString(R.string.the_card_couldnt_be_authenticated),
+                        requireContext(),
+                    )
+                error.show()
+            }
+        }
+
         NfcManager.onRead = {
             lifecycleScope.launch(Dispatchers.Main) {
                 val dialog =
-                    getSuccessDialog("Tag Read successfully $it", requireContext())
+                    getSuccessDialog(
+                        getString(R.string.tag_read_successfully, it),
+                        requireContext(),
+                    )
                 dialog.show()
             }
         }
 
         NfcManager.onErrorReading = {
             lifecycleScope.launch(Dispatchers.Main) {
-                //dismiss()
+                dismiss()
                 val error =
-                    getErrorDialog("error reading card $it, try again", requireContext())
+                    getErrorDialog(
+                        getString(R.string.error_reading_card_try_again, it),
+                        requireContext(),
+                    )
                 error.show()
             }
         }
@@ -206,17 +195,15 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         super.onResume()
         NfcManager.onResume()
         Timber.d(requireActivity().intent.action)
-
     }
 
-
     companion object {
-        //Creates a new Instance of this dialog
-        fun newInstance(isOffline: Boolean, email:String): NfcScanFragment =
+        // Creates a new Instance of this dialog
+        fun newInstance(isOffline: Boolean, data: String): NfcScanFragment =
             NfcScanFragment().apply {
                 arguments = Bundle().apply {
                     putBoolean("isOffline", isOffline)
-                    putString(emailBundle,email)
+                    putString(emailBundle, data)
                 }
             }
     }
@@ -225,15 +212,11 @@ class NfcScanFragment : BottomSheetDialogFragment() {
         super.onDismiss(dialog)
 
         setFragmentResult(NFC_REQUEST_KEY, bundleOf(NFC_BUNDLE_KEY to true))
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mChatService != null) {
-            mChatService!!.stop()
-        }
     }
 }
 
-const val emailBundle = "Email"
+const val emailBundle = "data"

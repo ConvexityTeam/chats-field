@@ -2,15 +2,12 @@ package chats.cash.chats_field.views.auth.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.ItemBluetoothDeviceBinding
 import chats.cash.chats_field.model.ConnectedDevice
-
 
 /*
 Created by
@@ -21,11 +18,13 @@ on 17/07/2020.
 class BluetoothDeviceAdapter(val clickListener: BluetoothClickListener) :
     ListAdapter<ConnectedDevice, BluetoothDeviceAdapter.MyViewHolder>(BluetoothDiffCallback()) {
 
-    class MyViewHolder(val binding : ItemBluetoothDeviceBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MyViewHolder(val binding: ItemBluetoothDeviceBinding) : RecyclerView.ViewHolder(
+        binding.root,
+    ) {
         @SuppressLint("SetTextI18n")
         fun bind(
             item: ConnectedDevice,
-            clickListener: BluetoothClickListener
+            clickListener: BluetoothClickListener,
         ) {
             binding.root.setOnClickListener {
                 clickListener.onClick(item)
@@ -39,10 +38,9 @@ class BluetoothDeviceAdapter(val clickListener: BluetoothClickListener) :
         return from(parent)
     }
 
-
-    private fun from(parent: ViewGroup) : MyViewHolder {
+    private fun from(parent: ViewGroup): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = ItemBluetoothDeviceBinding.inflate(layoutInflater,parent,false)
+        val binding = ItemBluetoothDeviceBinding.inflate(layoutInflater, parent, false)
         return MyViewHolder(binding)
     }
 
@@ -51,7 +49,7 @@ class BluetoothDeviceAdapter(val clickListener: BluetoothClickListener) :
         holder.bind(item, clickListener)
     }
 }
-class BluetoothDiffCallback : DiffUtil.ItemCallback<ConnectedDevice>(){
+class BluetoothDiffCallback : DiffUtil.ItemCallback<ConnectedDevice>() {
     override fun areItemsTheSame(oldItem: ConnectedDevice, newItem: ConnectedDevice): Boolean {
         return oldItem == newItem
     }
@@ -61,7 +59,6 @@ class BluetoothDiffCallback : DiffUtil.ItemCallback<ConnectedDevice>(){
     }
 }
 
-class BluetoothClickListener(val clickListener: (item : ConnectedDevice) -> Unit){
-    fun onClick(item : ConnectedDevice) = clickListener(item)
+class BluetoothClickListener(val clickListener: (item: ConnectedDevice) -> Unit) {
+    fun onClick(item: ConnectedDevice) = clickListener(item)
 }
-

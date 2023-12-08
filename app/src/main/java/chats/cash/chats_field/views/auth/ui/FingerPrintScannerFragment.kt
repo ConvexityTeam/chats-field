@@ -8,7 +8,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.*
+import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +39,11 @@ import chats.cash.chats_field.views.auth.dialog.DeviceSelectorDialog
 import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.internal.and
 import timber.log.Timber
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.*
 import kotlin.experimental.or
 
@@ -45,12 +52,11 @@ class FingerPrintScannerFragment : Fragment() {
     private var sDirectory = ""
     private val TAG = "BluetoothReader"
 
-    //default image size
+    // default image size
     val IMG_WIDTH = 256
     val IMG_HEIGHT = 288
 
     val IMG360 = 360
-
 
     private var mDeviceCmd: Byte = 0x00
     private var mIsWork = false
@@ -76,8 +82,8 @@ class FingerPrintScannerFragment : Fragment() {
     // Member object for the chat services
     private var mChatService: chats.cash.chats_field.utils.BluetoothReaderService? = null
 
-    //definition of variables which used for storing the fingerprint template
-    var mRefData = ByteArray(512) //enrolled FP template data
+    // definition of variables which used for storing the fingerprint template
+    var mRefData = ByteArray(512) // enrolled FP template data
 
     var mRefSize = 0
     var mMatData = ByteArray(512) // match FP template data
@@ -87,7 +93,6 @@ class FingerPrintScannerFragment : Fragment() {
     var mCardSn = ByteArray(7)
     var mCardData = ByteArray(4096)
     var mCardSize = 0
-
 
     var mUpImage = ByteArray(73728) // image data
 
@@ -100,22 +105,28 @@ class FingerPrintScannerFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //checking the permission
+        // checking the permission
 
-        //checking the permission
-        if (ActivityCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+        // checking the permission
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS_STORAGE,
-                REQUEST_PERMISSION_CODE)
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                PERMISSIONS_STORAGE,
+                REQUEST_PERMISSION_CODE,
+            )
         }
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     }
 
-    private lateinit var binding:FragmentFingerPrintScannerBinding
+    private lateinit var binding: FragmentFingerPrintScannerBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
@@ -138,22 +149,19 @@ class FingerPrintScannerFragment : Fragment() {
     }
 
     private fun setupChat() {
-        @SuppressLint("HandlerLeak") val mHandler: Handler = object : Handler() {
+        @SuppressLint("HandlerLeak")
+        val mHandler: Handler = object : Handler() {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
                     MESSAGE_STATE_CHANGE -> when (msg.arg1) {
                         chats.cash.chats_field.utils.BluetoothReaderService.STATE_CONNECTED -> {
-
                         }
                         chats.cash.chats_field.utils.BluetoothReaderService.STATE_CONNECTING -> {
-
                         }
                         chats.cash.chats_field.utils.BluetoothReaderService.STATE_LISTEN, chats.cash.chats_field.utils.BluetoothReaderService.STATE_NONE -> {
-
                         }
                     }
                     MESSAGE_WRITE -> {
-
                     }
                     MESSAGE_READ -> {
                         val readBuf = msg.obj as ByteArray
@@ -168,18 +176,26 @@ class FingerPrintScannerFragment : Fragment() {
                     MESSAGE_DEVICE_NAME -> {
                         // save the connected device's name
                         mConnectedDeviceName = msg.data.getString(DEVICE_NAME)
-                        Toast.makeText(requireContext(),
+                        Toast.makeText(
+                            requireContext(),
                             "Connected to $mConnectedDeviceName",
-                            Toast.LENGTH_SHORT).show()
-
+                            Toast.LENGTH_SHORT,
+                        ).show()
                     }
-                    MESSAGE_TOAST -> Toast.makeText(requireContext(), msg.data.getString(
-                        ChatsFieldConstants.TOAST), Toast.LENGTH_SHORT).show()
+                    MESSAGE_TOAST -> Toast.makeText(
+                        requireContext(),
+                        msg.data.getString(
+                            ChatsFieldConstants.TOAST,
+                        ),
+                        Toast.LENGTH_SHORT,
+                    ).show()
                 }
             }
         }
-        mChatService = chats.cash.chats_field.utils.BluetoothReaderService(requireContext(),
-            mHandler) // Initialize the BluetoothChatService to perform bluetooth connections
+        mChatService = chats.cash.chats_field.utils.BluetoothReaderService(
+            requireContext(),
+            mHandler,
+        ) // Initialize the BluetoothChatService to perform bluetooth connections
 
         mOutStringBuffer = StringBuffer("")
 
@@ -205,7 +221,7 @@ class FingerPrintScannerFragment : Fragment() {
         sendbuf[4] = cmdid
         sendbuf[5] = size.toByte()
         sendbuf[6] = (size shr 8).toByte()
-        if (size > 0 && data!=null) {
+        if (size > 0 && data != null) {
             for (i in 0 until size) {
                 sendbuf[7 + i] = data[i]
             }
@@ -220,58 +236,41 @@ class FingerPrintScannerFragment : Fragment() {
         mChatService?.write(sendbuf)
         when (sendbuf[4]) {
             ChatsFieldConstants.CMD_PASSWORD -> {
-
             }
             ChatsFieldConstants.CMD_ENROLID -> {
-
             }
             ChatsFieldConstants.CMD_VERIFY -> {
-
             }
             ChatsFieldConstants.CMD_IDENTIFY -> {
-
             }
             ChatsFieldConstants.CMD_DELETEID -> {
-
             }
             ChatsFieldConstants.CMD_CLEARID -> {
-
             }
             ChatsFieldConstants.CMD_ENROLHOST -> {
-
             }
             ChatsFieldConstants.CMD_CAPTUREHOST -> {
-
             }
             ChatsFieldConstants.CMD_MATCH -> {
-
             }
             ChatsFieldConstants.CMD_WRITEFPCARD, ChatsFieldConstants.CMD_WRITEDATACARD -> {
-
             }
             ChatsFieldConstants.CMD_READFPCARD, ChatsFieldConstants.CMD_READDATACARD -> {
-
             }
             ChatsFieldConstants.CMD_FPCARDMATCH -> {
-
             }
             ChatsFieldConstants.CMD_CARDSN -> {
-
             }
             ChatsFieldConstants.CMD_GETSN -> {
-
             }
             ChatsFieldConstants.CMD_GETBAT -> {
-
             }
             CMD_GETIMAGE -> {
                 mUpImageSize = 0
             }
             ChatsFieldConstants.CMD_GETCHAR -> {
-
             }
             ChatsFieldConstants.CMD_GET_VERSION -> {
-
             }
         }
     }
@@ -298,7 +297,7 @@ class FingerPrintScannerFragment : Fragment() {
                 timeOutStop()
                 if (mIsWork) {
                     mIsWork = false
-                    //Timber.v("Time Out");
+                    // Timber.v("Time Out");
                 }
                 super.handleMessage(msg)
             }
@@ -326,8 +325,8 @@ class FingerPrintScannerFragment : Fragment() {
     }
 
     private fun ReceiveCommand(databuf: ByteArray, datasize: Int) {
-        if (mDeviceCmd == CMD_GETIMAGE) { //receiving the image data from the device
-            if (imgSize == ChatsFieldConstants.IMG200) {   //image size with 152*200
+        if (mDeviceCmd == CMD_GETIMAGE) { // receiving the image data from the device
+            if (imgSize == ChatsFieldConstants.IMG200) { // image size with 152*200
                 memcpy(mUpImage, mUpImageSize, databuf, 0, datasize)
                 mUpImageSize = mUpImageSize + datasize
                 if (mUpImageSize >= 15200) {
@@ -341,7 +340,7 @@ class FingerPrintScannerFragment : Fragment() {
                         e.printStackTrace()
                     }
                     val bmpdata: ByteArray? = getFingerprintImage(mUpImage, 152, 200, 0 /*18*/)
-                    if(bmpdata != null){
+                    if (bmpdata != null) {
                         val image = BitmapFactory.decodeByteArray(bmpdata, 0, bmpdata.size)
                         saveJPGimage(image)
                         Log.d(ChatsFieldConstants.TAG, "bmpdata.length:" + bmpdata.size)
@@ -352,7 +351,7 @@ class FingerPrintScannerFragment : Fragment() {
                     mIsWork = false
                     Timber.v("Display Image")
                 }
-            } else if (imgSize == ChatsFieldConstants.IMG288) {   //image size with 256*288
+            } else if (imgSize == ChatsFieldConstants.IMG288) { // image size with 256*288
                 memcpy(mUpImage, mUpImageSize, databuf, 0, datasize)
                 mUpImageSize = mUpImageSize + datasize
                 if (mUpImageSize >= 36864) {
@@ -365,8 +364,8 @@ class FingerPrintScannerFragment : Fragment() {
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
-                    val bmpdata= getFingerprintImage(mUpImage, 256, 288, 0 /*18*/)
-                    if(bmpdata!=null){
+                    val bmpdata = getFingerprintImage(mUpImage, 256, 288, 0 /*18*/)
+                    if (bmpdata != null) {
                         val image = BitmapFactory.decodeByteArray(bmpdata, 0, bmpdata.size)
                         saveJPGimage(image)
                         binding.fingerprintImage.setImageBitmap(image)
@@ -382,10 +381,10 @@ class FingerPrintScannerFragment : Fragment() {
                     mIsWork = false
                     Timber.v("Display Image")
                 }
-            } else if (imgSize == ChatsFieldConstants.IMG360) {   //image size with 256*360
+            } else if (imgSize == ChatsFieldConstants.IMG360) { // image size with 256*360
                 memcpy(mUpImage, mUpImageSize, databuf, 0, datasize)
                 mUpImageSize = mUpImageSize + datasize
-                //Timber.v("Image Len="+Integer.toString(mUpImageSize)+"--"+Integer.toString(mUpImageCount));
+                // Timber.v("Image Len="+Integer.toString(mUpImageSize)+"--"+Integer.toString(mUpImageCount));
                 if (mUpImageSize >= 46080) {
                     val file = File("/sdcard/test.raw")
                     try {
@@ -398,7 +397,7 @@ class FingerPrintScannerFragment : Fragment() {
                     }
                     val bmpdata = getFingerprintImage(mUpImage, 256, 360, 0 /*18*/)
 //                    textSize.setText("256 * 360")
-                    if(bmpdata !=null){
+                    if (bmpdata != null) {
                         val image = BitmapFactory.decodeByteArray(bmpdata, 0, bmpdata.size)
                         saveJPGimage(image)
                         binding.fingerprintImage.setImageBitmap(image)
@@ -434,7 +433,7 @@ class FingerPrintScannerFragment : Fragment() {
                 System.arraycopy(bmpdata,1078, inpdata, 0, inpsize);
                 SaveWsqFile(inpdata,inpsize,"fingerprint.wsq");*/
             }
-        } else { //other data received from the device
+        } else { // other data received from the device
             // append the databuf received into mCmdData.
             memcpy(mCmdData, mCmdSize, databuf, 0, datasize)
             mCmdSize = mCmdSize + datasize
@@ -444,18 +443,20 @@ class FingerPrintScannerFragment : Fragment() {
                 mIsWork = false
                 timeOutStop()
 
-                //parsing the mCmdData
+                // parsing the mCmdData
                 if (mCmdData[0] == 'F'.code.toByte() && mCmdData[1] == 'T'.code.toByte()) {
                     when (mCmdData[4]) {
                         ChatsFieldConstants.CMD_PASSWORD -> {
                         }
                         ChatsFieldConstants.CMD_ENROLID -> {
                             if (mCmdData[7] == 1.toByte()) {
-                                //int id=mCmdData[8]+(mCmdData[9]<<8);
+                                // int id=mCmdData[8]+(mCmdData[9]<<8);
                                 val id = mCmdData[8] + (mCmdData[9].toInt() shl 8 and 0xFF00)
                                 Timber.v("Enrol Succeed:$id")
                                 Log.d(ChatsFieldConstants.TAG, id.toString())
-                            } else Timber.v("Search Fail")
+                            } else {
+                                Timber.v("Search Fail")
+                            }
                         }
                         ChatsFieldConstants.CMD_ENROLHOST -> {
                             val size: Int = mCmdData[5] + (mCmdData[6].toInt() shl 8 and 0xFF00) - 1
@@ -464,7 +465,9 @@ class FingerPrintScannerFragment : Fragment() {
                                 mRefSize = size
                                 Timber.v("Enrol Succeed with finger: $userId")
                                 userId += 1
-                            } else Timber.v("Search Fail")
+                            } else {
+                                Timber.v("Search Fail")
+                            }
                         }
                         ChatsFieldConstants.CMD_CAPTUREHOST -> {
                             val size: Int = mCmdData[5] + (mCmdData[6].toInt() shl 8 and 0xFF00) - 1
@@ -491,16 +494,30 @@ class FingerPrintScannerFragment : Fragment() {
 //                                if (cursor.count == 0) {
 //                                    Timber.v("Match Fail !!")
 //                                }
-                            } else Timber.v("Search Fail")
+                            } else {
+                                Timber.v("Search Fail")
+                            }
                         }
                         ChatsFieldConstants.CMD_MATCH -> {
                             val score: Int = mCmdData[8] + (mCmdData[9].toInt() shl 8 and 0xFF00)
-                            if (mCmdData[7] == 1.toByte()) Timber.v("Match Succeed:$score") else Timber.v(
-                                "Search Fail")
+                            if (mCmdData[7] == 1.toByte()) {
+                                Timber.v("Match Succeed:$score")
+                            } else {
+                                Timber.v(
+                                    "Search Fail",
+                                )
+                            }
                         }
                         ChatsFieldConstants.CMD_WRITEFPCARD -> {
-                            if (mCmdData[7] == 1.toByte()) Timber.v("Write Fingerprint Card Succeed") else Timber.v(
-                                "Search Fail")
+                            if (mCmdData[7] == 1.toByte()) {
+                                Timber.v(
+                                    "Write Fingerprint Card Succeed",
+                                )
+                            } else {
+                                Timber.v(
+                                    "Search Fail",
+                                )
+                            }
                         }
                         ChatsFieldConstants.CMD_READFPCARD -> {
                             val size: Int = mCmdData[5] + (mCmdData[6].toInt() shl 8 and 0xFF00)
@@ -508,7 +525,9 @@ class FingerPrintScannerFragment : Fragment() {
                                 memcpy(mCardData, 0, mCmdData, 8, size)
                                 mCardSize = size
                                 Timber.v("Read Fingerprint Card Succeed")
-                            } else Timber.v("Search Fail")
+                            } else {
+                                Timber.v("Search Fail")
+                            }
                         }
                         ChatsFieldConstants.CMD_FPCARDMATCH -> {
                             if (mCmdData[7] == 1.toByte()) {
@@ -520,17 +539,28 @@ class FingerPrintScannerFragment : Fragment() {
                                 Timber.v("Len=$size")
                                 val txt = String(tmpbuf)
                                 Timber.v(txt)
-                            } else Timber.v("Search Fail")
+                            } else {
+                                Timber.v("Search Fail")
+                            }
                         }
                         ChatsFieldConstants.CMD_UPCARDSN, ChatsFieldConstants.CMD_CARDSN -> {
                             val size: Int = mCmdData[5] + (mCmdData[6].toInt() shl 8 and 0xF0) - 1
                             if (size > 0) {
                                 memcpy(mCardSn, 0, mCmdData, 8, size)
-                                Timber.v("Read Card SN Succeed:" + Integer.toHexString(mCardSn[0] and 0xFF) + Integer.toHexString(
-                                    mCardSn[1] and 0xFF) + Integer.toHexString(mCardSn[2] and 0xFF) + Integer.toHexString(
-                                    mCardSn[3] and 0xFF) + Integer.toHexString(mCardSn[4] and 0xFF) + Integer.toHexString(
-                                    mCardSn[5] and 0xFF) + Integer.toHexString(mCardSn[6] and 0xFF))
-                            } else Timber.v("Search Fail")
+                                Timber.v(
+                                    "Read Card SN Succeed:" + Integer.toHexString(
+                                        mCardSn[0] and 0xFF,
+                                    ) + Integer.toHexString(
+                                        mCardSn[1] and 0xFF,
+                                    ) + Integer.toHexString(mCardSn[2] and 0xFF) + Integer.toHexString(
+                                        mCardSn[3] and 0xFF,
+                                    ) + Integer.toHexString(mCardSn[4] and 0xFF) + Integer.toHexString(
+                                        mCardSn[5] and 0xFF,
+                                    ) + Integer.toHexString(mCardSn[6] and 0xFF),
+                                )
+                            } else {
+                                Timber.v("Search Fail")
+                            }
                         }
                         ChatsFieldConstants.CMD_WRITEDATACARD -> {
                             if (mCmdData[7] == 1.toByte()) {
@@ -545,7 +575,9 @@ class FingerPrintScannerFragment : Fragment() {
                                 memcpy(mCardData, 0, mCmdData, 8, size)
                                 mCardSize = size
 //                                Timber.vHex(mCardData, size)
-                            } else Timber.v("Search Fail")
+                            } else {
+                                Timber.v("Search Fail")
+                            }
                         }
                     }
                 }
@@ -594,7 +626,6 @@ class FingerPrintScannerFragment : Fragment() {
         val b1 = (data shl 24 shr 24).toByte()
         return byteArrayOf(b1, b2, b3, b4)
     }
-
 
     /**
      * generate the image data into Bitmap format
@@ -703,7 +734,7 @@ class FingerPrintScannerFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            CONNECTION_CODE ->                 // When DeviceListActivity returns with a device to connect
+            CONNECTION_CODE -> // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     // Get the device MAC address
                     val address = data!!.extras!!.getString(EXTRA_DEVICE_ADDRESS)
@@ -713,7 +744,7 @@ class FingerPrintScannerFragment : Fragment() {
                     // Attempt to connect to the device
                     mChatService!!.connect(device)
                 }
-            REQUEST_ENABLE_BT ->                 // When the request to enable Bluetooth returns
+            REQUEST_ENABLE_BT -> // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
                     setupChat()
@@ -721,7 +752,6 @@ class FingerPrintScannerFragment : Fragment() {
                     // User did not enable Bluetooth or an error occured
                     Log.d(TAG, "BT not enabled")
                     Toast.makeText(requireContext(), "BT not enabled", Toast.LENGTH_SHORT).show()
-
                 }
         }
     }
@@ -730,8 +760,9 @@ class FingerPrintScannerFragment : Fragment() {
         val bottomSheetDialogFragment = DeviceSelectorDialog.newInstance()
         bottomSheetDialogFragment.isCancelable = true
         bottomSheetDialogFragment.setTargetFragment(this, CONNECTION_CODE)
-        bottomSheetDialogFragment.show(requireFragmentManager().beginTransaction(),"BottomSheetDialog")
+        bottomSheetDialogFragment.show(
+            requireFragmentManager().beginTransaction(),
+            "BottomSheetDialog",
+        )
     }
-
-
 }

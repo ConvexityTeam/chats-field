@@ -2,18 +2,25 @@ package chats.cash.chats_field.network.api
 
 import chats.cash.chats_field.model.NFCModel
 import chats.cash.chats_field.model.campaignform.AllCampaignFormResponse
+import chats.cash.chats_field.network.body.groupBeneficiary.GroupBeneficiaryBody
+import chats.cash.chats_field.network.body.groupBeneficiary.GroupBeneficiaryGroupDetails
+import chats.cash.chats_field.network.body.impact_report.ImpactReportBody
 import chats.cash.chats_field.network.body.login.LoginBody
 import chats.cash.chats_field.network.body.survey.SubmitSurveyAnswerBody
-import chats.cash.chats_field.network.response.*
-import chats.cash.chats_field.network.response.beneficiary_onboarding.Beneficiary
+import chats.cash.chats_field.network.response.BaseResponse
+import chats.cash.chats_field.network.response.NfcUpdateResponse
+import chats.cash.chats_field.network.response.RegisterResponse
+import chats.cash.chats_field.network.response.VendorDetailsResponse
+import chats.cash.chats_field.network.response.beneficiary_onboarding.OrganizationBeneficiary
+import chats.cash.chats_field.network.response.beneficiary_onboarding.UploadProfilePicResponse
 import chats.cash.chats_field.network.response.campaign.CampaignByOrganizationModel
 import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
 import chats.cash.chats_field.network.response.campaign.GetAllCampaignsResponse
 import chats.cash.chats_field.network.response.forgot.ForgotBody
 import chats.cash.chats_field.network.response.forgot.ForgotPasswordResponse
-import chats.cash.chats_field.network.response.login.Data
+import chats.cash.chats_field.network.response.group_beneficiary.OnboardGroupBeneficiaryResponse
+import chats.cash.chats_field.network.response.impact_report.ImpactReportResponse
 import chats.cash.chats_field.network.response.login.LoginResponse
-import chats.cash.chats_field.network.response.organization.OrganizationResponse
 import chats.cash.chats_field.network.response.organization.campaign.CampaignResponse
 import chats.cash.chats_field.network.response.progress.PostCompletionBody
 import chats.cash.chats_field.network.response.progress.SubmitProgressModel
@@ -25,7 +32,17 @@ import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 import kotlin.collections.ArrayList
 
 interface ConvexityApiService {
@@ -53,10 +70,9 @@ interface ConvexityApiService {
         @Header("Authorization") authorization: String,
     ): Deferred<RegisterResponse>
 
-
     @Multipart
     @POST("ngos/{organisation_id}/beneficiaries")
-    fun onboardBeneficiary(
+    suspend fun onboardBeneficiary(
         @Path("organisation_id") organisationId: String,
         @Part("first_name") firstName: RequestBody,
         @Part("last_name") lastName: RequestBody,
@@ -67,13 +83,14 @@ interface ConvexityApiService {
         @Part("longitude") long: RequestBody,
         @Part("location") location: RequestBody,
         @Part("nfc") nfc: RequestBody,
+        @Part("iris") iris: RequestBody? = null,
         @Part("role") status: RequestBody,
         @Part profile_pic: MultipartBody.Part,
         @Part prints: ArrayList<MultipartBody.Part>,
         @Part("gender") gender: RequestBody,
         @Part("dob") date: RequestBody,
         @Part("campaign") campaign: RequestBody,
-        @Part("pin") pin: RequestBody,
+        //   @Part("pin") pin: RequestBody,
         @Header("Authorization") authorization: String,
     ): RegisterResponse
 
@@ -112,6 +129,7 @@ interface ConvexityApiService {
         @Part("password") password: RequestBody,
         @Part("latitude") lat: RequestBody,
         @Part("longitude") long: RequestBody,
+        @Part("iris") iris: RequestBody? = null,
         @Part("location") location: RequestBody,
         @Part("nfc") nfc: RequestBody,
         @Part("role") status: RequestBody,
@@ -120,15 +138,38 @@ interface ConvexityApiService {
         @Part("gender") gender: RequestBody,
         @Part("dob") date: RequestBody,
         @Part("campaign") campaign: RequestBody,
-        @Part("pin") pin: RequestBody,
+        // @Part("pin") pin: RequestBody,
         @Header("Authorization") authorization: String,
     ): RegisterResponse
+
+    @Multipart
+    @POST("organisations/group-beneficiaries")
+    suspend fun onboardGroupBeneficiary(
+        @Part("group") group: GroupBeneficiaryGroupDetails,
+        @Part members: List<MultipartBody.Part>,
+        @Part representative: MultipartBody.Part,
+        @Header("Authorization") authorization: String,
+    ): OnboardGroupBeneficiaryResponse
+
+    @POST("organisations/group-beneficiaries")
+    @JvmSuppressWildcards
+    suspend fun onboardGroupBeneficiary(
+        @Body body: GroupBeneficiaryBody,
+        @Header("Authorization") authorization: String,
+    ): OnboardGroupBeneficiaryResponse
+
+    @POST("organisations/upload-profile-pic")
+    @Multipart
+    suspend fun UploadImage(
+        @Part profile_pic: MultipartBody.Part,
+        @Header("Authorization") authorization: String,
+    ): UploadProfilePicResponse
 
     @POST("organisations/{organisation_id}/vendors")
     @FormUrlEncoded
     @Deprecated(
         "this is wrong, as it resturns Any instead of returning ",
-        replaceWith = ReplaceWith("VendorOnboarding2")
+        replaceWith = ReplaceWith("VendorOnboarding2"),
     )
     suspend fun vendorOnboarding(
         @Path("organisation_id") organisationId: Int,
@@ -161,20 +202,16 @@ interface ConvexityApiService {
     ): VendorOnboardingResponse
 
     @POST("vendors/auth/{userId}")
-    fun getUserDetails(
+    suspend fun getVendorDetails(
         @Path("userId") userId: String,
         @Header("Authorization") authorization: String,
-    ): Deferred<UserDetailsResponse>
+    ): VendorDetailsResponse
 
-    @GET("ngos")
-    fun getNGOs(): Deferred<OrganizationResponse>
-
+//    @GET("ngos")
+//    fun getNGOs(): Deferred<OrganizationResponse>
 
     @POST("auth/field-login")
     suspend fun loginNGO(@Body loginBody: LoginBody): LoginResponse
-
-    @POST("auth/field-login")
-    suspend fun loginNgo(@Body loginBody: LoginBody): Data
 
     @POST("users/reset-password")
     suspend fun sendForgotMail(@Body forgotBody: ForgotBody): ForgotPasswordResponse
@@ -273,7 +310,7 @@ interface ConvexityApiService {
     suspend fun getBeneficiariesByOrganisation(
         @Path("organisation_id") organisationId: Int,
         @Header("Authorization") authorization: String,
-    ): BaseResponse<List<Beneficiary>>
+    ): BaseResponse<List<OrganizationBeneficiary>>
 
     @GET("organisations/non-org-beneficiary")
     suspend fun getExistingBeneficiary(
@@ -283,7 +320,7 @@ interface ConvexityApiService {
         @Query("nin") nin: String? = null,
         @Query("phone") phone: String? = null,
         @Header("Authorization") authorization: String,
-    ): BaseResponse<List<Beneficiary>>
+    ): BaseResponse<List<OrganizationBeneficiary>>
 
     @POST("beneficiaries/{beneficiary_id}/campaigns/{campaign_id}/join")
     suspend fun addBeneficiaryToCampaign(
@@ -297,7 +334,7 @@ interface ConvexityApiService {
         @Path("organisation_id") organisationId: Int,
         @Path("campaign_id") campaignId: Int,
         @Header("Authorization") authorization: String,
-    ): BaseResponse<List<Beneficiary>>
+    ): BaseResponse<List<OrganizationBeneficiary>>
 
     @POST("beneficiaries/field/survey/{campaign_id}")
     suspend fun answerCampaignSurvey(
@@ -305,4 +342,10 @@ interface ConvexityApiService {
         @Path("campaign_id") campaignId: Int,
         @Header("Authorization") authorization: String,
     )
+
+    @POST("impact-reports/create-report")
+    suspend fun submitImpactReport(
+        @Body answer: ImpactReportBody,
+        @Header("Authorization") authorization: String,
+    ): ImpactReportResponse
 }

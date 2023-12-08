@@ -2,7 +2,11 @@ package chats.cash.chats_field
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import chats.cash.chats_field.di.*
+import chats.cash.chats_field.di.apiModule
+import chats.cash.chats_field.di.repositoryModule
+import chats.cash.chats_field.di.retrofitModule
+import chats.cash.chats_field.di.utilModule
+import chats.cash.chats_field.di.viewModelModule
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -27,7 +31,7 @@ class ChatsApplication : Application() {
                 viewModelModule,
                 retrofitModule,
                 apiModule,
-                utilModule
+                utilModule,
             )
         }
         initNetworkChecker()

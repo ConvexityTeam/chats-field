@@ -4,9 +4,9 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.utils.JsonParser
+import chats.cash.chats_field.network.body.groupBeneficiary.GroupBeneficiaryMember
 import chats.cash.chats_field.network.body.survey.SubmitSurveyAnswerBody
 import com.google.gson.reflect.TypeToken
-
 
 @ProvidedTypeConverter
 class AllCampaignTypeConverter(private val jsonParser: JsonParser) {
@@ -15,7 +15,7 @@ class AllCampaignTypeConverter(private val jsonParser: JsonParser) {
     fun fromModelCampaignJson(json: String): List<ModelCampaign> {
         return jsonParser.fromJson<ArrayList<ModelCampaign>>(
             json,
-            object : TypeToken<ArrayList<ModelCampaign>>() {}.type
+            object : TypeToken<ArrayList<ModelCampaign>>() {}.type,
         ) ?: emptyList()
     }
 
@@ -29,7 +29,7 @@ class AllCampaignTypeConverter(private val jsonParser: JsonParser) {
     fun fromQuestionsJson(json: String): List<CampaignQuestion> {
         return jsonParser.fromJson<ArrayList<CampaignQuestion>>(
             json,
-            object : TypeToken<ArrayList<CampaignQuestion>>() {}.type
+            object : TypeToken<ArrayList<CampaignQuestion>>() {}.type,
         ) ?: emptyList()
     }
 
@@ -43,7 +43,7 @@ class AllCampaignTypeConverter(private val jsonParser: JsonParser) {
     fun fromQuestionsOptionJson(json: String): List<QuestionOptions> {
         return jsonParser.fromJson<ArrayList<QuestionOptions>>(
             json,
-            object : TypeToken<ArrayList<QuestionOptions>>() {}.type
+            object : TypeToken<ArrayList<QuestionOptions>>() {}.type,
         ) ?: emptyList()
     }
 
@@ -55,16 +55,49 @@ class AllCampaignTypeConverter(private val jsonParser: JsonParser) {
 
     @TypeConverter
     fun fromQuestionsAnswersJson(json: String): List<SubmitSurveyAnswerBody.QuestionAnswers> {
-        return jsonParser.fromJson<ArrayList<SubmitSurveyAnswerBody.QuestionAnswers>>(json,
-            object : TypeToken<ArrayList<SubmitSurveyAnswerBody.QuestionAnswers>>() {}.type
+        return jsonParser.fromJson<ArrayList<SubmitSurveyAnswerBody.QuestionAnswers>>(
+            json,
+            object : TypeToken<ArrayList<SubmitSurveyAnswerBody.QuestionAnswers>>() {}.type,
         ) ?: emptyList()
     }
 
     @TypeConverter
     fun toQuestionsAnswersJson(events: List<SubmitSurveyAnswerBody.QuestionAnswers>): String {
-        return jsonParser.toJson(events,
-            object : TypeToken<ArrayList<SubmitSurveyAnswerBody.QuestionAnswers>>() {}.type) ?: "[]"
+        return jsonParser.toJson(
+            events,
+            object : TypeToken<ArrayList<SubmitSurveyAnswerBody.QuestionAnswers>>() {}.type,
+        ) ?: "[]"
     }
 
+    @TypeConverter
+    fun fromGroupBeneficiaryMemberJson(json: String): List<GroupBeneficiaryMember> {
+        return jsonParser.fromJson<ArrayList<GroupBeneficiaryMember>>(
+            json,
+            object : TypeToken<ArrayList<GroupBeneficiaryMember>>() {}.type,
+        ) ?: emptyList()
+    }
 
+    @TypeConverter
+    fun toGroupBeneficiaryMemberJson(members: List<GroupBeneficiaryMember>): String {
+        return jsonParser.toJson(
+            members,
+            object : TypeToken<ArrayList<GroupBeneficiaryMember>>() {}.type,
+        ) ?: "[]"
+    }
+
+    @TypeConverter
+    fun fromCampaignBeneficiaryListJson(json: String): List<ModelCampaign.CampaignBeneficiaries> {
+        return jsonParser.fromJson<ArrayList<ModelCampaign.CampaignBeneficiaries>>(
+            json,
+            object : TypeToken<ArrayList<ModelCampaign.CampaignBeneficiaries>>() {}.type,
+        ) ?: emptyList()
+    }
+
+    @TypeConverter
+    fun toCampaignBeneficiaryListJson(members: List<ModelCampaign.CampaignBeneficiaries>): String {
+        return jsonParser.toJson(
+            members,
+            object : TypeToken<ArrayList<ModelCampaign.CampaignBeneficiaries>>() {}.type,
+        ) ?: "[]"
+    }
 }

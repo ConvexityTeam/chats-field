@@ -7,5 +7,5 @@ data class BeneficiaryUi(
     val lastName: String?,
     val phone: String?,
     val profilePic: String?,
-    val isAdded: Boolean = false
+    val isAdded: Boolean = false,
 )

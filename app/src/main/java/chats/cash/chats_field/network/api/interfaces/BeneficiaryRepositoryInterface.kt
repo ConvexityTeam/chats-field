@@ -1,17 +1,14 @@
 package chats.cash.chats_field.network.api.interfaces
 
 import chats.cash.chats_field.model.ModelCampaign
-import chats.cash.chats_field.model.campaignform.AllCampaignFormResponse
 import chats.cash.chats_field.model.campaignform.CampaignForm
 import chats.cash.chats_field.network.NetworkResponse
-import chats.cash.chats_field.network.response.RegisterResponse
+import chats.cash.chats_field.network.body.groupBeneficiary.GroupBeneficiaryBody
 import chats.cash.chats_field.network.response.campaign.CampaignSurveyResponse
+import chats.cash.chats_field.network.response.group_beneficiary.OnboardGroupBeneficiaryResponse
 import chats.cash.chats_field.network.response.vendor.VendorOnboardingResponse
 import chats.cash.chats_field.offline.Beneficiary
 import kotlinx.coroutines.flow.Flow
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface BeneficiaryRepositoryInterface {
 
@@ -20,8 +17,7 @@ interface BeneficiaryRepositoryInterface {
      * @return Flow<NetworkResponse<List<ModelCampaign>> which can be collected and observe for
      * loading, success or failure
      */
-    suspend fun getAllCampaigns(
-    ): Flow<NetworkResponse<List<ModelCampaign>>>
+    suspend fun getAllCampaigns(): Flow<NetworkResponse<List<ModelCampaign>>>
 
     /**
      * get all the campaigns survey questions for id of campaign passed
@@ -33,7 +29,6 @@ interface BeneficiaryRepositoryInterface {
         campaignId: Int,
     ): Flow<NetworkResponse<CampaignSurveyResponse.CampaignSurveyResponseData>>
 
-
     /**
      * get all the campaigns forms for the organization that is signed in to the user, this data
      * is also stored locally and filtered during beneficiary onboarding to get the survey for the
@@ -41,8 +36,7 @@ interface BeneficiaryRepositoryInterface {
      * @return Flow<NetworkResponse<List<CampaignForm>> which can be collected and observe for
      * loading, success or failure
      */
-    suspend fun getAllCampaignForms(
-    ): Flow<NetworkResponse<List<CampaignForm>>>
+    suspend fun getAllCampaignForms(): Flow<NetworkResponse<List<CampaignForm>>>
 
     /**
      * onboards a new beneficiary to the database
@@ -57,6 +51,20 @@ interface BeneficiaryRepositoryInterface {
     ): Flow<NetworkResponse<String>>
 
     /**
+     * onboards a new group beneficiary to the database
+     * @param body the body of the group beneficiary to be onboarded,
+     * a group beneficiary can have child beneficiaries under them,
+     * this checks if its a special case or not
+     * and class the appropriate endpoint
+     * @return Flow<NetworkResponse<String>> which can be collected and observe for
+     * loading, success or failure, the returned string is the new user id
+     */
+    suspend fun OnboardGroupBeneficiary(
+        body: GroupBeneficiaryBody,
+        isOnline: Boolean,
+    ): Flow<NetworkResponse<OnboardGroupBeneficiaryResponse.OnboardGroupBeneficiaryData>>
+
+    /**
      * onboards a new beneficiary to the database
      * @param beneficiary the beneficiary to be onboarded, this checks if its a special case or not
      * and class the appropriate endpoint
@@ -67,6 +75,4 @@ interface BeneficiaryRepositoryInterface {
         beneficiary: Beneficiary,
         isOnline: Boolean,
     ): Flow<NetworkResponse<VendorOnboardingResponse.VendorResponseData>>
-
-
 }

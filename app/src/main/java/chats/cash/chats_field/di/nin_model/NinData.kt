@@ -9,5 +9,5 @@ data class NinData(
     val profession: String,
     val surname: String,
     val telephoneno: String,
-    val title: String
+    val title: String,
 )

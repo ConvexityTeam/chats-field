@@ -3,7 +3,12 @@ package chats.cash.chats_field.utils.camera
 import android.content.Context
 import android.util.Log
 import android.view.Surface.ROTATION_0
-import androidx.camera.core.*
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
@@ -18,7 +23,7 @@ import java.util.concurrent.Executors
     private val lifecycleOwner: LifecycleOwner,
     private val graphicOverlay: GraphicOverlay,
     val screenAspectRatio: Int,
-    val onFaceDetected:(List<Face>,ImageCapture?) ->Unit
+    val onFaceDetected: (List<Face>, ImageCapture?) -> Unit,
 ) {
 
     private var preview: Preview? = null
@@ -30,7 +35,6 @@ import java.util.concurrent.Executors
 
     private var imageAnalyzer: ImageAnalysis? = null
     private var imageCapture: ImageCapture? = null
-
 
     init {
         createNewExecutor()
@@ -54,7 +58,7 @@ import java.util.concurrent.Executors
                     .setTargetAspectRatio(screenAspectRatio)
                     // Set initial target rotation, we will have to call this again if rotation changes
                     // during the lifecycle of this use case
-                    .setTargetRotation(preview?.targetRotation?:ROTATION_0)
+                    .setTargetRotation(preview?.targetRotation ?: ROTATION_0)
                     .build()
                 imageAnalyzer = ImageAnalysis.Builder()
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -68,20 +72,20 @@ import java.util.concurrent.Executors
                     .build()
 
                 setCameraConfig(cameraProvider, cameraSelector)
-
-            }, ContextCompat.getMainExecutor(context)
+            },
+            ContextCompat.getMainExecutor(context),
         )
     }
 
     private fun selectAnalyzer(): ImageAnalysis.Analyzer {
-        return FaceContourDetectionProcessor(graphicOverlay){
-            onFaceDetected(it,imageCapture)
+        return FaceContourDetectionProcessor(graphicOverlay) {
+            onFaceDetected(it, imageCapture)
         }
     }
 
     private fun setCameraConfig(
         cameraProvider: ProcessCameraProvider?,
-        cameraSelector: CameraSelector
+        cameraSelector: CameraSelector,
     ) {
         try {
             cameraProvider?.unbindAll()
@@ -90,10 +94,10 @@ import java.util.concurrent.Executors
                 cameraSelector,
                 preview,
                 imageAnalyzer,
-                imageCapture
+                imageCapture,
             )
             preview?.setSurfaceProvider(
-                finderView.surfaceProvider
+                finderView.surfaceProvider,
             )
         } catch (e: Exception) {
             Log.e(TAG, "Use case binding failed", e)
@@ -103,8 +107,11 @@ import java.util.concurrent.Executors
     fun changeCameraSelector() {
         cameraProvider?.unbindAll()
         cameraSelectorOption =
-            if (cameraSelectorOption == CameraSelector.LENS_FACING_BACK) CameraSelector.LENS_FACING_FRONT
-            else CameraSelector.LENS_FACING_BACK
+            if (cameraSelectorOption == CameraSelector.LENS_FACING_BACK) {
+                CameraSelector.LENS_FACING_FRONT
+            } else {
+                CameraSelector.LENS_FACING_BACK
+            }
         graphicOverlay.toggleSelector()
         startCamera()
     }
@@ -112,5 +119,4 @@ import java.util.concurrent.Executors
     companion object {
         private const val TAG = "CameraXBasic"
     }
-
 }

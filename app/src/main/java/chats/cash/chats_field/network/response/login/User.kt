@@ -6,7 +6,7 @@ data class User(
     @SerializedName("address")
     val address: String,
     @SerializedName("bvn")
-    val bvn: Any?,
+    val bvn: String?,
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("dob")
@@ -32,7 +32,7 @@ data class User(
     @SerializedName("is_tfa_enabled")
     val isTfaEnabled: Boolean,
     @SerializedName("last_login")
-    val lastLogin: Any?,
+    val lastLogin: String?,
     @SerializedName("last_name")
     val lastName: String,
     @SerializedName("lat")
@@ -44,15 +44,15 @@ data class User(
     @SerializedName("marital_status")
     val maritalStatus: Any?,
     @SerializedName("nfc")
-    val nfc: Any?,
+    val nfc: String?,
     @SerializedName("nin")
-    val nin: Any?,
+    val nin: String?,
     @SerializedName("password")
     val password: String,
     @SerializedName("phone")
     val phone: String,
     @SerializedName("pin")
-    val pin: Any?,
+    val pin: String?,
     @SerializedName("profile_pic")
     val profilePic: String,
     @SerializedName("referal_id")
@@ -62,9 +62,11 @@ data class User(
     @SerializedName("status")
     val status: String,
     @SerializedName("tfa_secret")
-    val tfaSecret: Any?,
+    val tfaSecret: String?,
     @SerializedName("updatedAt")
     val updatedAt: String,
+    @SerializedName("Organisation")
+    val Organisation: Organisation? = null,
     @SerializedName("AssociatedOrganisations")
     val associatedOrganisations: List<AssociatedOrganisation>,
 )
