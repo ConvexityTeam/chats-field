@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:layout_height="match_parent"
+    android:background="@color/def_bg"
+    android:orientation="vertical"
+    tools:context="chats.cash.chats_field.views.beneficiary_onboarding.group_details.BeneficiaryGroupDetailsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/def_bg"
+        tools:context="">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/fingerprint_appbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_back"
+            app:title="Verify Fingerprint" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/defaultDimen" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_end="@dimen/defaultDimen" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:text="@string/scan_template_finger"
+            android:id="@+id/title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/defaultDimen"
+            android:textAlignment="center"
+            app:layout_constraintTop_toBottomOf="@id/fingerprint_appbar"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            app:layout_constraintStart_toStartOf="@id/guide"
+            android:textColor="#25396F"
+            android:layout_height="wrap_content"/>
+
+
+        <ImageView
+            android:id="@+id/prints"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/topSpaceDimen"
+            android:padding="@dimen/largeDimen"
+            app:layout_constraintBottom_toBottomOf="@+id/rect"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            app:layout_constraintStart_toStartOf="@id/guide"
+            app:layout_constraintTop_toTopOf="@+id/rect" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/rect"
+            android:id="@+id/loading"
+            app:layout_constraintEnd_toEndOf="@id/rect"
+            app:layout_constraintStart_toStartOf="@id/rect"
+            app:layout_constraintBottom_toBottomOf="@id/rect"
+            android:indeterminate="true"
+            android:progressTint="?colorPrimary"
+            android:indeterminateTint="?colorPrimary"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/rect"
+            android:layout_width="0dp"
+            android:layout_height="230dp"
+            android:layout_marginTop="@dimen/topSpaceDimen"
+            android:layout_marginHorizontal="@dimen/topSpaceDimen"
+            android:src="@drawable/icon_scan_rect"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            app:layout_constraintStart_toStartOf="@id/guide"
+            app:layout_constraintTop_toBottomOf="@+id/desc" />
+
+        <TextView
+            android:id="@+id/scan_hint"
+            style="@style/TextAppearance.TextMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gilroy_regular"
+            android:text="@string/capture_fingerprints"
+            android:layout_marginTop="10dp"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/rect"
+            app:layout_constraintEnd_toEndOf="@id/rect"
+            app:layout_constraintStart_toStartOf="@+id/rect"
+            />
+
+        <TextView
+            android:id="@+id/desc"
+            style="@style/TextAppearance.TextMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gilroy_regular"
+            android:text="@string/fingerprint_place_template"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            app:layout_constraintStart_toStartOf="@+id/guide"
+            />
+
+        <ImageView
+            android:id="@+id/left_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/topSpaceDimen"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintEnd_toStartOf="@id/right_image"
+            android:src="@drawable/left_thumb_scan"
+            app:layout_constraintStart_toStartOf="@id/guide"
+            app:layout_constraintTop_toBottomOf="@+id/scan_hint" />
+
+        <ImageView
+            android:id="@+id/right_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:rotationY="-180"
+            android:src="@drawable/right_icon_fingerprint_none"
+            app:layout_constraintBottom_toBottomOf="@id/left_image"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            app:layout_constraintStart_toEndOf="@id/left_image"
+            app:layout_constraintTop_toTopOf="@+id/left_image" />
+
+        <TextView
+            android:id="@+id/lefthand"
+            style="@style/TextAppearance.TextMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gilroy_regular"
+            android:text="@string/left_hand"
+            android:layout_marginTop="10dp"
+            android:paddingStart="25dp"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/left_image"
+            app:layout_constraintEnd_toEndOf="@id/left_image"
+            app:layout_constraintStart_toStartOf="@+id/left_image"
+            />
+
+        <TextView
+            android:id="@+id/righthand"
+            style="@style/TextAppearance.TextMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gilroy_regular"
+            android:text="@string/right_hand"
+            android:layout_marginTop="10dp"
+            android:textAlignment="center"
+            android:paddingEnd="25dp"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/right_image"
+            app:layout_constraintEnd_toEndOf="@id/right_image"
+            app:layout_constraintStart_toStartOf="@+id/right_image"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/save"
+            style="@style/ConvexityButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/defaultDimen"
+            android:text="@string/save"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="@dimen/defaultDimen"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            app:layout_constraintStart_toStartOf="@id/guide"
+            app:layout_constraintTop_toBottomOf="@+id/lefthand"
+            app:layout_constraintVertical_bias="1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

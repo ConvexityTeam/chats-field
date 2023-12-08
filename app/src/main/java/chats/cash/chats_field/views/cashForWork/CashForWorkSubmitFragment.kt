@@ -1,13 +1,17 @@
 package chats.cash.chats_field.views.cashForWork
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentCashForWorkSubmitBinding
-import chats.cash.chats_field.utils.*
+import chats.cash.chats_field.utils.ApiResponse
+import chats.cash.chats_field.utils.hide
+import chats.cash.chats_field.utils.safeNavigate
+import chats.cash.chats_field.utils.show
+import chats.cash.chats_field.utils.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CashForWorkSubmitFragment : Fragment(R.layout.fragment_cash_for_work_submit) {
@@ -45,7 +49,9 @@ class CashForWorkSubmitFragment : Fragment(R.layout.fragment_cash_for_work_submi
                     cfwSubmitProgress.root.hide()
                     val data = it.data
                     requireContext().toast(data.message)
-                    findNavController().safeNavigate(CashForWorkSubmitFragmentDirections.toOnboardingFragment())
+                    findNavController().safeNavigate(
+                        CashForWorkSubmitFragmentDirections.toOnboardingFragment(),
+                    )
                 }
             }
         }
@@ -61,12 +67,14 @@ class CashForWorkSubmitFragment : Fragment(R.layout.fragment_cash_for_work_submi
         }
 
         cfwPictureCard.setOnClickListener {
-            findNavController().safeNavigate(CashForWorkSubmitFragmentDirections.toCashForWorkImageFragment(
-                taskId = args.taskId,
-                userId = args.userId,
-                taskName = args.taskName,
-                beneficiaryId = args.beneficiaryId
-            ))
+            findNavController().safeNavigate(
+                CashForWorkSubmitFragmentDirections.toCashForWorkImageFragment(
+                    taskId = args.taskId,
+                    userId = args.userId,
+                    taskName = args.taskName,
+                    beneficiaryId = args.beneficiaryId,
+                ),
+            )
         }
     }
 

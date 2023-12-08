@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chats.cash.chats_field.network.NetworkRepository
-import chats.cash.chats_field.network.response.beneficiary_onboarding.Beneficiary
+import chats.cash.chats_field.network.response.beneficiary_onboarding.OrganizationBeneficiary
 import chats.cash.chats_field.utils.ChatsFieldConstants.API_SUCCESS
 import chats.cash.chats_field.utils.handleThrowable
 import chats.cash.chats_field.utils.toDateString
@@ -36,13 +36,15 @@ class BeneficiarySearchViewModel(private val repository: NetworkRepository) : Vi
                 lastName = lastName,
                 email = email,
                 nin = nin,
-                phone = phone
+                phone = phone,
             )
             if (response.status == API_SUCCESS && response.code in 200..202) {
                 val beneficiaries = response.data
                 beneficiaries?.let { beneficiaryItems ->
                     if (beneficiaryItems.isNotEmpty()) {
-                        _uiState.postValue(BeneficiarySearchUiState.Success(beneficiaryItems.map { it.mapToUi() }))
+                        _uiState.postValue(
+                            BeneficiarySearchUiState.Success(beneficiaryItems.map { it.mapToUi() }),
+                        )
                     } else {
                         _uiState.postValue(BeneficiarySearchUiState.EmptyBeneficiaries)
                     }
@@ -56,17 +58,17 @@ class BeneficiarySearchViewModel(private val repository: NetworkRepository) : Vi
         }
     }
 
-    private fun Beneficiary.mapToUi(): BeneficiaryUi {
+    private fun OrganizationBeneficiary.mapToUi(): BeneficiaryUi {
         return BeneficiaryUi(
             dob = dob?.toDateString(),
             email = email,
             firstName = firstName?.trim(),
             gender = gender.toTitleCase(),
-            id = id,
+            id = id!!,
             lastName = lastName?.trim(),
             maritalStatus = maritalStatus,
             phone = phone,
-            profilePic = profilePic
+            profilePic = profilePic,
         )
     }
 

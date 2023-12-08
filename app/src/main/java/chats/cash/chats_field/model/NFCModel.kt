@@ -6,5 +6,5 @@ data class NFCModel(
     @SerializedName("id")
     val id: Int,
     @SerializedName("nfc")
-    val nfc: String
+    val nfc: String,
 )

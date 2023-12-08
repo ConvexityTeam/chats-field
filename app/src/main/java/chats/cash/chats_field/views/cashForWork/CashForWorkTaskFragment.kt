@@ -1,9 +1,9 @@
 package chats.cash.chats_field.views.cashForWork
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.view.isGone
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import chats.cash.chats_field.R
@@ -22,7 +22,7 @@ class CashForWorkTaskFragment : Fragment(R.layout.fragment_cash_for_work_task) {
     private val adapter: JobAdapter by lazy {
         JobAdapter(onReportClick = {
             findNavController().safeNavigate(
-                CashForWorkTaskFragmentDirections.toCashForWorkTaskDetailsFragment(it)
+                CashForWorkTaskFragmentDirections.toCashForWorkTaskDetailsFragment(it),
             )
         })
     }

@@ -2,7 +2,13 @@ package chats.cash.chats_field.utils.camera
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.DashPathEffect
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -17,7 +23,6 @@ class OverlayView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
 
-
     private val paint: Paint = Paint()
     private var holePaint: Paint = Paint()
     private var bitmap: Bitmap? = null
@@ -26,11 +31,11 @@ class OverlayView @JvmOverloads constructor(
         it.pathEffect = DashPathEffect(floatArrayOf(5f, 10f, 15f, 20f), 0f)
     }
 
-    //position of hole
+    // position of hole
     var holePosition: OverlayPosition = OverlayPosition(0.0f, 0.0f, 0.0f)
         set(value) {
             field = value
-            //redraw
+            // redraw
             this.invalidate()
         }
 
@@ -39,11 +44,11 @@ class OverlayView @JvmOverloads constructor(
         if (bitmap == null) {
             configureBitmap()
         }
-        val ovalWidth = width/1.5f // twice the width of the circle
-        val ovalHeight = height/2.1f // twice the height of the circle
+        val ovalWidth = width / 1.5f // twice the width of the circle
+        val ovalHeight = height / 2.1f // twice the height of the circle
 
         // Calculate the position of the center of the oval
-        val centerX = (width-ovalWidth) / 2f
+        val centerX = (width - ovalWidth) / 2f
         val centerY = (180f)
 
         // draw hole
@@ -52,14 +57,20 @@ class OverlayView @JvmOverloads constructor(
 
         //  draw background
         layer?.drawRect(0.0f, 0.0f, width.toFloat(), height.toFloat(), paint)
-        layer?.drawOval(centerX , centerY, centerX + ovalWidth, centerY + ovalHeight, border)
-        layer?.drawOval(centerX , centerY, centerX + ovalWidth, centerY + ovalHeight,  holePaint.apply { alpha = 0 })
-        //draw bitmap
-        canvas.drawBitmap(bitmap!!, 0.0f, 0.0f, paint);
+        layer?.drawOval(centerX, centerY, centerX + ovalWidth, centerY + ovalHeight, border)
+        layer?.drawOval(
+            centerX,
+            centerY,
+            centerX + ovalWidth,
+            centerY + ovalHeight,
+            holePaint.apply { alpha = 0 },
+        )
+        // draw bitmap
+        canvas.drawBitmap(bitmap!!, 0.0f, 0.0f, paint)
     }
 
     private fun configureBitmap() {
-        //create bitmap and layer
+        // create bitmap and layer
         bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         layer = Canvas(bitmap!!)
     }
@@ -68,43 +79,45 @@ class OverlayView @JvmOverloads constructor(
 
         val a: TypedArray =
             getContext()
-                .obtainStyledAttributes(attrs,
+                .obtainStyledAttributes(
+                    attrs,
                     R.styleable.OverlayView,
-                    0, 0);
+                    0,
+                    0,
+                )
 
-        val color = a.getColor(R.styleable.OverlayView_circleColor,  Color.parseColor("#FFFFFF"))
+        val color = a.getColor(R.styleable.OverlayView_circleColor, Color.parseColor("#FFFFFF"))
 
-        //do something with str
+        // do something with str
 
-
-        //do something with str
+        // do something with str
         a.recycle()
 
-        //configure background color
+        // configure background color
         val backgroundAlpha = 0.7
-        paint.color = ColorUtils.setAlphaComponent(context?.let {
-            ContextCompat.getColor(
-                it,
-                R.color.overlay
-            )
-        }!!, (255 * backgroundAlpha).toInt())
+        paint.color = ColorUtils.setAlphaComponent(
+            context?.let {
+                ContextCompat.getColor(
+                    it,
+                    R.color.overlay,
+                )
+            }!!,
+            (255 * backgroundAlpha).toInt(),
+        )
 
-        border.color =color
+        border.color = color
         border.strokeWidth = 30F
         border.style = Paint.Style.STROKE
         border.isAntiAlias = true
         border.isDither = true
 
-        //configure hole color & mode
+        // configure hole color & mode
         holePaint.color = ContextCompat.getColor(context, android.R.color.transparent)
 
         holePaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-
-
     }
 
-
-    public fun setCircleColor(color: Int){
+    public fun setCircleColor(color: Int) {
         border.color = color
         invalidate()
     }

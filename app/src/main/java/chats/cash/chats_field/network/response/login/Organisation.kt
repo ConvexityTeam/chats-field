@@ -8,7 +8,7 @@ data class Organisation(
     val id: Int,
     val is_verified: Boolean,
     val logo_link: Any?,
-    val name: String,
+    val name: String?,
     val phone: Any?,
     val registration_id: Any?,
     val state: Any?,

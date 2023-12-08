@@ -1,6 +1,5 @@
 package chats.cash.chats_field.utils.camera
 
-
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -10,7 +9,7 @@ import com.google.mlkit.vision.face.Face
 class FaceContourGraphic(
     overlay: GraphicOverlay,
     private val face: Face,
-    private val imageRect: Rect
+    private val imageRect: Rect,
 ) : GraphicOverlay.Graphic(overlay) {
 
     private val facePositionPaint: Paint
@@ -36,7 +35,7 @@ class FaceContourGraphic(
         val rect = calculateRect(
             imageRect.height().toFloat(),
             imageRect.width().toFloat(),
-            face.boundingBox
+            face.boundingBox,
         )
         canvas?.drawRect(rect, boxPaint)
     }
@@ -44,5 +43,4 @@ class FaceContourGraphic(
     companion object {
         private const val BOX_STROKE_WIDTH = 5.0f
     }
-
 }

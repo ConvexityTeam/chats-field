@@ -4,5 +4,5 @@ data class RegisterResponse(
     val code: Int,
     val `data`: String,
     val message: String,
-    val status: String
+    val status: String,
 )

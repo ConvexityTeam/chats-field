@@ -52,16 +52,29 @@ class BeneficiaryListFragment : Fragment(R.layout.fragment_beneficiary_list) {
                 loadingLayout.root.isGone = true
             }
             when (state) {
-                is BeneficiaryListViewModel.BeneficiaryListUiState.Error -> handleError(state.errorMessage)
+                is BeneficiaryListViewModel.BeneficiaryListUiState.Error -> handleError(
+                    state.errorMessage,
+                )
                 BeneficiaryListViewModel.BeneficiaryListUiState.Loading -> handleLoading()
-                is BeneficiaryListViewModel.BeneficiaryListUiState.Success -> handleSuccess(state.beneficiaries)
-                is BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiaryError -> showToast(state.errorMessage)
+                is BeneficiaryListViewModel.BeneficiaryListUiState.Success -> handleSuccess(
+                    state.beneficiaries,
+                )
+                is BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiaryError -> showToast(
+                    state.errorMessage,
+                )
                 BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiaryLoading -> {}
-                is BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiarySuccess -> { showToast(state.message) }
+                is BeneficiaryListViewModel.BeneficiaryListUiState.AddBeneficiarySuccess -> {
+                    showToast(
+                        state.message,
+                    )
+                }
             }
         }
 
     private fun addBeneficiaryToCampaign(beneficiary: BeneficiaryUi) {
-        viewModel.addBeneficiaryToCampaign(beneficiaryId = beneficiary.id, campaignId = args.campaignId)
+        viewModel.addBeneficiaryToCampaign(
+            beneficiaryId = beneficiary.id,
+            campaignId = args.campaignId,
+        )
     }
 }

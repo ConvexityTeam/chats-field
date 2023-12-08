@@ -4,5 +4,5 @@ data class NinBaseResponse(
     val detail: String,
     val nin_data: NinData,
     val response_code: String,
-    val status: Boolean
+    val status: Boolean,
 )

@@ -7,5 +7,5 @@ data class AddBeneficiaryResponse(
     val createdAt: String,
     val rejected: Boolean,
     val source: String,
-    val updatedAt: String
+    val updatedAt: String,
 )

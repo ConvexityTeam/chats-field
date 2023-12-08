@@ -18,12 +18,15 @@ import androidx.navigation.fragment.navArgs
 import chats.cash.chats_field.BuildConfig
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentCashForWorkImageBinding
-import chats.cash.chats_field.utils.*
+import chats.cash.chats_field.utils.ApiResponse
+import chats.cash.chats_field.utils.hide
 import chats.cash.chats_field.utils.location.LocationManager
-import chats.cash.chats_field.views.auth.AuthActivity
+import chats.cash.chats_field.utils.safeNavigate
+import chats.cash.chats_field.utils.show
+import chats.cash.chats_field.utils.showToast
+import chats.cash.chats_field.utils.toFile
 import chats.cash.chats_field.views.auth.adapter.PrintPagerAdapter
 import chats.cash.chats_field.views.core.showSnackbarWithAction
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -94,34 +97,39 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
         val imagesPart = ArrayList<File>()
 
         cashForWorkViewModel.imageList.value!!.forEachIndexed { index, bitmap ->
-            val f = bitmap.toFile(requireContext(),
-                "cash_for_work" + System.currentTimeMillis() + "$index" + ".png")
+            val f = bitmap.toFile(
+                requireContext(),
+                "cash_for_work" + System.currentTimeMillis() + "$index" + ".png",
+            )
             imagesPart.add(f)
         }
         lifecycleScope.launch {
-          getLocationAndUploadTask(desc, imagesPart).also {
-              if(!it){
-                  showSnackbarWithAction(R.string.location_not_found,binding.root,R.string.tryagain,R.color.design_default_color_error){
-                      lifecycleScope.launch {
-                          getLocationAndUploadTask(desc, imagesPart)
-                      }
-                  }
-              }
-          }
-
+            getLocationAndUploadTask(desc, imagesPart).also {
+                if (!it) {
+                    showSnackbarWithAction(
+                        R.string.location_not_found,
+                        binding.root,
+                        R.string.tryagain,
+                        R.color.design_default_color_error,
+                    ) {
+                        lifecycleScope.launch {
+                            getLocationAndUploadTask(desc, imagesPart)
+                        }
+                    }
+                }
+            }
         }
-
     }
 
-    private suspend fun getLocationAndUploadTask(desc:String,imagesPart:ArrayList<File>):Boolean{
-        val location =  locationManager.getLastKnownLocationAsync().await()
-        if(location!=null) {
+    private suspend fun getLocationAndUploadTask(desc: String, imagesPart: ArrayList<File>): Boolean {
+        val location = locationManager.getLastKnownLocationAsync().await()
+        if (location != null) {
             cashForWorkViewModel.postTaskImages(
                 beneficiaryId = args.beneficiaryId,
                 taskAssignmentId = args.taskId,
                 description = desc,
                 location = location,
-                images = imagesPart
+                images = imagesPart,
             )
             return true
         }
@@ -155,7 +163,9 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
                     binding.cfwImageSubmitProgress.root.hide()
                     val data = it.data
                     showToast(data.message)
-                    findNavController().safeNavigate(CashForWorkImageFragmentDirections.toOnboardingFragment())
+                    findNavController().safeNavigate(
+                        CashForWorkImageFragmentDirections.toOnboardingFragment(),
+                    )
                 }
             }
         }
@@ -172,7 +182,9 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
                     binding.cfwImageSubmitProgress.root.hide()
                     val data = it.data
                     showToast(data.message)
-                    findNavController().safeNavigate(CashForWorkImageFragmentDirections.toOnboardingFragment())
+                    findNavController().safeNavigate(
+                        CashForWorkImageFragmentDirections.toOnboardingFragment(),
+                    )
                 }
             }
         }
@@ -233,7 +245,7 @@ class CashForWorkImageFragment : Fragment(R.layout.fragment_cash_for_work_image)
         return FileProvider.getUriForFile(
             requireContext(),
             "${BuildConfig.APPLICATION_ID}.provider",
-            tempFile
+            tempFile,
         )
     }
 

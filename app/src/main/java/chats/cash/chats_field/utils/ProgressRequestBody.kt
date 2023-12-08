@@ -12,12 +12,14 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 
-class ProgressRequestBody(file: File, private val content_type: String, private val mListener : ImageUploadCallback) : RequestBody() {
+class ProgressRequestBody(
+    file: File,
+    private val content_type: String,
+    private val mListener: ImageUploadCallback,
+) : RequestBody() {
     private val mFile: File = file
     private val mPath: String? = null
     private val upload: String? = null
-
-
 
     @Nullable
     override fun contentType(): MediaType? {
@@ -48,25 +50,23 @@ class ProgressRequestBody(file: File, private val content_type: String, private 
 
     private inner class ProgressUpdater internal constructor(
         private val mUploaded: Long,
-        private val mTotal: Long
+        private val mTotal: Long,
     ) :
         Runnable {
 
         override fun run() {
-            if(mUploaded == 0L){
+            if (mUploaded == 0L) {
                 mListener.onProgressUpdate(0)
-            }else{
+            } else {
                 mListener.onProgressUpdate((100 * mUploaded / mTotal).toInt())
             }
-            ; //updating the UI of the progress
+            ; // updating the UI of the progress
         }
-
     }
 
     companion object {
         private const val DEFAULT_BUFFER_SIZE = 2048
     }
-
 }
 
 interface ImageUploadCallback {

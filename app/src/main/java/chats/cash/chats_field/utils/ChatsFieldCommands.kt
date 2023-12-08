@@ -15,5 +15,4 @@ object ChatsFieldCommands {
         }
         return sum and 0x00ff
     }
-
 }

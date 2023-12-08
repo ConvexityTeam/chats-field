@@ -11,6 +11,7 @@
         tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_splashFragment_to_onboardingFragment"
+            app:launchSingleTop="true"
             app:destination="@id/onboardingFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -18,6 +19,12 @@
             app:popExitAnim="@anim/slide_out_right"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_splashFragment_to_loginFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
@@ -42,6 +49,21 @@
         <action
             android:id="@+id/to_cashForWorkFragment"
             app:destination="@id/cashForWorkFragment" />
+        <action
+            android:id="@+id/to_SelectCampaignFragment"
+            app:destination="@id/selectCampaignFragment"
+            app:enterAnim="@anim/slide_out_left"
+            app:exitAnim="@anim/slide_in_left"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_onboardingFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_onboardingFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
+        <action
+            android:id="@+id/action_onboardingFragment_to_impactReportFragment"
+            app:destination="@id/impactReportFragment" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
@@ -82,6 +104,10 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_registerFragment_to_registerImageFragment"
+            app:destination="@id/registerImageFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/registerOtpFragment"
@@ -129,15 +155,7 @@
     <fragment
         android:id="@+id/registerVerifyFragment"
         android:name="chats.cash.chats_field.views.auth.ui.RegisterVerifyFragment"
-        android:label="fragment_register_verify"
-        tools:layout="@layout/fragment_register_verify">
-        <action
-            android:id="@+id/to_registerPrintFragment"
-            app:destination="@id/registerPrintFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+        android:label="fragment_register_verify">
         <action
             android:id="@+id/to_registerImageFragment"
             app:destination="@id/registerImageFragment"
@@ -180,22 +198,22 @@
         <argument
             android:name="date"
             app:argType="string" />
-        <argument
-            android:name="pin"
-            app:argType="string" />
-        <argument
-            android:name="campaign"
-            app:argType="chats.cash.chats_field.model.ModelCampaign" />
-    </fragment>
-    <fragment
-        android:id="@+id/registerPrintFragment"
-        android:name="chats.cash.chats_field.views.auth.ui.RegisterPrintFragment"
-        android:label="fragment_register_print"
-        tools:layout="@layout/fragment_register_print" >
+
         <action
-            android:id="@+id/action_registerPrintFragment_to_registerVerifyFragment"
+            android:id="@+id/action_registerVerifyFragment_self"
             app:destination="@id/registerVerifyFragment" />
+
+        <action
+            android:id="@+id/action_registerVerifyFragment_to_irisConfirmation"
+            app:destination="@id/irisConfirmation" />
+        <action
+            android:id="@+id/action_registerVerifyFragment_to_fingerPrintHomeFragment"
+            app:destination="@id/fingerPrintHomeFragment" />
+        <action
+            android:id="@+id/action_registerVerifyFragment_to_ninHomeFragment"
+            app:destination="@id/ninHomeFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/fingerPrintScannerFragment"
         android:name="chats.cash.chats_field.views.auth.ui.FingerPrintScannerFragment"
@@ -223,8 +241,16 @@
         tools:layout="@layout/fragment_vendor" />
     <fragment
         android:id="@+id/imageCaptureFragment"
+        tools:layout="@layout/fragment_image_capture"
         android:name="chats.cash.chats_field.views.auth.ui.ImageCaptureFragment"
-        android:label="ImageCaptureFragment" />
+        android:label="ImageCaptureFragment" >
+
+        <action
+            android:id="@+id/to_registerVerifyFragment"
+            app:destination="@id/registerVerifyFragment" />
+
+
+    </fragment>
     <fragment
         android:id="@+id/cashForWorkFragment"
         android:name="chats.cash.chats_field.views.cashForWork.CashForWorkFragment"
@@ -348,6 +374,9 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             app:destination="@id/dataConsentFragment" />
+        <action
+            android:id="@+id/action_beneficiaryTypeFragment_to_selectBeneficiaryTypeFragment"
+            app:destination="@id/selectBeneficiaryTypeFragment" />
     </fragment>
     <fragment
         android:id="@+id/existingBeneficiaryFragment"
@@ -381,12 +410,9 @@
     </fragment>
     <fragment
         android:id="@+id/registerOptinCampaignFragment"
-        tools:layout="@layout/fragment_register_opt_in"
-        android:name="chats.cash.chats_field.views.auth.ui.RegisterOptinCampaignFragment"
+        tools:layout="@layout/fragment_answer_campaign_form"
+        android:name="chats.cash.chats_field.views.campaignform.RegisterOptinCampaignFragment"
         android:label="RegisterOptinCampaignFragment" >
-        <argument
-            android:name="campaign"
-            app:argType="chats.cash.chats_field.model.ModelCampaign" />
         <action
             android:id="@+id/action_registerOptinCampaignFragment_to_registerVerifyFragment"
             app:destination="@id/registerVerifyFragment" />
@@ -426,9 +452,9 @@
         <argument
             android:name="date"
             app:argType="string" />
-        <argument
-            android:name="pin"
-            app:argType="string" />
+        <action
+            android:id="@+id/action_registerOptinCampaignFragment_to_registerImageFragment"
+            app:destination="@id/registerImageFragment" />
     </fragment>
     <fragment
         android:id="@+id/dataConsentFragment"
@@ -438,5 +464,188 @@
         <action
             android:id="@+id/action_dataConsentFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_dataConsentFragment_to_selectBeneficiaryTypeFragment"
+            app:destination="@id/selectBeneficiaryTypeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/irisConfirmation"
+        android:name="chats.cash.chats_field.views.iris.IrisConfirmation"
+        android:label="fragment_iris_capture_screen"
+        tools:layout="@layout/fragment_iris_confirmation" >
+    </fragment>
+    <fragment
+        android:id="@+id/selectBeneficiaryTypeFragment"
+        tools:layout="@layout/fragment_select_beneficiary_type"
+        android:name="chats.cash.chats_field.views.beneficiary_onboarding.select_beneficiary.SelectBeneficiaryTypeFragment"
+        android:label="SelectBeneficiaryTypeFragment" >
+        <action
+            android:id="@+id/action_select_beneficiary_type_to_register_fragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_selectBeneficiaryTypeFragment_to_beneficiaryGroupDetailsFragment"
+            app:destination="@id/beneficiaryGroupDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/beneficiaryGroupDetailsFragment"
+        android:name="chats.cash.chats_field.views.beneficiary_onboarding.group_details.BeneficiaryGroupDetailsFragment"
+        tools:layout="@layout/fragment_select_group_details"
+        android:label="BeneficiaryGroupDetailsFragment" >
+        <action
+            android:id="@+id/action_beneficiaryGroupDetailsFragment_to_addGroupBeneficiaryFragment"
+            app:destination="@id/addGroupBeneficiaryFragment" />
+        <action
+            android:id="@+id/action_beneficiaryGroupDetailsFragment_to_addGroupBeneficiaryFragment2"
+            app:destination="@id/addGroupBeneficiaryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addGroupBeneficiaryFragment"
+        tools:layout="@layout/beneficiary_add_group_member"
+        android:name="chats.cash.chats_field.views.beneficiary_onboarding.add_group_beneficiaries.AddGroupBeneficiaryFragment"
+        android:label="AddGroupBeneficiaryFragment" >
+
+        <action
+            android:id="@+id/action_addGroupBeneficiaryFragment_to_registerGroupFragment"
+            app:destination="@id/registerGroupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectCampaignFragment"
+        tools:layout="@layout/select_campaign_fragment"
+        android:name="chats.cash.chats_field.views.campaign.SelectCampaignFragment"
+        android:label="SelectCampaignFragment" >
+        <argument
+            android:name="isOnboardBeneficiary"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <action
+            android:id="@+id/action_selectCampaignFragment_to_dataConsentFragment"
+            app:destination="@id/dataConsentFragment" />
+        <action
+            android:id="@+id/action_selectCampaignFragment_self"
+            app:destination="@id/selectCampaignFragment" />
+        <action
+            android:id="@+id/action_selectCampaignFragment_to_impactReportUploadFragment"
+            app:destination="@id/impactReportUploadFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerGroupFragment"
+        tools:layout="@layout/fragment_register_group"
+        android:name="chats.cash.chats_field.views.auth.ui.RegisterGroupFragment"
+        android:label="RegisterGroupFragment" >
+        <action
+            android:id="@+id/action_registerGroupFragment_to_registerVerifyFragment"
+            app:destination="@id/registerVerifyFragment" />
+        <action
+            android:id="@+id/action_registerGroupFragment_to_registerImageFragment"
+            app:destination="@id/registerImageFragment" />
+        <action
+            android:id="@+id/to_registerOptinCampaignFragment2"
+            app:destination="@id/registerOptinCampaignFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/userProfileFragment"
+        tools:layout="@layout/fragment_agent_profile"
+        android:name="chats.cash.chats_field.views.profile.UserProfileFragment"
+        android:label="UserProfileFragment" >
+        <action
+            android:id="@+id/action_userProfileFragment_to_loginFragment"
+            app:popUpTo="@id/userProfileFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/loginFragment"
+            app:popEnterAnim="@anim/slide_out_left"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        tools:layout="@layout/fragment_login"
+        android:name="chats.cash.chats_field.views.login.LoginFragment"
+        android:label="LoginFragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_onboardingFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@+id/loginFragment"
+            app:launchSingleTop="true"
+            app:destination="@id/onboardingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/impactReportFragment"
+        tools:layout="@layout/fragment_impact_report_details"
+        android:name="chats.cash.chats_field.views.impact_report.ImpactReportFragment"
+        android:label="ImpactReportFragment" >
+        <action
+            android:id="@+id/action_impactReportFragment_to_selectCampaignFragment"
+            app:destination="@id/selectCampaignFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/impactReportUploadFragment"
+        tools:layout="@layout/fragment_impact_report_upload"
+        android:name="chats.cash.chats_field.views.impact_report.ImpactReportUploadFragment"
+        android:label="ImpactReportUploadFragment" >
+        <action
+            android:id="@+id/action_impactReportUploadFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fingerPrintScanFragment"
+        tools:layout="@layout/fragment_fingerprint_scanning"
+        android:name="chats.cash.chats_field.views.fingerprint.FingerPrintScanFragment"
+        android:label="FingerPrintScanFragment" />
+    <fragment
+        android:id="@+id/fingerPrintHomeFragment"
+        tools:layout="@layout/fragment_fingerprint_home"
+        android:name="chats.cash.chats_field.views.fingerprint.FingerPrintHomeFragment"
+        android:label="FingerPrintHomeFragment" >
+
+        <action
+            android:id="@+id/action_fingerPrintHomeFragment_to_fingerPrintScanHomeFragment"
+            app:destination="@id/fingerPrintScanHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/ninHomeFragment"
+        tools:layout="@layout/fragment_register_nin_home"
+        android:name="chats.cash.chats_field.views.nin.NinHomeFragment"
+        android:label="NinHomeFragment" >
+        <action
+            android:id="@+id/action_ninHomeFragment_to_enterNinFragment"
+            app:destination="@id/enterNinFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterNinFragment"
+        tools:layout="@layout/fragment_enter_nin"
+        android:name="chats.cash.chats_field.views.nin.EnterNinFragment"
+        android:label="EnterNinFragment" >
+        <action
+            android:id="@+id/to_onboardingFragment"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_enterNinFragment_to_submitBeneficiary"
+            app:destination="@id/submitBeneficiary" />
+    </fragment>
+    <fragment
+        android:id="@+id/submitBeneficiary"
+        android:name="chats.cash.chats_field.views.submit.SubmitBeneficiaryFragment"
+        android:label="fragment_submit_beneficiary"
+        tools:layout="@layout/fragment_submit_beneficiary" >
+        <action
+            android:id="@+id/to_onboardingFragmentSubmit"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/fingerPrintScanHomeFragment"
+        android:name="chats.cash.chats_field.views.fingerprint.FingerPrintScanHomeFragment"
+        tools:layout="@layout/fragment_fingerprint_scanning_home"
+        android:label="FingerPrintScanHomeFragment" >
+        <action
+            android:id="@+id/action_fingerPrintScanHomeFragment_to_fingerPrintScanFragment"
+            app:destination="@id/fingerPrintScanFragment" />
+        <action
+            android:id="@+id/action_fingerPrintScanHomeFragment_to_submitBeneficiary"
+            app:destination="@id/submitBeneficiary" />
+    </fragment>
+
 </navigation>

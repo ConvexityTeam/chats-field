@@ -1,6 +1,5 @@
 package chats.cash.chats_field.network.response.campaign
 
-
 import com.google.gson.annotations.SerializedName
 
 data class CampaignSurveyResponse(
@@ -11,7 +10,7 @@ data class CampaignSurveyResponse(
     @SerializedName("message")
     val message: String,
     @SerializedName("status")
-    val status: String
+    val status: String,
 ) {
     data class CampaignSurveyResponseData(
         @SerializedName("beneficiaryId")
@@ -27,7 +26,7 @@ data class CampaignSurveyResponse(
         @SerializedName("questions")
         val questions: List<Question>,
         @SerializedName("updatedAt")
-        val updatedAt: String
+        val updatedAt: String,
     ) {
         data class Question(
             @SerializedName("answer")
@@ -37,7 +36,7 @@ data class CampaignSurveyResponse(
             @SerializedName("reward")
             val reward: Int,
             @SerializedName("type")
-            val type: String
+            val type: String,
         )
     }
 }

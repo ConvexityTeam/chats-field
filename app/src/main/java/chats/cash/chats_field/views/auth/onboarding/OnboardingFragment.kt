@@ -6,68 +6,101 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentOnboardingBinding
-import chats.cash.chats_field.utils.*
-import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_LOGIN_RESULT_KEY
-import chats.cash.chats_field.utils.ChatsFieldConstants.LOGIN_BUNDLE_KEY
 import chats.cash.chats_field.utils.ChatsFieldConstants.REQUEST_CODE_PERMISSIONS
-import chats.cash.chats_field.views.MainActivity
+import chats.cash.chats_field.utils.PreferenceUtilInterface
+import chats.cash.chats_field.utils.hide
+import chats.cash.chats_field.utils.network.NetworkStatusTracker
+import chats.cash.chats_field.utils.safeNavigate
+import chats.cash.chats_field.utils.show
 import chats.cash.chats_field.views.auth.AuthActivity
-import chats.cash.chats_field.views.auth.adapter.OnBoarding
-import chats.cash.chats_field.views.auth.adapter.OnboardingAdapter
 import chats.cash.chats_field.views.auth.login.LoginDialog
-import com.google.android.material.tabs.TabLayoutMediator
+import chats.cash.chats_field.views.auth.login.LoginViewModel
+import chats.cash.chats_field.views.auth.ui.loadGlide
+import chats.cash.chats_field.views.core.showErrorSnackbar
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 @OptIn(InternalCoroutinesApi::class)
 class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private var _binding: FragmentOnboardingBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModel<OnboardingViewModel>()
-    private val adapter: OnboardingAdapter by lazy { OnboardingAdapter() }
-    private val preferenceUtil: PreferenceUtil by inject()
+    private val viewModel by activityViewModel<LoginViewModel>()
+    private val preferenceUtil: PreferenceUtilInterface by inject()
+
+    private val internetAvailabilityChecker: NetworkStatusTracker by inject()
+    val userProfile by lazy {
+        viewModel.getUserProfile()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setFragmentResultListener(FRAGMENT_LOGIN_RESULT_KEY) { _, bundle ->
-            val result = bundle.getBoolean(LOGIN_BUNDLE_KEY)
-            binding.logoutBtn.isVisible = result
+        if (preferenceUtil.getNGOId() == 0) {
+            findNavController().safeNavigate(OnboardingFragmentDirections.actionOnboardingFragmentToLoginFragment())
         }
     }
+
+    var count1 = 0
+    var count2 = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentOnboardingBinding.bind(view)
 
-        (requireActivity() as AuthActivity).showPendingUpload()
-        val onboardings = arrayListOf<OnBoarding>()
-        onboardings.add(OnBoarding(getString(R.string.onb_title_1),
-            getString(R.string.onb_desc_1),
-            R.drawable.ic_onboard_one))
-        onboardings.add(OnBoarding(getString(R.string.onb_title_2),
-            getString(R.string.onb_desc_2),
-            R.drawable.ic_onboarding_two))
-        onboardings.add(OnBoarding(getString(R.string.onb_title_3),
-            getString(R.string.onb_desc_3),
-            R.drawable.ic_onboarding_three))
-        adapter.submitList(onboardings)
-        binding.run {
-            onboardingViewPager.adapter = adapter
-            TabLayoutMediator(onboardingTab, onboardingViewPager) { _, _ -> }.attach()
+        viewModel.getBeneficiaries.observe(viewLifecycleOwner) {
+            count1 = it.size
+            Timber.v("$count1")
+            if (count1 > 0) {
+                binding.offlineCard.show()
+            } else if (count2 < 1) {
+                binding.offlineCard.hide()
+            }
+        }
 
-            if (preferenceUtil.getNGOId() == 0) {
-                logoutBtn.hide()
-            } else {
-                logoutBtn.show()
+        viewModel.getGroupBeneficiaries.observe(viewLifecycleOwner) {
+            count2 = it.size
+            Timber.v("$count2")
+            if (count2 > 0) {
+                binding.offlineCard.show()
+            } else if (count1 < 1) {
+                binding.offlineCard.hide()
+            }
+        }
+
+        binding.impactReport.setOnClickListener {
+            findNavController().navigate(R.id.action_onboardingFragment_to_impactReportFragment)
+        }
+
+        binding.uploadOffline.setOnClickListener {
+            lifecycleScope.launch {
+                if (internetAvailabilityChecker.isNetworkAvailable()) {
+                    lifecycleScope.launch {
+                        (requireActivity() as AuthActivity).startUpload()
+                    }
+                } else {
+                    showErrorSnackbar(R.string.no_internet, binding.root)
+                }
+            }
+            lifecycleScope.launch {
+                (requireActivity() as AuthActivity).uploading.collect {
+                    if (it) {
+                        binding.uploadingView.show()
+                        binding.uploadOffline.hide()
+                    } else {
+                        binding.uploadingView.hide()
+                        binding.uploadOffline.show()
+                    }
+                }
             }
         }
 
@@ -77,39 +110,54 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 REQUIRED_PERMISSIONS,
-                REQUEST_CODE_PERMISSIONS
+                REQUEST_CODE_PERMISSIONS,
             )
+        }
+
+        binding.apply {
+            binding.name.text = "${userProfile?.firstName} ${userProfile?.lastName}"
+            userProfile?.profilePic?.let {
+                binding.profile.loadGlide(it)
+            }
+            binding.profile.setOnClickListener {
+                findNavController().safeNavigate(R.id.action_onboardingFragment_to_userProfileFragment)
+            }
         }
     }
 
     private fun setupClickListeners() = with(binding) {
-        onboardingCashForWorkBtn.setOnClickListener { openCashForWork() }
-        beneficiaryOnboardingBtn.setOnClickListener { openBeneficiaryOnboarding() }
-        logoutBtn.setOnClickListener { doLogout() }
-        vendorOnboardingBtn.setOnClickListener { openVendorOnboarding() }
+        cashForWork.setOnClickListener { openCashForWork() }
+        beneficiaryOnboarding.setOnClickListener { openBeneficiaryOnboarding() }
+        //  logoutBtn.setOnClickListener { doLogout() }
+        vendorOnboarding.setOnClickListener { openVendorOnboarding() }
     }
 
-    private fun doLogout() {
-        preferenceUtil.clearPreference()
-        viewModel.clearAllTables()
-        binding.logoutBtn.hide()
-    }
+//    private fun doLogout() {
+//        preferenceUtil.clearPreference()
+//        viewModel.clearAllTables()
+//        binding.logoutBtn.hide()
+//    }
 
     @OptIn(InternalCoroutinesApi::class)
     override fun onDestroyView() {
         super.onDestroyView()
-        (requireActivity() as AuthActivity) .hidePendingUpload()
+
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
 
     companion object {
         val REQUIRED_PERMISSIONS =
-            arrayOf(Manifest.permission.CAMERA,
+            arrayOf(
+                Manifest.permission.CAMERA,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            )
     }
 
     private fun openCashForWork() {
@@ -124,7 +172,9 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         if (preferenceUtil.getNGOId() == 0) {
             openLogin()
         } else {
-            findNavController().safeNavigate(OnboardingFragmentDirections.toBeneficiaryTypeFragment())
+            findNavController().safeNavigate(
+                OnboardingFragmentDirections.toSelectCampaignFragment(true),
+            )
         }
     }
 
@@ -138,7 +188,9 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
-            requireActivity().baseContext, it) == PackageManager.PERMISSION_GRANTED
+            requireActivity().baseContext,
+            it,
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun openLogin(isCancelable: Boolean = true) {

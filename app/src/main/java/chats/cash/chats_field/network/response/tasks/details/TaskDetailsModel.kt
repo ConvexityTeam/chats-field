@@ -10,5 +10,5 @@ data class TaskDetailsModel(
     @SerializedName("message")
     val message: String,
     @SerializedName("status")
-    val status: String
+    val status: String,
 )

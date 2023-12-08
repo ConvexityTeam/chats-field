@@ -30,8 +30,8 @@ data class Campaign(
     @SerializedName("type")
     val type: String,
     @SerializedName("updatedAt")
-    val updatedAt: String
-){
+    val updatedAt: String,
+) {
     override fun toString(): String {
         return title
     }

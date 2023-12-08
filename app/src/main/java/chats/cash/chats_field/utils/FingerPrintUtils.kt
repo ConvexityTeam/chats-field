@@ -134,5 +134,4 @@ object FingerPrintUtils {
             dstbuf[dstoffset + i] = srcbuf[srcoffset + i]
         }
     }
-
 }

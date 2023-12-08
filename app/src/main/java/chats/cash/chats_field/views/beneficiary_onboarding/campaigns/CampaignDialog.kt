@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
@@ -24,23 +23,33 @@ import chats.cash.chats_field.utils.ChatsFieldConstants.FRAGMENT_CAMPAIGN_RESULT
 import chats.cash.chats_field.views.auth.viewmodel.RegisterViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CampaignDialog : BottomSheetDialogFragment() {
 
     private var _binding: DialogCampaignBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel by viewModel<CampaignViewModel>()
-    private val registerViewModel by activityViewModels<RegisterViewModel>()
+    private val registerViewModel by activityViewModel<RegisterViewModel>()
+
     private val campaignAdapter by lazy {
         CampaignAdapter(onCampaignClick = {
-            setFragmentResult(FRAGMENT_CAMPAIGN_RESULT_LISTENER, bundleOf(CAMPAIGN_BUNDLE_KEY to it))
+            setFragmentResult(
+                FRAGMENT_CAMPAIGN_RESULT_LISTENER,
+                bundleOf(CAMPAIGN_BUNDLE_KEY to it),
+            )
             dismiss()
         })
     }
+
     private val cashForWorkAdapter by lazy {
         CampaignAdapter(onCampaignClick = {
-            setFragmentResult(FRAGMENT_CAMPAIGN_RESULT_LISTENER, bundleOf(CAMPAIGN_BUNDLE_KEY to it))
+            setFragmentResult(
+                FRAGMENT_CAMPAIGN_RESULT_LISTENER,
+                bundleOf(CAMPAIGN_BUNDLE_KEY to it),
+            )
             dismiss()
         })
     }
@@ -49,7 +58,7 @@ class CampaignDialog : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding =
             DialogCampaignBinding.bind(inflater.inflate(R.layout.dialog_campaign, container, false))
@@ -66,7 +75,9 @@ class CampaignDialog : BottomSheetDialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.setOnShowListener {
             val bottomSheet =
-                dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+                dialog.findViewById<FrameLayout>(
+                    com.google.android.material.R.id.design_bottom_sheet,
+                )
             bottomSheet.setBackgroundColor(Color.TRANSPARENT)
 
             val params = bottomSheet.layoutParams
@@ -88,7 +99,7 @@ class CampaignDialog : BottomSheetDialogFragment() {
     }
 
     private fun handleCampaignList(campaigns: List<ModelCampaign>?) = with(binding) {
-        if(campaigns.isNullOrEmpty()){
+        if (campaigns.isNullOrEmpty()) {
             lifecycleScope.launch {
                 registerViewModel.getAllCampaigns2()
             }

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+        android:background="@color/def_bg"
+    tools:context=".views.iris.IrisConfirmation">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:layout_width="1dp"
+            app:layout_constraintGuide_begin="15dp"
+            android:orientation="vertical"
+            android:id="@+id/start"
+            android:layout_height="match_parent"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:layout_width="1dp"
+            app:layout_constraintGuide_end="15dp"
+            android:orientation="vertical"
+            android:id="@+id/end"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/fingerprint_appbar"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:liftOnScroll="true">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/appbar"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                android:background="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:navigationIcon="@drawable/ic_back"
+                app:title="@string/verify_fingerprint" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+        <ImageView
+            android:layout_width="0dp"
+            android:src="@drawable/fingerprint_scanning"
+            android:id="@+id/fingerprint_image"
+            app:layout_constraintTop_toBottomOf="@id/fingerprint_appbar"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            app:layout_constraintStart_toStartOf="@id/start"
+            app:layout_constraintHeight_percent="0.4"
+            app:layout_constraintWidth_percent="0.8"
+            android:layout_marginTop="20dp"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:text="@string/capture_fingerprints"
+            android:id="@+id/title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/defaultDimen"
+            android:textAlignment="center"
+            app:layout_constraintTop_toBottomOf="@id/fingerprint_image"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            app:layout_constraintStart_toStartOf="@id/start"
+            android:textColor="#25396F"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:text="@string/make_sure_you_are_using_the_fp08_device_inorder_to_capture_beneficiary_fingerprints"
+            android:textAppearance="@style/TextAppearance.TextMedium"
+            android:textAlignment="center"
+            android:id="@+id/desc"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            android:layout_marginTop="5dp"
+            app:layout_constraintStart_toStartOf="@id/start"
+            android:textColor="#555555"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/materialCardView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/defaultDimen"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/defaultDimen"
+            app:contentPadding="@dimen/defaultDimen"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            app:layout_constraintStart_toStartOf="@id/start"
+            app:layout_constraintTop_toBottomOf="@id/desc">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/icon_info_colored" />
+
+                <TextView
+                    android:id="@+id/steps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/capture_beneficiary_s_left_thumb_left_index_left_little_right_thumb_right_index_and_right_little_fingers"
+                    android:textAppearance="@style/TextAppearance.TextMedium"
+                    android:textColor="#555555" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/start_scanning"
+            style="@style/ConvexityButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/topSpaceDimen"
+            android:text="@string/start_scanning"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/end"
+            app:layout_constraintStart_toStartOf="@id/start"
+            app:layout_constraintTop_toBottomOf="@+id/materialCardView"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</ScrollView>

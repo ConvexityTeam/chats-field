@@ -3,24 +3,24 @@ package chats.cash.chats_field.views.auth.ui
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentRegisterOtpBinding
 
-
 class RegisterOtpFragment : Fragment() {
 
-    private lateinit var binding:FragmentRegisterOtpBinding
+    private lateinit var binding: FragmentRegisterOtpBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentRegisterOtpBinding.inflate(inflater,container,false)
+        binding = FragmentRegisterOtpBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -46,19 +46,15 @@ class RegisterOtpFragment : Fragment() {
             override fun onTextChanged(arg0: CharSequence, arg1: Int, arg2: Int, arg3: Int) {
                 // TODO Auto-generated method stub
             }
-
         }
 
-        binding.otp1.addTextChangedListener(OTPTextWatcher(binding.otp1));
-        binding.otp2.addTextChangedListener(OTPTextWatcher(binding.otp2));
-        binding.otp3.addTextChangedListener(OTPTextWatcher(binding.otp3));
-        binding.otp4.addTextChangedListener(OTPTextWatcher(binding.otp4));
+        binding.otp1.addTextChangedListener(OTPTextWatcher(binding.otp1))
+        binding.otp2.addTextChangedListener(OTPTextWatcher(binding.otp2))
+        binding.otp3.addTextChangedListener(OTPTextWatcher(binding.otp3))
+        binding.otp4.addTextChangedListener(OTPTextWatcher(binding.otp4))
 
         binding.registerOtpVerifyButton.setOnClickListener {
 //            findNavController().navigate(RegisterOtpFragmentDirections.actionRegisterOtpFragmentToRegisterVerifyFragment())
         }
-
     }
-
-
 }

@@ -24,5 +24,5 @@ data class AssignedWorker(
     val maritalStatus: Any,
     val phone: String,
     @SerializedName("profile_pic")
-    val profilePic: String
+    val profilePic: String,
 )

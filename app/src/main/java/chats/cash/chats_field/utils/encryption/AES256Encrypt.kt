@@ -1,6 +1,5 @@
 package chats.cash.chats_field.utils.encryption
 
-
 import android.util.Base64
 import java.nio.charset.StandardCharsets
 import java.security.InvalidAlgorithmParameterException
@@ -8,12 +7,17 @@ import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.KeySpec
-import javax.crypto.*
+import javax.crypto.BadPaddingException
+import javax.crypto.Cipher
+import javax.crypto.IllegalBlockSizeException
+import javax.crypto.NoSuchPaddingException
+import javax.crypto.SecretKey
+import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
-class AES256Encrypt (key: String) {
+class AES256Encrypt(key: String) {
     /* Private variable declaration */
     private val SECRET_KEY = key
     private val SALTVALUE = key
@@ -34,7 +38,7 @@ class AES256Encrypt (key: String) {
             val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec)
             /* Retruns encrypted value. */return Base64
-                .encodeToString(cipher.doFinal(strToEncrypt.toByteArray(StandardCharsets.UTF_8)),0)
+                .encodeToString(cipher.doFinal(strToEncrypt.toByteArray(StandardCharsets.UTF_8)), 0)
         } catch (e: InvalidAlgorithmParameterException) {
             println("Error occured during encryption: " + e.toString())
         } catch (e: InvalidKeyException) {
@@ -70,8 +74,8 @@ class AES256Encrypt (key: String) {
             cipher.init(Cipher.DECRYPT_MODE, secretKey, ivspec)
             /* Retruns decrypted value. */return String(
                 cipher.doFinal(
-                    Base64.decode(strToDecrypt,0)
-                )
+                    Base64.decode(strToDecrypt, 0),
+                ),
             )
         } catch (e: InvalidAlgorithmParameterException) {
             println("Error occured during decryption: " + e.toString())

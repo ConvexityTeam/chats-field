@@ -1,9 +1,7 @@
 package chats.cash.chats_field.utils.nfc
 
-
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
-
 
 /**
  * Created by Qifan on 05/12/2018.
@@ -33,7 +31,6 @@ object NdefMessageParser {
         return elements
     }
 }
-
 
 /**
  * Created by Qifan on 05/12/2018.

@@ -6,5 +6,5 @@ data class PostCompletionBody(
     @SerializedName("taskId")
     val taskId: Int,
     @SerializedName("userId")
-    val userId: Int
+    val userId: Int,
 )

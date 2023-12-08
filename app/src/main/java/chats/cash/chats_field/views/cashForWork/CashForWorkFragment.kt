@@ -1,12 +1,14 @@
 package chats.cash.chats_field.views.cashForWork
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import chats.cash.chats_field.R
 import chats.cash.chats_field.databinding.FragmentCashForWorkBinding
-import chats.cash.chats_field.utils.*
+import chats.cash.chats_field.utils.hide
+import chats.cash.chats_field.utils.safeNavigate
+import chats.cash.chats_field.utils.show
 import chats.cash.chats_field.views.auth.adapter.CashForWorkAdapter
 import chats.cash.chats_field.views.cashForWork.model.Job
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -20,7 +22,7 @@ class CashForWorkFragment : Fragment(R.layout.fragment_cash_for_work) {
     private val adapter: CashForWorkAdapter by lazy {
         CashForWorkAdapter(
             onLoadTaskClick = ::toCashForWorkTask,
-            onBeneficiaryClick = ::toBeneficiary
+            onBeneficiaryClick = ::toBeneficiary,
         )
     }
 
@@ -49,19 +51,23 @@ class CashForWorkFragment : Fragment(R.layout.fragment_cash_for_work) {
                     binding.cfwEmpty.txtNotFound.text = getString(R.string.empty_cash_for_work)
                 } else {
                     binding.cfwProgress.root.hide()
-                    adapter.submitList(it/*.filter { campaign ->
-                        campaign.status.equals(ACTIVE_CASH_FOR_WORK, ignoreCase = true)
-                    }*/)
+                    adapter.submitList(
+                        it,
+                    )
                 }
             }
         }
     }
 
     private fun toCashForWorkTask(jobs: List<Job>) {
-        findNavController().safeNavigate(CashForWorkFragmentDirections.toCashForWorkTaskFragment(jobs.toTypedArray()))
+        findNavController().safeNavigate(
+            CashForWorkFragmentDirections.toCashForWorkTaskFragment(jobs.toTypedArray()),
+        )
     }
 
     private fun toBeneficiary(campaignId: Int) {
-        findNavController().safeNavigate(CashForWorkFragmentDirections.toBeneficiaryListFragment(campaignId))
+        findNavController().safeNavigate(
+            CashForWorkFragmentDirections.toBeneficiaryListFragment(campaignId),
+        )
     }
 }

@@ -1,0 +1,4 @@
+com.eyecool.utils.ImageUtil$BITMAPINFOHEADER:
+    long biXPelsPerMeter
+    long biYPelsPerMeter
+com.eyecool.utils.ImageUtil$RGBQUAD

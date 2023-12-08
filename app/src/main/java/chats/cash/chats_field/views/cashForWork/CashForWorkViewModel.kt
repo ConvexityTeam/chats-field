@@ -63,7 +63,7 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
         beneficiaryId: Int,
         taskAssignmentId: String,
         description: String,
-        location:UserLocation,
+        location: UserLocation,
         images: ArrayList<File>,
     ) {
         _imageUpload.value = ImageUploadState.Loading
@@ -73,7 +73,7 @@ class CashForWorkViewModel(private val networkRepository: NetworkRepository) : V
                 location = location,
                 taskAssignmentId = taskAssignmentId,
                 comment = description,
-                uploads = images
+                uploads = images,
             )
             _imageUpload.postValue(ImageUploadState.Success(response))
         }

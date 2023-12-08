@@ -22,5 +22,5 @@ data class Job(
     val requireEvidence: Boolean,
     @SerializedName("require_vendor_approval")
     val requireVendorApproval: Boolean,
-    val updatedAt: String
-): Parcelable
+    val updatedAt: String,
+) : Parcelable

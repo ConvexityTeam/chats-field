@@ -3,20 +3,20 @@ package chats.cash.chats_field.utils.camera
 import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.graphics.RectF
-import androidx.camera.core.*
-import chats.cash.chats_field.utils.camera.GraphicOverlay
+import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.MeteringPoint
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 
-@ExperimentalGetImage abstract class BaseImageAnalyzer<T> : ImageAnalysis.Analyzer {
+@ExperimentalGetImage
+abstract class BaseImageAnalyzer<T> : ImageAnalysis.Analyzer {
 
     abstract val graphicOverlay: GraphicOverlay
 
-
     @SuppressLint("UnsafeExperimentalUsageError")
     override fun analyze(imageProxy: ImageProxy) {
-
-
         val mediaImage = imageProxy.image
 
         mediaImage?.let {
@@ -26,7 +26,7 @@ import com.google.mlkit.vision.common.InputImage
                     onSuccess(
                         results,
                         graphicOverlay,
-                        it.cropRect
+                        it.cropRect,
                     )
                     imageProxy.close()
                 }
@@ -44,11 +44,10 @@ import com.google.mlkit.vision.common.InputImage
     protected abstract fun onSuccess(
         results: T,
         graphicOverlay: GraphicOverlay,
-        rect: Rect
+        rect: Rect,
     )
 
     protected abstract fun onFailure(e: Exception)
-
 }
 
 @SuppressLint("RestrictedApi")

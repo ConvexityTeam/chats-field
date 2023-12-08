@@ -10,5 +10,5 @@ data class BaseResponse<T>(
     @SerializedName("message")
     val message: String,
     @SerializedName("status")
-    val status: String
+    val status: String,
 )

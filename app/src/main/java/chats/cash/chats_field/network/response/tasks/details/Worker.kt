@@ -28,5 +28,5 @@ data class Worker(
     @SerializedName("status")
     val status: String,
     @SerializedName("updatedAt")
-    val updatedAt: String
+    val updatedAt: String,
 )

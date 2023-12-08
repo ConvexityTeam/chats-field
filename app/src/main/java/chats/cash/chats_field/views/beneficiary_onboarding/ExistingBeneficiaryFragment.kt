@@ -67,13 +67,19 @@ class ExistingBeneficiaryFragment : Fragment(R.layout.fragment_existing_benefici
     private fun setupClickListeners() = with(binding) {
         backBtn.setOnClickListener { findNavController().navigateUp() }
         searchBeneficiaryEditText.setOnClickListener {
-            findNavController().safeNavigate(ExistingBeneficiaryFragmentDirections.toBeneficiarySearchDialog())
+            findNavController().safeNavigate(
+                ExistingBeneficiaryFragmentDirections.toBeneficiarySearchDialog(),
+            )
         }
         registerCampaignEdit.setOnClickListener {
-            findNavController().safeNavigate(ExistingBeneficiaryFragmentDirections.toCampaignDialog())
+            findNavController().safeNavigate(
+                ExistingBeneficiaryFragmentDirections.toCampaignDialog(),
+            )
         }
         registerCampaignLayout.setEndIconOnClickListener {
-            findNavController().safeNavigate(ExistingBeneficiaryFragmentDirections.toCampaignDialog())
+            findNavController().safeNavigate(
+                ExistingBeneficiaryFragmentDirections.toCampaignDialog(),
+            )
         }
         addBeneficiaryButton.setOnClickListener {
             if (campaign == null && beneficiaryId == null) {

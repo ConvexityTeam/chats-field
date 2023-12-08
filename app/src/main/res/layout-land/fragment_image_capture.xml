@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:whatever="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".views.MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        app:liftOnScroll="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_back"
+            app:title="Verify Liveness" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/def_bg">
+
+            <ProgressBar
+                android:id="@+id/progressbar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="0dp"
+                android:layout_height="5dp"
+                android:layout_margin="@dimen/defaultDimen"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:elevation="2dp"
+                android:max="5"
+                android:progress="0"
+                android:progressTint="?colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/card_view_finder"
+                app:layout_constraintTop_toTopOf="@+id/card_view_finder" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/camera_capture_button"
+                style="@style/ConvexityButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="50dp"
+                android:elevation="2dp"
+                android:enabled="false"
+                android:text="@string/take_photo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/card_view_finder" />
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_finder"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="40dp"
+                android:elevation="0dp"
+                app:cardElevation="0dp"
+                app:layout_constraintDimensionRatio="w,1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.4"
+                app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full">
+
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/viewFinder"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:visibility="visible" />
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <chats.cash.chats_field.utils.camera.GraphicOverlay
+                android:id="@+id/graphicOverlay_finder"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/overlay_view"
+                app:layout_constraintEnd_toEndOf="@id/overlay_view"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/overlay_view"
+                app:layout_constraintTop_toTopOf="@+id/overlay"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <chats.cash.chats_field.utils.camera.OverlayView
+                android:id="@+id/overlay"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/card_view_finder"
+                app:layout_constraintEnd_toEndOf="@id/card_view_finder"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/card_view_finder"
+                app:layout_constraintTop_toTopOf="@id/card_view_finder"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <View
+                android:id="@+id/overlay_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/loader_border"
+                android:scaleX="1.2"
+                android:scaleY="1.2"
+                app:layout_constraintBottom_toBottomOf="@+id/card_view_finder"
+                app:layout_constraintDimensionRatio="w,1:1"
+                app:layout_constraintEnd_toEndOf="@id/card_view_finder"
+                app:layout_constraintStart_toStartOf="@id/card_view_finder"
+                app:layout_constraintTop_toTopOf="@+id/card_view_finder" />
+
+            <TextView
+                android:id="@+id/circleText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/make_sure_your_face_is_in_the_circle"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.TextBold"
+                android:textColor="#222222"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@+id/camera_capture_button"
+                app:layout_constraintStart_toEndOf="@+id/card_view_finder"
+                app:layout_constraintTop_toBottomOf="@+id/progressbar" />
+
+
+            <TextView
+                android:id="@+id/blinkCountText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/close_your_eyes_for_5_seconds"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.TextRegular"
+                android:textColor="#222222"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="@+id/circleText"
+                app:layout_constraintStart_toEndOf="@+id/card_view_finder"
+                app:layout_constraintTop_toBottomOf="@+id/circleText" />
+
+            <ImageView
+                android:id="@+id/imagePreviewView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/preview_image"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_onboard_one" />
+
+            <Button
+                android:id="@+id/select_button"
+                style="@style/Widget.MaterialComponents.Button.Primary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="50dp"
+                android:text="@string/select_image"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/retake_button"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/retake_button"
+                style="@style/Widget.MaterialComponents.Button.Primary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="@android:color/holo_red_dark"
+                android:text="@string/retake"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/select_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/select_button"
+                app:layout_constraintTop_toTopOf="@+id/select_button" />
+
+            <ImageButton
+                android:id="@+id/flip_button"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/baseline_flip_camera_ios_24"
+                android:contentDescription="@string/flip_camera"
+                android:scaleType="fitCenter"
+                android:src="@drawable/baseline_flip_camera_ios_24"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/camera_capture_button"
+                app:layout_constraintEnd_toEndOf="@+id/camera_capture_button"
+                app:layout_constraintRight_toRightOf="parent"
+                app:tint="@color/colorAccent"
+                tools:visibility="visible" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

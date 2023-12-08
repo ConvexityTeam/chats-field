@@ -10,13 +10,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 
-class PermissionManager(private val context: AppCompatActivity, private val permissionResultReceiver: PermissionResultReceiver) {
+class PermissionManager(
+    private val context: AppCompatActivity,
+    private val permissionResultReceiver: PermissionResultReceiver,
+) {
 
-    var currrentPermission:String? = null
+    var currrentPermission: String? = null
 
     private val requestPermissionLauncher =
         context.registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
+            ActivityResultContracts.RequestPermission(),
         ) { isGranted: Boolean ->
             if (isGranted) {
                 // Permission is granted. Continue the action or workflow in your
@@ -24,10 +27,9 @@ class PermissionManager(private val context: AppCompatActivity, private val perm
                 permissionResultReceiver.onGranted()
             } else {
                 currrentPermission?.let {
-                    if (context.shouldShowRequestPermissionRationale(it)){
+                    if (context.shouldShowRequestPermissionRationale(it)) {
                         permissionResultReceiver.showRationale(it)
-                    }
-                    else{
+                    } else {
                         permissionResultReceiver.onDenied(it)
                     }
                 }
@@ -37,10 +39,10 @@ class PermissionManager(private val context: AppCompatActivity, private val perm
 
     private val requestPermissionLauncher2 =
         context.registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
+            ActivityResultContracts.RequestMultiplePermissions(),
         ) { permissions ->
-            permissions.keys.forEach {key ->
-                val isGranted = permissions[key]?:false
+            permissions.keys.forEach { key ->
+                val isGranted = permissions[key] ?: false
                 if (isGranted) {
                     // Permission is granted. Continue the action or workflow in your
                     // app.
@@ -58,31 +60,27 @@ class PermissionManager(private val context: AppCompatActivity, private val perm
             }
         }
 
-
-
-    fun getPermission(permission:String){
+    fun getPermission(permission: String) {
         currrentPermission = permission
         requestPermissionLauncher.launch(permission)
     }
 
-
-    fun checkPermissions( permissions:List<String>){
-        permissions.forEach {permission ->
+    fun checkPermissions(permissions: List<String>) {
+        permissions.forEach { permission ->
             if (ContextCompat.checkSelfPermission(
                     context,
-                    permission
+                    permission,
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 permissionResultReceiver.onGranted()
                 // You can use the API that requires the permission.
             } else {
-                    permissionResultReceiver.notGranted(permission)
-                }
+                permissionResultReceiver.notGranted(permission)
             }
         }
+    }
 
-
-    fun shouldShowRationale(permission:String):Boolean{
+    fun shouldShowRationale(permission: String): Boolean {
         return context.shouldShowRequestPermissionRationale(permission)
     }
 
@@ -91,14 +89,13 @@ class PermissionManager(private val context: AppCompatActivity, private val perm
     }
 }
 
-
-interface PermissionResultReceiver{
+interface PermissionResultReceiver {
     fun onGranted()
     fun notGranted(permission: String)
 
-    fun onDenied(permission:String)
+    fun onDenied(permission: String)
 
-    fun showRationale(permission:String)
+    fun showRationale(permission: String)
 }
 
 const val CAMERA_PERMISSION = Manifest.permission.CAMERA
@@ -108,16 +105,19 @@ const val COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
 const val FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
 
 fun Context.openAppSystemSettings() {
-    startActivity(Intent().apply {
-        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-        data = Uri.fromParts("package", packageName, null)
-    })
+    startActivity(
+        Intent().apply {
+            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            data = Uri.fromParts("package", packageName, null)
+        },
+    )
 }
 
-fun Context.checkPermission(permission:String):Boolean{
-    return (ContextCompat.checkSelfPermission(
+fun Context.checkPermission(permission: String): Boolean {
+    return (
+        ContextCompat.checkSelfPermission(
             this,
-            permission
-        ) == PackageManager.PERMISSION_GRANTED)
-
+            permission,
+        ) == PackageManager.PERMISSION_GRANTED
+        )
 }

@@ -12,8 +12,8 @@ data class Organization(
     val logo_link: String,
     val name: String,
     val phone: String,
-    val updatedAt: String
-){
+    val updatedAt: String,
+) {
     override fun toString(): String {
         return name
     }

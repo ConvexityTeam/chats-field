@@ -2,9 +2,7 @@ package chats.cash.chats_field.utils.nfc
 
 import android.nfc.NdefRecord
 import java.io.UnsupportedEncodingException
-import java.nio.charset.Charset
 import java.util.*
-
 
 class TextRecord(
     /**
@@ -27,7 +25,7 @@ class TextRecord(
         fun parse(record: NdefRecord): TextRecord? {
             return if (record.tnf == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(
                     record.type,
-                    NdefRecord.RTD_TEXT
+                    NdefRecord.RTD_TEXT,
                 )
             ) {
                 try {
@@ -49,8 +47,10 @@ class TextRecord(
                     val languageCodeLength = payload[0].toInt() and 63
                     val languageCode = String(payload, 1, languageCodeLength, Charsets.US_ASCII)
                     val text = String(
-                        payload, languageCodeLength + 1,
-                        payload.size - languageCodeLength - 1, textEncoding
+                        payload,
+                        languageCodeLength + 1,
+                        payload.size - languageCodeLength - 1,
+                        textEncoding,
                     )
                     TextRecord(languageCode, text)
                 } catch (e: UnsupportedEncodingException) {

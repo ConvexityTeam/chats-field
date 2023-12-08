@@ -60,16 +60,36 @@ before_script:
   # Not necessary, but just for surity
   - chmod +x ./gradlew
 
+## Basic android and gradle stuff
+## Check linting
+#lintDebug:
+#  interruptible: true
+#  stage: build
+#  script:
+#    - ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
+
 # Basic android and gradle stuff
-# Check linting
-lintDebug:
+# apply linting with spotless
+lintApply:
   interruptible: true
   stage: build
   script:
-    - ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
+    - ./gradlew -Pci --console=plain :app:spotlessApply -PbuildDir=spotlessLintApply
+  only:
+    - merge_requests
+
+# Basic android and gradle stuff
+# Check linting with spotless
+lintCheck:
+  interruptible: true
+  stage: build
+  script:
+    - ./gradlew -Pci --console=plain :app:spotlessCheck -PbuildDir=spotlessLintCheck
+  only:
+    - merge_requests
 
 # Make Project
-assembleDebug:
+assembleDebugApk:
   interruptible: true
   stage: build
   script:
@@ -77,10 +97,14 @@ assembleDebug:
   artifacts:
     paths:
       - app/build/outputs/
+  only:
+    - merge_requests
 
 # Run all tests, if any fails, interrupt the pipeline(fail it)
-debugTests:
+runningTests:
   interruptible: true
   stage: test
   script:
     - ./gradlew -Pci --console=plain :app:testDebug
+  only:
+    - merge_requests

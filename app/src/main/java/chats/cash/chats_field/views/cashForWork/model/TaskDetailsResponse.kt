@@ -26,5 +26,5 @@ data class TaskDetailsResponse(
     val requireVendorApproval: Boolean,
     @SerializedName("total_task_allowed")
     val totalTaskAllowed: Int,
-    val updatedAt: String
+    val updatedAt: String,
 )

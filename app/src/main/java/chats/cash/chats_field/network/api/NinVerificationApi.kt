@@ -10,7 +10,7 @@ interface NinVerificationApi {
     @POST("biometrics/merchant/data/verification/nin_wo_face")
     suspend fun verifyNin(
         @Body nonBody: NinBody,
-        @Header("x-api-key") apiKey: String = NIN_KEY
+        @Header("x-api-key") apiKey: String = NIN_KEY,
     ): NinResponse
 
     data class NinBody(val number: String?)
@@ -25,6 +25,6 @@ interface NinVerificationApi {
     data class NinData(
         val nin: String,
         val firstname: String,
-        val surname: String
+        val surname: String,
     )
 }

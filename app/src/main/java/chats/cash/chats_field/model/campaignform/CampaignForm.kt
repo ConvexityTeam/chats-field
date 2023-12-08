@@ -1,6 +1,5 @@
 package chats.cash.chats_field.model.campaignform
 
-
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -9,7 +8,6 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "allCampaignForm")
-
 @Parcelize
 data class CampaignForm(
     @SerializedName("beneficiaryId")
@@ -28,5 +26,5 @@ data class CampaignForm(
     @SerializedName("title")
     val title: String,
     @SerializedName("updatedAt")
-    val updatedAt: String
-):Parcelable
+    val updatedAt: String,
+) : Parcelable

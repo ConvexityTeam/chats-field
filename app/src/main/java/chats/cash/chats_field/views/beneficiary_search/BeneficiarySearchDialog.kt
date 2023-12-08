@@ -41,9 +41,12 @@ class BeneficiarySearchDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding =
-            DialogBeneficiarySearchBinding.bind(inflater.inflate(R.layout.dialog_beneficiary_search,
-                container,
-                false)
+            DialogBeneficiarySearchBinding.bind(
+                inflater.inflate(
+                    R.layout.dialog_beneficiary_search,
+                    container,
+                    false,
+                ),
             )
 
         setupClickListeners()
@@ -56,7 +59,9 @@ class BeneficiarySearchDialog : BottomSheetDialogFragment() {
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 BeneficiarySearchViewModel.BeneficiarySearchUiState.EmptyBeneficiaries -> handleEmptyState()
-                is BeneficiarySearchViewModel.BeneficiarySearchUiState.Error -> handleError(state.errorMessage)
+                is BeneficiarySearchViewModel.BeneficiarySearchUiState.Error -> handleError(
+                    state.errorMessage,
+                )
                 BeneficiarySearchViewModel.BeneficiarySearchUiState.Loading -> handleLoading()
                 is BeneficiarySearchViewModel.BeneficiarySearchUiState.Success -> {
                     handleSuccess(state.beneficiaries)
@@ -69,7 +74,9 @@ class BeneficiarySearchDialog : BottomSheetDialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.setOnShowListener {
             val bottomSheet =
-                dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+                dialog.findViewById<FrameLayout>(
+                    com.google.android.material.R.id.design_bottom_sheet,
+                )
             bottomSheet.setBackgroundColor(Color.TRANSPARENT)
 
             val params = bottomSheet.layoutParams
@@ -87,7 +94,7 @@ class BeneficiarySearchDialog : BottomSheetDialogFragment() {
                 lastName = lastNameEdit.text.toString(),
                 email = emailEditText.text.toString(),
                 phone = phoneEditText.text.toString(),
-                nin = ninEditText.text.toString()
+                nin = ninEditText.text.toString(),
             )
         }
     }

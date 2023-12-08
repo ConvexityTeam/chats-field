@@ -9,15 +9,19 @@ import chats.cash.chats_field.model.ModelCampaign
 import chats.cash.chats_field.model.campaignform.AllCampaignTypeConverter
 import chats.cash.chats_field.model.campaignform.CampaignForm
 import chats.cash.chats_field.model.utils.GsonParser
+import chats.cash.chats_field.network.body.groupBeneficiary.GroupBeneficiaryBody
 import chats.cash.chats_field.network.body.survey.SubmitSurveyAnswerBody
+import chats.cash.chats_field.network.response.beneficiary_onboarding.OrganizationBeneficiary
 import chats.cash.chats_field.network.response.organization.campaign.Campaign
 import com.google.gson.Gson
 
 @Database(
-    entities = [Beneficiary::class, Campaign::class, ModelCampaign::class, CampaignForm::class,
-               SubmitSurveyAnswerBody::class],
-    version = 14,
-    exportSchema = false
+    entities = [
+        Beneficiary::class, Campaign::class, ModelCampaign::class, CampaignForm::class,
+        SubmitSurveyAnswerBody::class, OrganizationBeneficiary::class, GroupBeneficiaryBody::class,
+    ],
+    version = 22,
+    exportSchema = false,
 )
 @TypeConverters(AllCampaignTypeConverter::class)
 abstract class BeneficiaryDatabase : RoomDatabase() {
@@ -32,7 +36,7 @@ abstract class BeneficiaryDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     BeneficiaryDatabase::class.java,
-                    "beneficiary"
+                    "beneficiary",
                 ).addTypeConverter(AllCampaignTypeConverter(GsonParser(Gson())))
                     .fallbackToDestructiveMigration()
                     .build()

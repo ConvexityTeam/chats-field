@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="16dp"
+    android:background="@color/def_bg"
     tools:context=".views.auth.ui.RegisterFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,40 +12,41 @@
         android:layout_height="wrap_content"
         tools:ignore="RtlSymmetry">
 
-        <ImageButton
-            android:id="@+id/back_btn"
-            style="@style/ImageButton.Default"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:contentDescription="@null"
-            android:src="@drawable/logo_sm"
+            app:elevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/appbar"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                android:background="@color/white"
+                android:paddingVertical="5dp"
+                app:navigationIcon="@drawable/ic_back"
+                app:title="@string/personal_information" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
 
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
             android:layout_marginTop="32dp"
             android:contentDescription="@null"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/progress_in_progress"
             app:layout_constraintEnd_toStartOf="@id/imageView4"
             app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageView2" />
+            app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
 
         <ImageView
             android:id="@+id/imageView4"
@@ -63,6 +64,7 @@
             android:id="@+id/imageView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="17dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_uncheck"
             app:layout_constraintBottom_toBottomOf="@id/imageView4"
@@ -76,7 +78,8 @@
             android:layout_height="1dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@color/lineColor"
+            android:background="@color/colorPrimary"
+            android:backgroundTint="?colorPrimary"
             app:layout_constraintBottom_toBottomOf="@id/imageView3"
             app:layout_constraintEnd_toStartOf="@id/imageView4"
             app:layout_constraintStart_toEndOf="@id/imageView3"
@@ -87,7 +90,8 @@
             android:layout_height="1dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@color/lineColor"
+            android:background="@color/colorPrimary"
+            android:backgroundTint="?colorPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/imageView3"
             app:layout_constraintEnd_toStartOf="@id/imageView5"
             app:layout_constraintStart_toEndOf="@id/imageView4"
@@ -106,81 +110,27 @@
             app:layout_constraintTop_toBottomOf="@id/imageView4" />
 
         <TextView
-            android:id="@+id/loggedInText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/text_logged_in"
-            android:textAppearance="@style/TextAppearance.TextBold"
-            android:textColor="@color/textColorPrimary"
-            app:layout_constraintEnd_toStartOf="@+id/change_account_text"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView2" />
-
-        <TextView
-            android:id="@+id/change_account_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/text_change_account"
-            android:textAppearance="@style/TextAppearance.TextBold"
-            android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="@id/loggedInText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@id/loggedInText"
-            app:layout_constraintTop_toTopOf="@id/loggedInText" />
-
-        <TextView
-            android:id="@+id/textView45"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/text_campaigns"
-            android:textAppearance="@style/TextAppearance.TextMedium"
-            android:textColor="@color/textColorSecondary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/loggedInText" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registerCampaignLayout"
-            style="@style/TextInputLayout.FormEditText.DropDown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView45">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/registerCampaignEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:hint="@string/text_select_a_campaign"
-                android:paddingStart="16dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:textAppearance="@style/TextAppearance.TextRegular" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="10dp"
             android:text="@string/first_name"
-            android:textAppearance="@style/TextAppearance.TextMedium"
+            android:textAppearance="@style/TextAppearance.Body"
             android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/registerCampaignLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/title_desc" />
+
+        <TextView
+            android:id="@+id/title_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fill_the_form_with_beneficiary_details"
+            android:textAppearance="@style/TextAppearance.Body"
+            android:textColor="@color/textColorSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/registerFirstNameLayout"
@@ -188,8 +138,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="16dp"
+            app:boxBackgroundColor="#F5F6F8"
+            app:boxCornerRadiusBottomEnd="0dp"
+            app:boxCornerRadiusBottomStart="0dp"
+            app:boxCornerRadiusTopEnd="0dp"
+            app:boxCornerRadiusTopStart="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView3">
@@ -221,8 +176,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="16dp"
+            app:boxBackgroundColor="#F5F6F8"
+            app:boxCornerRadiusBottomEnd="0dp"
+            app:boxCornerRadiusBottomStart="0dp"
+            app:boxCornerRadiusTopEnd="0dp"
+            app:boxCornerRadiusTopStart="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView4">
@@ -254,8 +214,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="16dp"
+            app:boxBackgroundColor="#F5F6F8"
+            app:boxCornerRadiusBottomEnd="0dp"
+            app:boxCornerRadiusBottomStart="0dp"
+            app:boxCornerRadiusTopEnd="0dp"
+            app:boxCornerRadiusTopStart="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView44">
@@ -292,8 +257,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="16dp"
+            app:boxBackgroundColor="#F5F6F8"
+            app:boxCornerRadiusBottomEnd="0dp"
+            app:boxCornerRadiusBottomStart="0dp"
+            app:boxCornerRadiusTopEnd="0dp"
+            app:boxCornerRadiusTopStart="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5">
@@ -320,61 +290,61 @@
             app:layout_constraintTop_toBottomOf="@+id/registerEmailLayout" />
 
         <LinearLayout
-            android:layout_width="match_parent"
             android:id="@+id/phoneLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/outline_shape"
+            android:backgroundTint="#F5F6F8"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
             android:paddingHorizontal="5dp"
             android:paddingVertical="10dp"
-            android:layout_marginEnd="16dp"
-            android:gravity="center_horizontal"
-            android:background="@drawable/outline_shape"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView6"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
+            app:layout_constraintTop_toBottomOf="@id/textView6">
 
             <com.hbb20.CountryCodePicker
                 android:id="@+id/ccp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:ccp_defaultNameCode="ng"
-                app:ccp_autoDetectCountry="true"
-                android:gravity="center"
-                app:ccpDialog_searchEditTextTint="@color/colorPrimary"
-                app:ccpDialog_backgroundColor="@color/white"
-                app:ccp_showNameCode="false"
                 android:layout_gravity="center"
+                android:gravity="center"
+                app:ccpDialog_backgroundColor="@color/white"
+                app:ccpDialog_searchEditTextTint="@color/colorPrimary"
+                app:ccp_arrowSize="15sp"
+                app:ccp_autoDetectCountry="true"
+                app:ccp_defaultNameCode="ng"
                 app:ccp_defaultPhoneCode="234"
                 app:ccp_internationalFormattingOnly="true"
-                app:ccp_textSize="13sp"
-                app:ccp_arrowSize="15sp"
-                />
+                app:ccp_showNameCode="false"
+                app:ccp_textSize="13sp" />
 
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/registerPhoneEdit"
-                    android:textStyle="normal"
-                    style="@style/TextAppearance.TextRegular"
-                    android:background="#0017CE89"
-                    android:inputType="phone"
-                    android:maxLines="1"
-                    android:hint="@string/_081000xxxxx"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"/>
+            <EditText
+                android:id="@+id/registerPhoneEdit"
+                style="@style/TextAppearance.TextRegular"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="#0017CE89"
+                android:hint="@string/_081000xxxxx"
+                android:inputType="phone"
+                android:maxLines="1"
+                android:textStyle="normal" />
 
         </LinearLayout>
 
         <TextView
             android:id="@+id/phone_error"
+            style="@style/TextAppearance.TextRegular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/invalid_phone_number"
-            android:visibility="gone"
             android:textColor="@color/design_default_color_error"
-            style="@style/TextAppearance.TextRegular"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/registerGenderLayout"
             app:layout_constraintStart_toStartOf="@+id/phoneLayout"
             app:layout_constraintTop_toBottomOf="@id/phoneLayout" />
@@ -399,9 +369,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="16dp"
             android:visibility="visible"
+            app:boxBackgroundColor="#F5F6F8"
+            app:boxCornerRadiusBottomEnd="0dp"
+            app:boxCornerRadiusBottomStart="0dp"
+            app:boxCornerRadiusTopEnd="0dp"
+            app:boxCornerRadiusTopStart="0dp"
+            app:endIconDrawable="@drawable/icon_calendar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView7"
@@ -415,136 +391,6 @@
                 android:focusable="false"
                 android:hint="@string/text_placeholder_date"
                 android:inputType="date" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/textView55"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/text_special_case"
-            android:textAppearance="@style/TextAppearance.TextMedium"
-            android:textColor="@color/textColorSecondary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/registerDateLayout" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registerSpecialCaseLayout"
-            style="@style/TextInputLayout.FormEditText.DropDown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView55">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/registerSpecialCaseEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:hint="@string/text_no"
-                android:paddingStart="16dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:textAppearance="@style/TextAppearance.TextRegular" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/txt_nin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/text_nin"
-            android:textAppearance="@style/TextAppearance.TextMedium"
-            android:textColor="@color/textColorSecondary"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/registerSpecialCaseLayout"
-            tools:visibility="visible" />
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/ninGroup"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="gone"
-            android:layout_marginEnd="411dp"
-            app:constraint_referenced_ids="txt_nin,registerNINLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registerNINLayout"
-            style="@style/TextInputLayout.FormEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:visibility="visible"
-            app:helperText="Enter a NIN, vNIN or VIN"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_nin"
-            app:passwordToggleEnabled="false"
-            tools:visibility="visible">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/registerNINEdit"
-                style="@style/TextInputEditText.Padding"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="XXXXXXXXX"
-                android:inputType="text|textNoSuggestions"
-                android:maxLength="16"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/inputPinText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/input_pin"
-            android:textAppearance="@style/TextAppearance.TextMedium"
-            android:textColor="@color/textColorSecondary"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/registerNINLayout" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/inputPinLayout"
-            style="@style/TextInputLayout.FormEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:visibility="visible"
-            app:helperText="Enter a 4-digit PIN"
-            app:counterMaxLength="4"
-            app:counterEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/inputPinText"
-            app:passwordToggleEnabled="false">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputPinEdit"
-                style="@style/TextInputEditText.Padding"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="1234"
-                android:inputType="number"
-                android:maxLength="4" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -566,14 +412,15 @@
 
         <Button
             android:id="@+id/registerNextButton"
-            style="@style/Widget.MaterialComponents.Button.Primary"
+            style="@style/ConvexityButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/topSpaceDimen"
             android:text="@string/next"
             app:layout_constraintEnd_toEndOf="@id/phoneLayout"
             app:layout_constraintStart_toStartOf="@id/phoneLayout"
-            app:layout_constraintTop_toBottomOf="@id/inputPinLayout" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registerDateLayout"/>
 
         <TextView
             android:id="@+id/registerLoginText"

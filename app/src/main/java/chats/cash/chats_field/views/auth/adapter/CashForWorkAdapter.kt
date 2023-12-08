@@ -21,12 +21,15 @@ on 17/07/2020.
 
 class CashForWorkAdapter(
     private val onLoadTaskClick: (List<Job>) -> Unit,
-    private val onBeneficiaryClick: (Int) -> Unit
+    private val onBeneficiaryClick: (Int) -> Unit,
 ) : ListAdapter<ModelCampaign, CashForWorkAdapter.MyViewHolder>(CashForWorkDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(ItemCashForWorkItemBinding.bind(LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_cash_for_work_item, parent, false))
+        return MyViewHolder(
+            ItemCashForWorkItemBinding.bind(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_cash_for_work_item, parent, false),
+            ),
         )
     }
 

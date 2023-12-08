@@ -13,13 +13,13 @@ import java.lang.Exception
 
 object Utils {
     fun Context.checkAppPermission() {
-        Permissions.check(this,
+        Permissions.check(
+            this,
             ChatsFieldConstants.permissions,
             null,
             null,
             object : PermissionHandler() {
                 override fun onGranted() {
-
                 }
 
                 override fun onBlocked(
@@ -43,8 +43,8 @@ object Utils {
                 ) {
                     super.onJustBlocked(context, justBlockedList, deniedPermissions)
                 }
-            })
-
+            },
+        )
     }
 
     fun generatePassword(): String {

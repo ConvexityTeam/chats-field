@@ -35,5 +35,5 @@ data class Data(
     val right_fingers: String,
     val status: Int,
     val tfa_secret: Any,
-    val updatedAt: String
+    val updatedAt: String,
 )
